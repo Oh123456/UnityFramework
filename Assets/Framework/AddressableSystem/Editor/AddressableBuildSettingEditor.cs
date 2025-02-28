@@ -80,7 +80,6 @@ namespace AddressableEditor
         static int profileIndex = 0;
         static int playModeIndex = 0;
         static bool pathRemoteToggle = true;
-        static bool informationFoldout = true;
         static Vector2 scrollPos;
 
         private void OnEnable()

@@ -28,6 +28,8 @@ public partial class AddressableManager : Singleton.LazySingleton<AddressableMan
 
     List<string> labelNames;
 
+    Lazy<AddressableDataManager> addressableDataManager = new Lazy<AddressableDataManager>(() => new AddressableDataManager());
+
 #if UNITY_EDITOR
     public AddressableManager()
     {
@@ -146,6 +148,11 @@ public partial class AddressableManager : Singleton.LazySingleton<AddressableMan
         this.OnDownloadDependencies = null;
         this.OnDownload = null;
 
+    }
+
+    public AddressableDataManager GetAddressableDataManager()
+    {
+        return this.addressableDataManager.Value;
     }
 
     [System.Diagnostics.Conditional("UNITY_EDITOR"), System.Diagnostics.Conditional("DEVELOPMENT_BUILD")]
