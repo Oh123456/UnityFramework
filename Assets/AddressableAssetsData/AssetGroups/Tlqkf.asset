@@ -1,0 +1,115 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Tlqkf
+  m_EditorClassIdentifier: 
+  m_GroupName: Tlqkf
+  m_Data:
+    m_SerializedData: []
+  m_GUID: 84312fad14e78b6459795b006d362487
+  m_SerializeEntries:
+  - m_GUID: ce0fa5042be55fd4ba0724c81580842a
+    m_Address: Assets/GIF/1/360render_0.jpeg
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Image
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3128ffc8da3829744b2169fea811a5e7
+    m_Address: Assets/GIF/1/360render_1.jpeg
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Image
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5b77a737fe03ece41a29941e7911e273
+    m_Address: Assets/GIF/1/360render_2.jpeg
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Image
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2b4f11d9dfb49124a8d800d4e729035e
+    m_Address: Assets/GIF/1/360render_3.jpeg
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Image
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8cb6cce1cec169c42af2eeaa1a22831b
+    m_Address: Assets/GIF/1/360render_4.jpeg
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Image
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 043d23848ae779a44944c68eeee10861
+    m_Address: Assets/GIF/1/360render_5.jpeg
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Image
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6da842e858cc9c64ebb46fcda9442b46
+    m_Address: Assets/GIF/1/360render_6.jpeg
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Image
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 997594f5a8e27f445a5441e2c5563379
+    m_Address: Assets/GIF/1/360render_7.jpeg
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Image
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 23364317449668b4b9f6351081e45aaa
+    m_Address: Assets/GIF/1/360render_8.jpeg
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Image
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3c6640148224412488880a75e8c481d5
+    m_Address: Assets/GIF/1/360render_9.jpeg
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Image
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 113728b714333e0408a767fbf8941488
+    m_Address: Assets/GIF/1/360render_10.jpeg
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Image
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6bbc6dea990514e42abcaf7e1f22070b
+    m_Address: Assets/GIF/1/360render_11.jpeg
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Image
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 34f06dd40c28bc448bafdce6a32c9965
+    m_Address: Assets/GIF/1/360render_12.jpeg
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Image
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f0f82f1a414536044882f5fca1c4ac08
+    m_Address: Assets/GIF/1/360render_14.jpeg
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Image
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8963e1817f672ca42abac88f477a4c23
+    m_Address: Assets/Cube.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Image
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 3a88b6728ff4e534f84e308d2655ebfa, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: d8233a8722646ee4c9484e919262336a, type: 2}
+    - {fileID: 11400000, guid: 9c82702fbb2938645a87470643d206f6, type: 2}

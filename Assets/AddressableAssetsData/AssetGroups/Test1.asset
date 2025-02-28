@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Test1
+  m_EditorClassIdentifier: 
+  m_GroupName: Test1
+  m_Data:
+    m_SerializedData: []
+  m_GUID: a1cd296025359c54b9ec875e6f476998
+  m_SerializeEntries:
+  - m_GUID: e31cbeaea14fb0149bc8c145c2ec28bf
+    m_Address: Assets/GIF/1/360render_13.jpeg
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Image
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 3a88b6728ff4e534f84e308d2655ebfa, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 2cd2d59c6d1396b4895530184256c722, type: 2}
+    - {fileID: 11400000, guid: 4fe53ab043cfdbd4e935d0babc03dc7d, type: 2}
