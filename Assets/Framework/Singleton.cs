@@ -2,7 +2,7 @@ using System;
 
 using UnityEngine;
 
-namespace Singleton
+namespace UnityFramework.Singleton
 {
     public class LazySingleton<T> where T : class, new()
     {

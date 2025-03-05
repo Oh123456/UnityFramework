@@ -5,13 +5,23 @@ using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 
 
-public partial class AddressableManager
+namespace UnityFramework.Addressable
 {
-    public static AddressableResource<T> UnsafeLoadAsset<T>(object key)
+    public partial class AddressableManager
     {
-        return new AddressableResource<T>()
+
+
+        [System.Diagnostics.Conditional("UNITY_EDITOR"), System.Diagnostics.Conditional("DEVELOPMENT_BUILD")]
+        public static void AddressableLog(object msg)
         {
-            asyncOperationHandle = Addressables.LoadAssetAsync<T>(key) 
-        };
+            AddressableLog(msg, Color.white);
+        }
+
+        [System.Diagnostics.Conditional("UNITY_EDITOR"), System.Diagnostics.Conditional("DEVELOPMENT_BUILD")]
+        public static void AddressableLog(object msg, Color color)
+        {
+            Debug.Log($"<color={color}>{msg}</color>");
+        }
     }
+
 }

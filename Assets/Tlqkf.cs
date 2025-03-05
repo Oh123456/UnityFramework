@@ -4,11 +4,16 @@ using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.UI;
 
+using UnityFramework.Addressable;
+
 public class Tlqkf : MonoBehaviour
 {
     [SerializeField] RawImage image;
     [SerializeField] AssetReference assetReference;
     [SerializeField] AssetReference assetReferenceGO;
+
+
+    AddressableResource<Texture> addressableResource;
     void Start()
     {
         AddressableManager.Instance.DownLoad();
@@ -22,7 +27,11 @@ public class Tlqkf : MonoBehaviour
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.V))
-            image.texture = Addressables.LoadAssetAsync<Texture>(assetReference).WaitForCompletion();
+        {
+            addressableResource.Release();
+            addressableResource = AddressableManager.UnsafeLoadAsset<Texture>(assetReference);
+            image.texture = addressableResource.WaitForCompletion();
+        }
         if (Input.GetKeyDown(KeyCode.B))
             Instantiate( Addressables.LoadAssetAsync<GameObject>(assetReferenceGO).WaitForCompletion());
     }

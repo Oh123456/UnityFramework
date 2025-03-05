@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
+using UnityFramework.Addressable.Managing;
+
 
 
 #if USE_ADDRESSABLE_TASK
@@ -12,158 +14,150 @@ using System.Threading.Tasks;
 using Cysharp.Threading.Tasks;
 #endif
 
-public struct AddressableDownLoadData
+namespace UnityFramework.Addressable
 {
-    public AsyncOperationHandle handle;
-    public string label;
-}
+    public struct AddressableDownLoadData
+    {
+        public AsyncOperationHandle handle;
+        public string label;
+    }
 
-public partial class AddressableManager : Singleton.LazySingleton<AddressableManager>
-{
-    public const string BUILD_LABELS_PATH = "Assets/Resources";
+    public partial class AddressableManager : Singleton.LazySingleton<AddressableManager>
+    {
+        public const string BUILD_LABELS_PATH = "Assets/Resources";
 
-    public event Action OnCompletedLoad;
-    public event Action<AddressableDownLoadData> OnDownloadDependencies;
-    public event Action<AddressableDownLoadData> OnDownload;
+        public event Action OnCompletedLoad;
+        public event Action<AddressableDownLoadData> OnDownloadDependencies;
+        public event Action<AddressableDownLoadData> OnDownload;
 
-    List<string> labelNames;
+        List<string> labelNames;
 
-    Lazy<AddressableDataManager> addressableDataManager = new Lazy<AddressableDataManager>(() => new AddressableDataManager());
+        Lazy<AddressableDataManager> addressableDataManager = new Lazy<AddressableDataManager>(() => new AddressableDataManager());
 
 #if UNITY_EDITOR
-    public AddressableManager()
-    {
-        UnityEditor.EditorApplication.playModeStateChanged += (playModeStateChange) =>
-            {
-                if (playModeStateChange == UnityEditor.PlayModeStateChange.ExitingPlayMode)
+        public AddressableManager()
+        {
+            UnityEditor.EditorApplication.playModeStateChanged += (playModeStateChange) =>
                 {
+                    if (playModeStateChange == UnityEditor.PlayModeStateChange.ExitingPlayMode)
+                    {
 
-                }
-                Debug.Log($"PlayModeStateChange : {playModeStateChange}");
-            };
-    }
+                    }
+                    Debug.Log($"PlayModeStateChange : {playModeStateChange}");
+                };
+        }
 
 #endif
 
-    public void UpdateLabelNames(List<string> label)
-    {
-        this.labelNames = label;
-    }
-
-    public async void DownLoad()
-    {
-        AddressableLog("Addressables Start");
-
-        AddressableBuildLabels labels = Resources.Load<AddressableBuildLabels>(AddressableBuildLabels.NAME);
-
-        if (labels == null)
+        public void UpdateLabelNames(List<string> label)
         {
-            AddressableLog($"AddressableBuildLabels Not Found");
-            return;
+            this.labelNames = label;
         }
 
-        this.labelNames = labels.Labels;
-
-        int count = this.labelNames.Count;
-        for (int i = 0; i < count; i++)
+        public async void DownLoad()
         {
-            string label = this.labelNames[i];
-            AddressableLog($"DownLabel : {label}");
-            var handle = Addressables.GetDownloadSizeAsync(label);
-            this.OnDownloadDependencies?.Invoke(new AddressableDownLoadData()
+            AddressableLog("Addressables Start");
+
+            AddressableBuildLabels labels = Resources.Load<AddressableBuildLabels>(AddressableBuildLabels.NAME);
+
+            if (labels == null)
             {
-                handle = handle,
-                label = label
-            });
+                AddressableLog($"AddressableBuildLabels Not Found");
+                return;
+            }
+
+            this.labelNames = labels.Labels;
+
+            int count = this.labelNames.Count;
+            for (int i = 0; i < count; i++)
+            {
+                string label = this.labelNames[i];
+                AddressableLog($"DownLabel : {label}");
+                var handle = Addressables.GetDownloadSizeAsync(label);
+                this.OnDownloadDependencies?.Invoke(new AddressableDownLoadData()
+                {
+                    handle = handle,
+                    label = label
+                });
 
 #if USE_ADDRESSABLE_TASK
             await handle.Task; 
 #else
-            await handle.ToUniTask();
+                await handle.ToUniTask();
 #endif
-            DownLoadAddressables(handle, label);
+                DownLoadAddressables(handle, label);
 
-        }
-    }
-
-
-    async void DownLoadAddressables(AsyncOperationHandle<long> completedHandler, string label)
-    {
-        if (completedHandler.Status != AsyncOperationStatus.Succeeded)
-        {
-            AddressableLog("Failed", Color.red);
-            return;
+            }
         }
 
-        if (completedHandler.Result < 1)
+
+        async void DownLoadAddressables(AsyncOperationHandle<long> completedHandler, string label)
         {
-            AddressableLog("handle.Result < 1", Color.green);
-            CompletedLoad();
+            if (completedHandler.Status != AsyncOperationStatus.Succeeded)
+            {
+                AddressableLog("Failed", Color.red);
+                return;
+            }
+
+            if (completedHandler.Result < 1)
+            {
+                AddressableLog("handle.Result < 1", Color.green);
+                CompletedLoad();
+                Addressables.Release(completedHandler);
+                return;
+            }
+
             Addressables.Release(completedHandler);
-            return;
-        }
-
-        Addressables.Release(completedHandler);
 
 
-        var handler = Addressables.DownloadDependenciesAsync(label);
-        this.OnDownload?.Invoke(new AddressableDownLoadData()
-        {
-            handle = handler,
-            label = label
-        });
+            var handler = Addressables.DownloadDependenciesAsync(label);
+            this.OnDownload?.Invoke(new AddressableDownLoadData()
+            {
+                handle = handler,
+                label = label
+            });
 
 #if USE_ADDRESSABLE_TASK
         await handler.Task;
 #else
-        await handler.ToUniTask();
+            await handler.ToUniTask();
 #endif
-        DownladAddressable(handler);
-        Addressables.Release(handler);
-        return;
-    }
-
-
-    void DownladAddressable(AsyncOperationHandle handle)
-    {
-        if (handle.Status == AsyncOperationStatus.Succeeded)
-        {
-            AddressableLog("Download Completed", Color.green);
-            CompletedLoad();
+            DownladAddressable(handler);
+            Addressables.Release(handler);
             return;
         }
-        AddressableLog("Download Failed", Color.red);
-        return;
+
+
+        void DownladAddressable(AsyncOperationHandle handle)
+        {
+            if (handle.Status == AsyncOperationStatus.Succeeded)
+            {
+                AddressableLog("Download Completed", Color.green);
+                CompletedLoad();
+                return;
+            }
+            AddressableLog("Download Failed", Color.red);
+            return;
+        }
+
+        void CompletedLoad()
+        {
+            this.OnCompletedLoad?.Invoke();
+            ClearEvents();
+        }
+
+        public void ClearEvents()
+        {
+            this.OnCompletedLoad = null;
+            this.OnDownloadDependencies = null;
+            this.OnDownload = null;
+
+        }
+
+        public AddressableDataManager GetAddressableDataManager()
+        {
+            return this.addressableDataManager.Value;
+        }
     }
 
-    void CompletedLoad()
-    {
-        this.OnCompletedLoad?.Invoke();
-        ClearEvents();
-    }
-
-    public void ClearEvents()
-    {
-        this.OnCompletedLoad = null;
-        this.OnDownloadDependencies = null;
-        this.OnDownload = null;
-
-    }
-
-    public AddressableDataManager GetAddressableDataManager()
-    {
-        return this.addressableDataManager.Value;
-    }
-
-    [System.Diagnostics.Conditional("UNITY_EDITOR"), System.Diagnostics.Conditional("DEVELOPMENT_BUILD")]
-    private void AddressableLog(object msg)
-    {
-        AddressableLog(msg, Color.white);
-    }
-
-    [System.Diagnostics.Conditional("UNITY_EDITOR"), System.Diagnostics.Conditional("DEVELOPMENT_BUILD")]
-    private void AddressableLog(object msg, Color color)
-    {
-        Debug.Log($"<color={color}>{msg}</color>");
-    }
 }

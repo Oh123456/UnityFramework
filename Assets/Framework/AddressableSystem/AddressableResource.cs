@@ -2,43 +2,87 @@ using System;
 
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
+using UnityEngine;
+
 
 
 #if USE_ADDRESSABLE_TASK
 using System.Threading.Tasks;
 #else
 using Cysharp.Threading.Tasks;
-
-
 #endif
-public struct AddressableResource<T> : IDisposable
+namespace UnityFramework.Addressable
 {
-    public AsyncOperationHandle<T> asyncOperationHandle;
+    interface IAddressableResource
+    {
+#if USE_ADDRESSABLE_TASK
+    Task Task { get;}
+#else
+        UniTask Task { get; }
+#endif
+        void Release();
+
+        bool GetResource(out object resource);
+    }
+
+    public struct AddressableResource<T> : IDisposable, IAddressableResource
+    {
+        private AsyncOperationHandle<T> asyncOperationHandle;
+
+        public AddressableResource(AsyncOperationHandle<T> asyncOperationHandle)
+        {
+            this.asyncOperationHandle = asyncOperationHandle;
+        }
 
 #if USE_ADDRESSABLE_TASK
-    Task Task => asyncOperationHandle.Task;
+    public Task Task { get => this.asyncOperationHandle.Task;}
 #else
-    UniTask Task => asyncOperationHandle.ToUniTask();
+        public UniTask Task { get => this.asyncOperationHandle.ToUniTask(); }
 #endif
 
-    T Get()
-    {
-       return asyncOperationHandle.Result;
-    }
+        public T GetResource()
+        {
+            if (!GetResource(out object resource))
+                return default(T);
+            return (T)resource;
+        }
 
-    public void Dispose()
-    {
-        Release();
-    }
+        public bool GetResource(out object resource)
+        {
 
-    public void Release()
-    {
-        Addressables.Release(asyncOperationHandle);
-    }
+            if (this.asyncOperationHandle.IsValid()
+              && this.asyncOperationHandle.IsDone)
+            {
+                resource = this.asyncOperationHandle.Result;
+                return true;
+            }
 
-    public T WaitForCompletion()
-    {
-        return asyncOperationHandle.WaitForCompletion();
+            AddressableManager.AddressableLog("UnLoad Asset", Color.yellow);
+            resource = null;
+            return false;
+        }
+
+        public void Dispose()
+        {
+            Release();
+        }
+
+        public void Release()
+        {
+            if (this.asyncOperationHandle.IsValid())
+                Addressables.Release(this.asyncOperationHandle);
+        }
+
+        public T WaitForCompletion()
+        {
+            if (!this.asyncOperationHandle.IsValid())
+            {
+                AddressableManager.AddressableLog("UnLoad Asset", Color.yellow);
+                return default(T);
+            }
+            return this.asyncOperationHandle.WaitForCompletion();
+        }
+
     }
 
 }

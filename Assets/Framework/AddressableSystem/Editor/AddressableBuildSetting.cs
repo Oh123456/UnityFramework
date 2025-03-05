@@ -11,6 +11,8 @@ using UnityEditor.AddressableAssets.Settings.GroupSchemas;
 
 using UnityEngine;
 
+using UnityFramework.Addressable;
+
 namespace AddressableEditor
 {
     public class AddressableBuildSetting : ScriptableObject
