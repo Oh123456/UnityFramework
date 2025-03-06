@@ -20,7 +20,7 @@ namespace UnityFramework.Addressable
         [System.Diagnostics.Conditional("UNITY_EDITOR"), System.Diagnostics.Conditional("DEVELOPMENT_BUILD")]
         public static void AddressableLog(object msg, Color color)
         {
-            Debug.Log($"<color={color}>{msg}</color>");
+            Debug.Log($"<color=#{ColorUtility.ToHtmlStringRGB(color)}>{msg}</color>");
         }
     }
 

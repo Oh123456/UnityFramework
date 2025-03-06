@@ -311,6 +311,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   image: {fileID: 29548940}
+  imageKeys: Assets/GIF/1/360render_0.jpeg
   assetReference:
     m_AssetGUID: ce0fa5042be55fd4ba0724c81580842a
     m_SubObjectName: 
@@ -321,10 +322,6 @@ MonoBehaviour:
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0
-  vector2Curve2afxxx:
-    moveCurves:
-    - {x: -1, y: -1}
-    - {x: 1, y: 0.98}
 --- !u!1 &476952597
 GameObject:
   m_ObjectHideFlags: 0

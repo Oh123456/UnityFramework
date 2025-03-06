@@ -9,11 +9,12 @@ using UnityFramework.Addressable;
 public class Tlqkf : MonoBehaviour
 {
     [SerializeField] RawImage image;
+    [SerializeField] string imageKeys;
     [SerializeField] AssetReference assetReference;
     [SerializeField] AssetReference assetReferenceGO;
 
 
-    AddressableResource<Texture> addressableResource;
+    AddressableResourceHandle<Texture> addressableResource;
     void Start()
     {
         AddressableManager.Instance.DownLoad();
@@ -28,12 +29,14 @@ public class Tlqkf : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.V))
         {
-            addressableResource.Release();
-            addressableResource = AddressableManager.UnsafeLoadAsset<Texture>(assetReference);
+            AddressableResource<Texture> addressableResource = AddressableManager.Instance.LoadAsset<Texture>(assetReference);
             image.texture = addressableResource.WaitForCompletion();
         }
         if (Input.GetKeyDown(KeyCode.B))
-            Instantiate( Addressables.LoadAssetAsync<GameObject>(assetReferenceGO).WaitForCompletion());
+        {
+            AddressableResource<Texture> addressableResource = AddressableManager.Instance.LoadAsset<Texture>(imageKeys);
+            image.texture = addressableResource.WaitForCompletion();            
+        }
     }
 
 }
