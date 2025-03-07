@@ -3,6 +3,8 @@ using System;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using UnityEngine;
+using System.Collections;
+
 
 
 
@@ -19,9 +21,14 @@ using Cysharp.Threading.Tasks;
 
 namespace UnityFramework.Addressable
 {
+
     interface IAddressableReleaseAble
     {
-        void Release();
+        /// <summary>
+        /// Addressable Release
+        /// </summary>
+        /// <returns> ture is Complete Release</returns>
+        bool Release();
     }
 
     public interface IAddressableResource
@@ -36,7 +43,7 @@ namespace UnityFramework.Addressable
         bool GetResource(out object resource);
     }
 
-    public sealed class AddressableResource<T> : IAddressableResource
+    public sealed class AddressableResource<T> : IAddressableResource 
     {
         AddressableResourceHandle<T> addressableResourceHandler;
 
@@ -50,7 +57,7 @@ namespace UnityFramework.Addressable
 #if USE_ADDRESSABLE_TASK
         public Task Task { get => addressableResource.Task; }
 #else
-        public UniTask Task { get => addressableResourceHandler.Task; }  
+        public UniTask Task { get => addressableResourceHandler.Task; }
 #endif
 
         public T GetResource()
@@ -77,8 +84,9 @@ namespace UnityFramework.Addressable
 
     }
 
-    public struct AddressableResourceHandle<T> : IDisposable, IAddressableResource, IAddressableReleaseAble
+    public struct AddressableResourceHandle<T> : IDisposable, IAddressableResource, IAddressableReleaseAble 
     {
+
         private AsyncOperationHandle<T> asyncOperationHandle;
 
         public AddressableResourceHandle(AsyncOperationHandle<T> asyncOperationHandle)
@@ -119,10 +127,19 @@ namespace UnityFramework.Addressable
             Release();
         }
 
-        public void Release()
+        public bool Release()
         {
             if (this.asyncOperationHandle.IsValid())
+            {
+#if UNITY_EDITOR
+                Editor.AddressableManagingDataManager.TrackRelease(this.asyncOperationHandle);
+#endif
+                AddressableManager.AddressableLog($"{this.asyncOperationHandle.DebugName} Release!!", Color.blue);
                 Addressables.Release(this.asyncOperationHandle);
+                return !this.asyncOperationHandle.IsValid();
+            }
+
+            return true;
         }
 
         public T WaitForCompletion()

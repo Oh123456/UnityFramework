@@ -37,6 +37,10 @@ public class Tlqkf : MonoBehaviour
             AddressableResource<Texture> addressableResource = AddressableManager.Instance.LoadAsset<Texture>(imageKeys);
             image.texture = addressableResource.WaitForCompletion();            
         }
+        if (Input.GetKeyDown(KeyCode.C))
+        {
+            AddressableManager.Instance.GetAddressableDataManager().Release();  
+        }
     }
 
 }

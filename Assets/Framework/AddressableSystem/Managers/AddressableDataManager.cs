@@ -10,6 +10,8 @@ namespace UnityFramework.Addressable.Managing
     {
         Dictionary<object, IAddressableResource> loadedResource = new Dictionary<object, IAddressableResource>();
 
+        private event System.Func<bool> OnRelease;
+
         public AddressableResource<T> LoadResource<T>(object key)
         {
             object assetKey = null;
@@ -25,7 +27,13 @@ namespace UnityFramework.Addressable.Managing
             if (!loadedResource.TryGetValue(assetKey, out addressableResource))
             {
                 AddressableManager.AddressableLog($"Loaded Addressable resource KeyCode : {assetKey}", Color.yellow);
-                addressableResource = new AddressableResource<T>(new AddressableResourceHandle<T>(Addressables.LoadAssetAsync<T>(key)));
+                var handle = Addressables.LoadAssetAsync<T>(key);
+#if UNITY_EDITOR
+                Editor.AddressableManagingDataManager.TrackEditorLoad(handle, Editor.AddressableManagingDataManager.LoadType.SafeLoad, key);
+#endif
+                AddressableResourceHandle<T> addressableResourceHandle = new AddressableResourceHandle<T>(handle);
+                OnRelease += addressableResourceHandle.Release;
+                addressableResource = new AddressableResource<T>(addressableResourceHandle);
                 loadedResource.Add(assetKey, addressableResource);
             }
 
@@ -37,19 +45,17 @@ namespace UnityFramework.Addressable.Managing
             foreach (var pair in loadedResource)
             {
                 IAddressableResource addressableResource = pair.Value;
-                if (!addressableResource.IsValid())
-                    continue;
 
-                if (addressableResource is IAddressableReleaseAble releaseAble)
+                bool isReleaseComplete = false;
+                while (!isReleaseComplete) 
                 {
-                    releaseAble.Release();
-                    continue;
+                   bool? releaseComplete = OnRelease?.Invoke();
+                   isReleaseComplete = releaseComplete == null ? true : releaseComplete.Value;
                 }
-
-                AddressableManager.AddressableLog($"{pair.Key} Not Relese");
+                
             }
-
-            loadedResource.Clear(); 
+            AddressableManager.AddressableLog($"LoadedResource Release!!", Color.blue);
+            loadedResource.Clear();
         }
-    } 
+    }
 }

@@ -293,8 +293,8 @@ namespace AddressableEditor
             DrawTitle("Debugs");
             PropertyField(assetBundleBuildResults, "빌드 완료 로그 활성화");
 
-            var DataBuilders = settings.DataBuilders;
 
+            var DataBuilders = settings.DataBuilders;
             int dataBuilderCount = DataBuilders.Count;
             //string[] dataBuilderNames = ArrayPool<string>.Shared.Rent(dataBuilderCount);
 

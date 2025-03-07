@@ -1,6 +1,14 @@
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using UnityEngine.ResourceManagement.ResourceProviders;
+using UnityFramework.Addressable.Managing;
+using UnityEngine;
+
+
+
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 
 #if USE_ADDRESSABLE_TASK
@@ -16,9 +24,15 @@ namespace UnityFramework.Addressable
         public event System.Action<float> OnLoadScenePercent;
         public event System.Action<SceneInstance> OnSceneLoadCompleted;
 
+        System.Lazy<AddressableDataManager> addressableDataManager = new System.Lazy<AddressableDataManager>(() => new AddressableDataManager());
+
         public static AddressableResourceHandle<T> UnsafeLoadAsset<T>(object key)
         {
-            return new AddressableResourceHandle<T>(Addressables.LoadAssetAsync<T>(key));
+            var handle = Addressables.LoadAssetAsync<T>(key);
+#if UNITY_EDITOR
+            Editor.AddressableManagingDataManager.TrackEditorLoad(handle, Editor.AddressableManagingDataManager.LoadType.UnsafeLoad, key);
+#endif
+            return new AddressableResourceHandle<T>(handle);
         }
 
         public AddressableResource<T> LoadAsset<T>(object key)
@@ -47,6 +61,13 @@ namespace UnityFramework.Addressable
 
             Addressables.Release(asyncOperationHandle);
         }
+
+
+        public AddressableDataManager GetAddressableDataManager()
+        {
+            return this.addressableDataManager.Value;
+        }
+
 
     } 
 }

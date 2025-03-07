@@ -32,7 +32,7 @@ namespace UnityFramework.Addressable
 
         List<string> labelNames;
 
-        Lazy<AddressableDataManager> addressableDataManager = new Lazy<AddressableDataManager>(() => new AddressableDataManager());
+   
 
 #if UNITY_EDITOR
         public AddressableManager()
@@ -41,7 +41,8 @@ namespace UnityFramework.Addressable
                 {
                     if (playModeStateChange == UnityEditor.PlayModeStateChange.ExitingPlayMode)
                     {
-
+                        if (this.addressableDataManager.IsValueCreated)
+                            this.addressableDataManager.Value.Release();
                     }
                     Debug.Log($"PlayModeStateChange : {playModeStateChange}");
                 };
@@ -81,7 +82,7 @@ namespace UnityFramework.Addressable
                 });
 
 #if USE_ADDRESSABLE_TASK
-            await handle.Task; 
+                await handle.Task; 
 #else
                 await handle.ToUniTask();
 #endif
@@ -103,6 +104,9 @@ namespace UnityFramework.Addressable
             {
                 AddressableLog("handle.Result < 1", Color.green);
                 CompletedLoad();
+#if UNITY_EDITOR
+                Editor.AddressableManagingDataManager.addressableManagingDatas.Clear();
+    #endif
                 Addressables.Release(completedHandler);
                 return;
             }
@@ -154,10 +158,6 @@ namespace UnityFramework.Addressable
 
         }
 
-        public AddressableDataManager GetAddressableDataManager()
-        {
-            return this.addressableDataManager.Value;
-        }
     }
 
 }
