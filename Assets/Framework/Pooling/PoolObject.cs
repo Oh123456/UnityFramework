@@ -3,7 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using UnityEngine;
-namespace UnityFramework.Pool
+using UnityFramework.Pool;
+
+namespace UnityFramework.PoolObject
 {
     public interface IPoolObject
     {

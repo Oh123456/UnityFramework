@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityFramework.PoolObject;
 
 
 namespace UnityFramework.Pool
@@ -63,7 +64,7 @@ namespace UnityFramework.Pool
                 // 혹시라도 생성되있는애가 풀에 들어와 있을경우
                 isValid = poolObject.IsValid();
             }
-            return objects.Pop();
+            return poolObject;
         }
 
         protected abstract IPoolObject CreateObject();
