@@ -39,8 +39,17 @@ namespace UnityFramework.Addressable
 #else
         UniTask Task { get; }
 #endif
+
+
+        /// <summary>
+        /// Checks whether the AsyncOperationHandle is valid.
+        /// </summary>
         bool IsValid();
 
+
+        /// <summary>
+        /// Load Addressable Resource 
+        /// </summary>
         bool GetResource(out object resource);
     }
 
@@ -65,7 +74,9 @@ namespace UnityFramework.Addressable
 #else
         public UniTask Task { get => addressableResourceHandler.Task; }
 #endif
-
+        /// <summary>
+        /// Load Addressable Resource with Generic Type 
+        /// </summary>
         public T GetResource()
         {
             if (!addressableResourceHandler.GetResource(out object resource))
@@ -73,21 +84,33 @@ namespace UnityFramework.Addressable
             return (T)resource;
         }
 
+        /// <summary>
+        /// Load Addressable Resource 
+        /// </summary>
         public bool GetResource(out object resource)
         {
             return addressableResourceHandler.GetResource(out resource);
         }
 
+        /// <summary>
+        /// Checks whether the AsyncOperationHandle is valid.
+        /// </summary>
         public bool IsValid()
         {
             return addressableResourceHandler.IsValid();
         }
 
+        /// <summary>
+        /// Load Addressable Resource, but the Main Thread Freezes
+        /// </summary>
         public T WaitForCompletion()
         {
             return addressableResourceHandler.WaitForCompletion();
         }
 
+        /// <summary>
+        /// Release Addressable Resource
+        /// </summary>
         private bool Release()
         {
             return addressableResourceHandler.Release();
@@ -127,6 +150,9 @@ namespace UnityFramework.Addressable
         public UniTask Task { get => this.asyncOperationHandle.ToUniTask(); }
 #endif
 
+        /// <summary>
+        /// Load Addressable Resource with Generic Type 
+        /// </summary>
         public T GetResource()
         {
             if (!GetResource(out object resource))
@@ -134,6 +160,9 @@ namespace UnityFramework.Addressable
             return (T)resource;
         }
 
+        /// <summary>
+        /// Load Addressable Resource 
+        /// </summary>
         public bool GetResource(out object resource)
         {
 
@@ -149,11 +178,17 @@ namespace UnityFramework.Addressable
             return false;
         }
 
+        /// <summary>
+        /// Release Addressable Resource
+        /// </summary>
         public void Dispose()
         {
             Release();
         }
 
+        /// <summary>
+        /// Release Addressable Resource
+        /// </summary>
         public bool Release()
         {
             if (this.asyncOperationHandle.IsValid())
@@ -169,6 +204,9 @@ namespace UnityFramework.Addressable
             return true;
         }
 
+        /// <summary>
+        /// Load Addressable Resource, but the Main Thread Freezes
+        /// </summary>
         public T WaitForCompletion()
         {
             if (!this.asyncOperationHandle.IsValid())
@@ -179,6 +217,9 @@ namespace UnityFramework.Addressable
             return this.asyncOperationHandle.WaitForCompletion();
         }
 
+        /// <summary>
+        /// Checks whether the AsyncOperationHandle is valid.
+        /// </summary>
         public bool IsValid()
         {
             return this.asyncOperationHandle.IsValid();
