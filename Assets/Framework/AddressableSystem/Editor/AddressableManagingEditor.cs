@@ -1,8 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 
-using Unity.VisualScripting.YamlDotNet.Core.Tokens;
-
 using UnityEditor;
 
 using UnityEngine;
@@ -13,6 +11,29 @@ namespace AddressableEditor
 {
     public class AddressableManagingEditor : EditorWindow
     {
+        class LoadTypeAddressableData
+        {
+            public Dictionary<string, AddressableData> addressableDatas = new Dictionary<string, AddressableData>();
+
+            public void Clear()
+            {
+                foreach (var item in addressableDatas)
+                    item.Value.Clear();
+            }
+        }
+
+        class AddressableData
+        {
+            public bool isFoldout = false;
+            public List<AddressableManagingData> addressableManagingDatas = new List<AddressableManagingData>();
+
+
+            public void Clear()
+            {
+                addressableManagingDatas.Clear();
+            }
+        }
+
         enum MenuType
         {
             Unsafes,
@@ -25,15 +46,20 @@ namespace AddressableEditor
             gray = 0,
             Green = 1,
             Red = 2,
+            Yellow = 3,
         }
 
-
+       
+        private bool isAddPlayMode = false;
+        private static Dictionary<string, bool> sceneNameFoldout = new Dictionary<string, bool>();
         private static bool isTracking = true;
         private static float splitRatio = 0.15f;
         private static GUIStyle menuStyle;
+        private static GUIStyle sceneNameStyle;
         private static GUIStyleState styleState;
         private static GUIStyleState styleStateBalckColor;
         private static GUIStyle foldoutStyle;
+        private static Dictionary<AddressableManagingDataManager.LoadType, LoadTypeAddressableData> datas = new Dictionary<AddressableManagingDataManager.LoadType, LoadTypeAddressableData>();
         private Vector2 leftScrollPos;
         private Vector2 rightScrollPos;
         private int selectedIndex = 0;
@@ -45,7 +71,13 @@ namespace AddressableEditor
             $"<color=#{ColorUtility.ToHtmlStringRGB(Color.gray)}>●</color>",
             $"<color=#{ColorUtility.ToHtmlStringRGB(Color.green)}>●</color>",
             $"<color=#{ColorUtility.ToHtmlStringRGB(Color.red)}>●</color>" ,
+            $"<color=#{ColorUtility.ToHtmlStringRGB(Color.yellow)}>●</color>" ,
         };
+
+        public static void Clear()
+        {
+            sceneNameFoldout.Clear();
+        }
 
         [MenuItem("Addressable/Managing")]
 
@@ -58,15 +90,34 @@ namespace AddressableEditor
 
         }
 
+        private void PlayModeStateChanged(PlayModeStateChange playModeStateChange)
+        {
+            if (playModeStateChange == PlayModeStateChange.EnteredPlayMode)
+            {
+                ClaerData();
+                datas.Clear();
+                sceneNameFoldout.Clear();
+            }
+        }
+
         private void OnEnable()
         {
             InitiationStyle();
+            UpdateData();
+            AddressableManagingDataManager.OnUpdated += UpdateData;
             AddressableManagingDataManager.OnUpdated += Repaint;
+
+            if (!isAddPlayMode)
+            {
+                UnityEditor.EditorApplication.playModeStateChanged += PlayModeStateChanged;
+                isAddPlayMode = true;
+            }
         }
 
         private void OnDisable()
         {
             AddressableManagingDataManager.OnUpdated -= Repaint;
+            AddressableManagingDataManager.OnUpdated -= UpdateData;
         }
 
         private void OnGUI()
@@ -185,10 +236,15 @@ namespace AddressableEditor
                 {
                     richText = true,
                 };
+
+                sceneNameStyle = new GUIStyle(EditorStyles.foldout)
+                {
+                    fontSize = 15,
+                };
             }
             catch
             {
-                
+
             }
         }
 
@@ -214,26 +270,93 @@ namespace AddressableEditor
             if (AddressableManagingDataManager.addressableManagingDatas.Count < 1)
                 return;
 
+            if (!datas.TryGetValue(loadType, out var data))
+                return;
+
             EditorGUI.indentLevel++;
-            foreach (var keyValuePair in AddressableManagingDataManager.addressableManagingDatas)
+
+            foreach (var item in data.addressableDatas)
             {
-                var data = keyValuePair.Value;
-                if (!data.stackTraces.TryGetValue(loadType, out var dataStack))
+                AddressableData addressableData = item.Value;
+                if (addressableData.addressableManagingDatas.Count == 0)
                     continue;
 
-
-                string IndicatorColor = IndicatorColors[(int)GetIndicatorColor(data)];
-
-                EditorGUILayout.BeginHorizontal();
-                data.foldout = EditorGUILayout.Foldout(data.foldout, $"{IndicatorColor} Name : {data.name}  LoadCount : {data.loadCount} ", foldoutStyle);
-                if (data.foldout)
+                bool sceneFoldout = true;
+                if (loadType == AddressableManagingDataManager.LoadType.SafeLoad)
                 {
-
+                    addressableData.isFoldout = EditorGUILayout.Foldout(addressableData.isFoldout, item.Key, sceneNameStyle);
+                    sceneFoldout = addressableData.isFoldout;   
+                }
+                else
+                {
+                    EditorGUI.indentLevel--;
                 }
 
-                EditorGUILayout.EndHorizontal();
+                if (sceneFoldout)
+                {   
+                    EditorGUI.indentLevel++;
+
+                    int count = addressableData.addressableManagingDatas.Count;
+                    for (int i = 0; i < count; i++)
+                    {
+                        var managingData = addressableData.addressableManagingDatas[i];
+                        string indicatorColor = IndicatorColors[(int)GetIndicatorColor(managingData)];
+                        managingData.foldout = EditorGUILayout.Foldout(managingData.foldout, $"{indicatorColor} Name : {managingData.name}  LoadCount : {managingData.loadCount} ", foldoutStyle);
+
+                        if (managingData.foldout)
+                        {
+                            EditorGUI.indentLevel++;
+                            foreach (var accessKey in managingData.accessKeys)
+                            {
+                                EditorGUILayout.LabelField($"accessKey : {accessKey}");
+                            }
+
+                            foreach (var stackTrace in managingData.stackTraces)
+                            {
+
+                                var array = managingData.GetAddressableManagingDataStackTraces(stackTrace.Value);
+                                if (array == null)
+                                    continue;
+                                int length = array.Length;
+                                bool current = EditorGUILayout.Foldout(managingData.foldouts[(int)stackTrace.Key], $"LoadType : {stackTrace.Key}");
+                                managingData.foldouts[(int)stackTrace.Key] = current;
+                                if (current)
+                                {
+                                    EditorGUI.indentLevel++;
+                                    for (int j = 0; j < length; j++)
+                                    {
+                                        var element = array[j];
+                                        if (element == null)
+                                            continue;
+
+                                        EditorGUILayout.BeginHorizontal();
+                                        GUIContent labelContent = new GUIContent($"Call Stack (Count {element.count}): {element.FunctionName}");
+                                        GUIStyle labelStyle = EditorStyles.label;
+                                        Vector2 size = labelStyle.CalcSize(labelContent);
+                                        EditorGUILayout.LabelField(labelContent, GUILayout.Width(size.x + 60.0f));
+                                        if (EditorGUILayout.LinkButton($"(at {element.Path}:{element.LineNumber} )"))
+                                        {
+                                            OpenScriptInEditor(element.Path, element.LineNumber);
+                                        }
+                                        EditorGUILayout.EndHorizontal();
+                                    }
+                                    EditorGUI.indentLevel--;
+                                }
+                                managingData.ReturnAddressableManagingDataStackTraces(array);
+                            }
+
+
+                            EditorGUI.indentLevel--;
+                        }
+                    }
+
+
+                    EditorGUI.indentLevel--;
+                }
+
             }
-            EditorGUI.indentLevel++;
+
+            EditorGUI.indentLevel--;
 
         }
 
@@ -243,14 +366,71 @@ namespace AddressableEditor
                 return IndicatorColor.gray;
 
             int keyCount = 0;
+
             if (addressableManagingData.stackTraces.ContainsKey(AddressableManagingDataManager.LoadType.UnsafeLoad))
                 keyCount++;
 
             if (addressableManagingData.stackTraces.ContainsKey(AddressableManagingDataManager.LoadType.SafeLoad))
                 keyCount++;
 
+            if (keyCount != (int)IndicatorColor.Red)
+            {
+                if (addressableManagingData.AccessKeysCount() == 2)
+                    keyCount = (int)IndicatorColor.Yellow;
+            }
 
             return (IndicatorColor)keyCount;
+        }
+
+        private void UpdateData()
+        {
+            ClaerData();
+            foreach (var keyValuePair in AddressableManagingDataManager.addressableManagingDatas)
+            {
+                var data = keyValuePair.Value;
+
+                foreach (var loadtpye in data.stackTraces)
+                {
+                    var type = loadtpye.Key;
+                    if (!datas.TryGetValue(type, out var loadTypeAddressableData))
+                    {
+                        loadTypeAddressableData = new LoadTypeAddressableData();
+                        datas.Add(type, loadTypeAddressableData);
+                    }
+
+                    string sceneName = data.seceneName;
+                    if (!loadTypeAddressableData.addressableDatas.TryGetValue(sceneName, out var addressableData))
+                    {
+                        addressableData = new AddressableData();
+                        loadTypeAddressableData.addressableDatas.Add(sceneName, addressableData);
+                    }
+
+                    addressableData.addressableManagingDatas.Add(data);
+                }
+            }
+        }
+
+        private void ClaerData()
+        {
+            foreach (var item in datas)
+            {
+                item.Value.Clear();
+            }
+
+            //datas.Clear();
+        }
+
+        private void OpenScriptInEditor(string path, int line)
+        {
+            Object obj = AssetDatabase.LoadAssetAtPath<Object>(path);
+            if (obj != null)
+            {
+                AssetDatabase.OpenAsset(obj, line); // 해당 줄에서 열기!
+            }
+            else
+            {
+                Debug.LogWarning($"파일을 찾을 수 없음: {path}");
+            }
         }
     }
 

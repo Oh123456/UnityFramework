@@ -7,29 +7,32 @@ public class AddressableBuildLabels : ScriptableObject
 {
     public const string NAME = "AddressableBuildLabels";
 
-    [SerializeField] List<string> labels = new List<string>();
+    [SerializeField] List<string> autoLoadLabels = new List<string>();
+    [SerializeField] List<string> ignoreLabels = new List<string>();    
 
-    public List<string> Labels => this.labels;
+    public List<string> Labels => this.autoLoadLabels;
 
     public void UpdateLabels(List<string> newLabels)
     {
-        this.labels.Clear();
+        this.autoLoadLabels.Clear();
 
         int count = newLabels.Count;
 
         for (int i = 0; i < count; i++)
         {
-            this.labels.Add(newLabels[i]);
+            this.autoLoadLabels.Add(newLabels[i]);
         }
     }
 
     public void UpdateLabels(HashSet<string> newLabels)
     {
-        this.labels.Clear();
+        this.autoLoadLabels.Clear();
+        
+        newLabels.ExceptWith(this.ignoreLabels);  
 
         foreach (string label in newLabels)
         {
-            this.labels.Add(label);
+            this.autoLoadLabels.Add(label);
         }
     }
 }

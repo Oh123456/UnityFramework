@@ -1,7 +1,10 @@
 using System.Collections.Generic;
 
+using UnityEditor.SearchService;
+
 using UnityEngine;
 using UnityEngine.AddressableAssets;
+using UnityEngine.SceneManagement;
 
 
 namespace UnityFramework.Addressable.Managing
@@ -11,6 +14,13 @@ namespace UnityFramework.Addressable.Managing
         Dictionary<object, IAddressableResource> loadedResource = new Dictionary<object, IAddressableResource>();
 
         public event System.Func<bool> OnRelease;
+
+        public AddressableDataManager()
+        {
+#if !CUSTOM_ADDRESSABLE_RELEASE
+            SceneManager.sceneUnloaded += UnloadScene;
+#endif
+        }
 
         public AddressableResource<T> LoadResource<T>(object key)
         {
@@ -28,11 +38,15 @@ namespace UnityFramework.Addressable.Managing
             {
                 AddressableManager.AddressableLog($"Loaded Addressable resource KeyCode : {assetKey}", Color.yellow);
                 var handle = Addressables.LoadAssetAsync<T>(key);
-#if UNITY_EDITOR
-                Editor.AddressableManagingDataManager.TrackEditorLoad(handle, Editor.AddressableManagingDataManager.LoadType.SafeLoad, key);
-#endif
                 AddressableResourceHandle<T> addressableResourceHandle = new AddressableResourceHandle<T>(handle);
                 addressableResource = new AddressableResource<T>(addressableResourceHandle);
+#if UNITY_EDITOR
+                AddressableResource<T> resource = addressableResource as AddressableResource<T>;    
+                Editor.AddressableManagingDataManager.TrackEditorLoad(handle, Editor.AddressableManagingDataManager.LoadType.SafeLoad, key, (assetKey) =>
+                {
+                    resource.SetEdtior_AssetKey(assetKey);
+                });
+#endif
                 loadedResource.Add(assetKey, addressableResource);
             }
 
@@ -56,6 +70,11 @@ namespace UnityFramework.Addressable.Managing
             AddressableManager.AddressableLog($"LoadedResource Release!!", Color.blue);
             OnRelease = null;
             loadedResource.Clear();
+        }
+
+        private void UnloadScene(UnityEngine.SceneManagement.Scene scene)
+        {
+            Release();
         }
     }
 }

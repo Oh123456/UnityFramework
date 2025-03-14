@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 using UnityFramework.Addressable;
@@ -27,10 +28,14 @@ public class Tlqkf : MonoBehaviour
 
     private void Update()
     {
+        if (Input.GetKeyDown(KeyCode.Z))
+        {
+            addressableResource.Release();
+            addressableResource = AddressableManager.UnsafeLoadAsset<Texture>(imageKeys);
+        }
         if (Input.GetKeyDown(KeyCode.V))
         {
-            AddressableResource<Texture> addressableResource = AddressableManager.Instance.LoadAsset<Texture>(assetReference);
-            image.texture = addressableResource.WaitForCompletion();
+            dkslaltlqkfdlrpdhodksejhkaghfsdjkghsdfjkghjfdakghadkfghadf();
         }
         if (Input.GetKeyDown(KeyCode.B))
         {
@@ -41,6 +46,22 @@ public class Tlqkf : MonoBehaviour
         {
             AddressableManager.Instance.GetAddressableDataManager().Release();  
         }
+        if (Input.GetKeyDown(KeyCode.P))
+        {
+            SceneManager.LoadSceneAsync("NewScene");
+        }
+        if (Input.GetKeyDown(KeyCode.O))
+        {
+            var addressableResource = AddressableManager.UnsafeLoadAsset<GameObject>(assetReferenceGO);
+            var go = addressableResource.WaitForCompletion();
+            Instantiate(go);
+        }
+
     }
 
+    private void dkslaltlqkfdlrpdhodksejhkaghfsdjkghsdfjkghjfdakghadkfghadf()
+    {
+        AddressableResource<Texture> addressableResource = AddressableManager.Instance.LoadAsset<Texture>(assetReference);
+        image.texture = addressableResource.WaitForCompletion();
+    }
 }

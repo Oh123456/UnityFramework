@@ -32,17 +32,29 @@ namespace UnityFramework.Addressable
 
         List<string> labelNames;
 
-   
+
 
 #if UNITY_EDITOR
         public AddressableManager()
         {
             UnityEditor.EditorApplication.playModeStateChanged += (playModeStateChange) =>
                 {
-                    if (playModeStateChange == UnityEditor.PlayModeStateChange.ExitingPlayMode)
+                    switch (playModeStateChange)
                     {
-                        if (this.addressableDataManager.IsValueCreated)
-                            this.addressableDataManager.Value.Release();
+                        case UnityEditor.PlayModeStateChange.EnteredEditMode:
+                            break;
+                        case UnityEditor.PlayModeStateChange.ExitingEditMode:
+                            break;
+                        case UnityEditor.PlayModeStateChange.EnteredPlayMode:
+                            break;
+                        case UnityEditor.PlayModeStateChange.ExitingPlayMode:
+                            if (this.addressableDataManager.IsValueCreated)
+                                this.addressableDataManager.Value.Release();
+                            break;                        
+                    }
+                    if (playModeStateChange == UnityEditor.PlayModeStateChange.EnteredPlayMode)
+                    {
+
                     }
                     Debug.Log($"PlayModeStateChange : {playModeStateChange}");
                 };
@@ -105,8 +117,8 @@ namespace UnityFramework.Addressable
                 AddressableLog("handle.Result < 1", Color.green);
                 CompletedLoad();
 #if UNITY_EDITOR
-                Editor.AddressableManagingDataManager.addressableManagingDatas.Clear();
-    #endif
+                Editor.AddressableManagingDataManager.ClearData();
+#endif
                 Addressables.Release(completedHandler);
                 return;
             }

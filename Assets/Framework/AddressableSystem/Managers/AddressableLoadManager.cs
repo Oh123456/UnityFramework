@@ -20,7 +20,7 @@ using Cysharp.Threading.Tasks;
 namespace UnityFramework.Addressable
 {
     public partial class AddressableManager
-	{
+    {
         public event System.Action<float> OnLoadScenePercent;
         public event System.Action<SceneInstance> OnSceneLoadCompleted;
 
@@ -29,15 +29,19 @@ namespace UnityFramework.Addressable
         public static AddressableResourceHandle<T> UnsafeLoadAsset<T>(object key)
         {
             var handle = Addressables.LoadAssetAsync<T>(key);
+            AddressableResourceHandle<T> addressableResourceHandle = new AddressableResourceHandle<T>(handle);
 #if UNITY_EDITOR
-            Editor.AddressableManagingDataManager.TrackEditorLoad(handle, Editor.AddressableManagingDataManager.LoadType.UnsafeLoad, key);
+            Editor.AddressableManagingDataManager.TrackEditorLoad(handle, Editor.AddressableManagingDataManager.LoadType.UnsafeLoad, key, (assetKey) =>
+            {
+                addressableResourceHandle.editor_AssetKey = assetKey;
+            });
 #endif
-            return new AddressableResourceHandle<T>(handle);
+            return addressableResourceHandle;
         }
 
         public AddressableResource<T> LoadAsset<T>(object key)
         {
-            return this.addressableDataManager.Value.LoadResource<T>(key);  
+            return this.addressableDataManager.Value.LoadResource<T>(key);
         }
 
         public async void LoadScene(string sceneName, UnityEngine.SceneManagement.LoadSceneMode loadSceneMode)
@@ -48,11 +52,11 @@ namespace UnityFramework.Addressable
             {
                 this.OnLoadScenePercent?.Invoke(asyncOperationHandle.PercentComplete);
 
-                #if USE_ADDRESSABLE_TASK
+#if USE_ADDRESSABLE_TASK
                 await Task.Yield();
-                #else
+#else
                 await UniTask.Yield();
-                #endif
+#endif
             }
 
             this.OnSceneLoadCompleted?.Invoke(asyncOperationHandle.Result);
@@ -69,5 +73,5 @@ namespace UnityFramework.Addressable
         }
 
 
-    } 
+    }
 }

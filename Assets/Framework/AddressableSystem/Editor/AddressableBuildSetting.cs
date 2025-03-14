@@ -219,6 +219,8 @@ namespace AddressableEditor
 
             Undo.RegisterCompleteObjectUndo(addressableBuildLabels, $"Label Updates");
             EditorUtility.SetDirty(addressableBuildLabels);
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
 
         }
     }

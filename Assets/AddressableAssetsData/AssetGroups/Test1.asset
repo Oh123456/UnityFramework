@@ -21,7 +21,7 @@ MonoBehaviour:
     m_Address: Assets/GIF/1/360render_13.jpeg
     m_ReadOnly: 0
     m_SerializedLabels:
-    - Image
+    - TestLabel
     FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 3a88b6728ff4e534f84e308d2655ebfa, type: 2}

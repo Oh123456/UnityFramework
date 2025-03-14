@@ -7,6 +7,14 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
+using UnityEngine.SceneManagement;
+using System.Buffers;
+using System.Text.RegularExpressions;
+using UnityEngine.Timeline;
+
+
+
+
 
 #if USE_ADDRESSABLE_TASK
 using System.Threading.Tasks;
@@ -49,7 +57,7 @@ namespace UnityFramework.Addressable.Editor
             }
         }
 
-        public static void TrackEditorLoad<T>(AsyncOperationHandle<T> handle, LoadType loadType, object key)
+        public static void TrackEditorLoad<T>(AsyncOperationHandle<T> handle, LoadType loadType, object key, System.Action<string> outAssetKey)
         {
             System.Diagnostics.StackTrace stackTrace = null;
 
@@ -58,9 +66,6 @@ namespace UnityFramework.Addressable.Editor
             {
                 stackTrace = new System.Diagnostics.StackTrace(true);
             }
-
-            
-
 
 
             handle.Completed += async (AsyncOperationHandle<T> handle) =>
@@ -85,9 +90,10 @@ namespace UnityFramework.Addressable.Editor
                 }
 
                 string assetGUID = loadResource.Result[0].PrimaryKey;
-
-                if (!string.IsNullOrEmpty(assetGUID))                
+                if (!string.IsNullOrEmpty(assetGUID))
                 {
+                    outAssetKey?.Invoke(assetGUID);
+
                     if (!addressableManagingDatas.TryGetValue(assetGUID, out var data))
                     {
                         data = new AddressableManagingData();
@@ -97,6 +103,10 @@ namespace UnityFramework.Addressable.Editor
                     object accessKey = key is IKeyEvaluator keyEvaluator ? keyEvaluator.RuntimeKey : key;
                     data.accessKeys.Add(accessKey);
                     data.name = handle.DebugName;
+                    if (loadType == LoadType.SafeLoad)
+                        data.seceneName = SceneManager.GetActiveScene().name;
+                    else
+                        data.seceneName = string.Empty;
                     if (stackTrace != null)
                     {
                         var traces = data.GetAddressableManagingDataStackTrace(loadType);
@@ -109,7 +119,7 @@ namespace UnityFramework.Addressable.Editor
                             trace = new AddressableManagingData.AddressableManagingDataStackTrace();
                             traces.Add(info, trace);
                         }
-                        trace.stackTrace = info;
+                        trace.SetStackTrace(info);
                         trace.count++;
                         OnUpdated?.Invoke();
                     }
@@ -124,24 +134,25 @@ namespace UnityFramework.Addressable.Editor
         }
 
 
-        public static void TrackRelease<T>(AsyncOperationHandle<T> handle)
+        public static void TrackRelease<T>(AsyncOperationHandle<T> handle, string assetKey)
         {
-            Object loadedAsset = handle.Result as Object;
-
-            string assetPath = AssetDatabase.GetAssetPath(loadedAsset);
-            if (!string.IsNullOrEmpty(assetPath))
+            if (!string.IsNullOrEmpty(assetKey))
             {
-                string assetGUID = AssetDatabase.AssetPathToGUID(assetPath);
-                if (!addressableManagingDatas.TryGetValue(assetGUID, out var data))
+                if (!addressableManagingDatas.TryGetValue(assetKey, out var data))
                 {
                     data = new AddressableManagingData();
-                    addressableManagingDatas.Add(assetGUID, data);
+                    addressableManagingDatas.Add(assetKey, data);
                 }
                 data.loadCount--;
                 OnUpdated?.Invoke();
 
-                AddressableManager.AddressableLog($"Addressable 에셋의 GUID: {assetGUID}", Color.yellow);
+                AddressableManager.AddressableLog($"Addressable 에셋의 GUID: {assetKey}", Color.yellow);
             }
+        }
+
+        public static void ClearData()
+        {
+            addressableManagingDatas.Clear();
         }
     }
 
@@ -149,8 +160,38 @@ namespace UnityFramework.Addressable.Editor
     {
         public class AddressableManagingDataStackTrace : System.IEquatable<AddressableManagingDataStackTrace>
         {
-            public string stackTrace = string.Empty;
+            private const string STACKTRACE_PATTERN = @"^([\w\.]+) \((.*?\.cs):(\d+)\)$";
+
+            private string stackTrace = string.Empty;
+            private string functionName = string.Empty;
+            private string fullPath = string.Empty;
+            private string path = string.Empty;
+            private int lineNumber = 0;
             public int count = 0;
+
+            public string FunctionName => functionName;
+            public string FullPath => fullPath;
+            public string Path => path;
+            public int LineNumber => lineNumber;
+
+            public void SetStackTrace(string trace)
+            {
+                stackTrace = trace;
+
+                Match match = Regex.Match(stackTrace, STACKTRACE_PATTERN);
+
+                if (match.Success)
+                {
+                    functionName = match.Groups[1].Value;
+                    fullPath = match.Groups[2].Value;
+                    lineNumber = int.Parse(match.Groups[3].Value);
+
+                    int index = fullPath.IndexOf("Assets\\");
+                    path = index == -1 ? fullPath : fullPath.Substring(index);
+                }
+
+            }
+
 
             public bool Equals(AddressableManagingDataStackTrace other)
             {
@@ -172,6 +213,8 @@ namespace UnityFramework.Addressable.Editor
         /// 에디터용
         /// </summary>
         public bool foldout = false;
+        public List<bool> foldouts = new List<bool>(2) { false, false };
+        public string seceneName = string.Empty;
 
         public Dictionary<string, AddressableManagingDataStackTrace> GetAddressableManagingDataStackTrace(LoadType loadType)
         {
@@ -191,6 +234,38 @@ namespace UnityFramework.Addressable.Editor
             }
         }
 
+        public int AccessKeysCount()
+        {
+            return accessKeys.Count;
+        }
+
+        public AddressableManagingDataStackTrace[] GetAddressableManagingDataStackTraces(Dictionary<string, AddressableManagingDataStackTrace> trces)
+        {
+            if (trces == null)
+                return null;
+
+            AddressableManagingDataStackTrace[] addressableManagingDataStackTraces = null;
+
+            int count = trces.Count;
+            addressableManagingDataStackTraces = ArrayPool<AddressableManagingDataStackTrace>.Shared.Rent(count);
+
+
+            int i = 0;
+            foreach (var tr in trces)
+            {
+                addressableManagingDataStackTraces[i] = tr.Value;
+                i++;
+            }
+            return addressableManagingDataStackTraces;
+        }
+
+
+        public void ReturnAddressableManagingDataStackTraces(AddressableManagingDataStackTrace[] addressableManagingDataStackTraces)
+        {
+            if (addressableManagingDataStackTraces == null)
+                return;
+            ArrayPool<AddressableManagingDataStackTrace>.Shared.Return(addressableManagingDataStackTraces, clearArray: true);
+        }
     }
 }
 

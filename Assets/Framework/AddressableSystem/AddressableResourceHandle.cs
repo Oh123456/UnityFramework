@@ -44,7 +44,7 @@ namespace UnityFramework.Addressable
         bool GetResource(out object resource);
     }
 
-    public sealed class AddressableResource<T> : IAddressableResource 
+    public sealed class AddressableResource<T> : IAddressableResource
     {
         AddressableResourceHandle<T> addressableResourceHandler;
 
@@ -80,7 +80,7 @@ namespace UnityFramework.Addressable
 
         public bool IsValid()
         {
-            return addressableResourceHandler.IsValid();    
+            return addressableResourceHandler.IsValid();
         }
 
         public T WaitForCompletion()
@@ -92,16 +92,33 @@ namespace UnityFramework.Addressable
         {
             return addressableResourceHandler.Release();
         }
+
+
+#if UNITY_EDITOR
+        public void SetEdtior_AssetKey(string key) { addressableResourceHandler.editor_AssetKey = key; } 
+#endif
+
     }
 
-    public struct AddressableResourceHandle<T> : IDisposable, IAddressableResource, IAddressableReleaseAble 
+    public struct AddressableResourceHandle<T> : IDisposable, IAddressableResource, IAddressableReleaseAble
     {
 
         private AsyncOperationHandle<T> asyncOperationHandle;
 
+#if UNITY_EDITOR
+        /// <summary>
+        /// EditorValue
+        /// </summary>
+        public string editor_AssetKey;
+#endif
+
         public AddressableResourceHandle(AsyncOperationHandle<T> asyncOperationHandle)
         {
             this.asyncOperationHandle = asyncOperationHandle;
+
+#if UNITY_EDITOR
+            editor_AssetKey = string.Empty;
+#endif
         }
 
 #if USE_ADDRESSABLE_TASK
@@ -142,7 +159,7 @@ namespace UnityFramework.Addressable
             if (this.asyncOperationHandle.IsValid())
             {
 #if UNITY_EDITOR
-                Editor.AddressableManagingDataManager.TrackRelease(this.asyncOperationHandle);
+                Editor.AddressableManagingDataManager.TrackRelease(this.asyncOperationHandle, editor_AssetKey);
 #endif
                 AddressableManager.AddressableLog($"{this.asyncOperationHandle.DebugName} Release!!", Color.blue);
                 Addressables.Release(this.asyncOperationHandle);
@@ -164,7 +181,7 @@ namespace UnityFramework.Addressable
 
         public bool IsValid()
         {
-            return this.asyncOperationHandle.IsValid(); 
+            return this.asyncOperationHandle.IsValid();
         }
     }
 
