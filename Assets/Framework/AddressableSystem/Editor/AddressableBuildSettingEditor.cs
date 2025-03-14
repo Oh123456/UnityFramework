@@ -459,6 +459,8 @@ namespace AddressableEditor
 
         private void PropertyField(EditorSerializedProperty editorSerializedProperty, string tooltip)
         {
+            if (editorSerializedProperty == null)
+                return;
             EditorGUILayout.PropertyField(editorSerializedProperty.Property, new GUIContent(editorSerializedProperty.PropertyName, tooltip));
         }
 

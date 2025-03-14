@@ -61,6 +61,12 @@ namespace AddressableEditor
         private void OnEnable()
         {
             InitiationStyle();
+            AddressableManagingDataManager.OnUpdated += Repaint;
+        }
+
+        private void OnDisable()
+        {
+            AddressableManagingDataManager.OnUpdated -= Repaint;
         }
 
         private void OnGUI()
@@ -157,26 +163,33 @@ namespace AddressableEditor
 
         private void InitiationStyle()
         {
-            menuStyle = new GUIStyle(EditorStyles.wordWrappedLabel)
+            try
             {
-                fontSize = 15,
-                alignment = TextAnchor.MiddleCenter,
-            };
+                menuStyle = new GUIStyle(EditorStyles.wordWrappedLabel)
+                {
+                    fontSize = 15,
+                    alignment = TextAnchor.MiddleCenter,
+                };
 
-            styleState = new GUIStyleState()
-            {
-                textColor = Color.white,
-            };
+                styleState = new GUIStyleState()
+                {
+                    textColor = Color.white,
+                };
 
-            styleStateBalckColor = new GUIStyleState()
-            {
-                textColor = Color.black,
-            };
+                styleStateBalckColor = new GUIStyleState()
+                {
+                    textColor = Color.black,
+                };
 
-            foldoutStyle = new GUIStyle(EditorStyles.foldout)
+                foldoutStyle = new GUIStyle(EditorStyles.foldout)
+                {
+                    richText = true,
+                };
+            }
+            catch
             {
-                richText = true,
-            };
+                
+            }
         }
 
         private bool CheckStyles()

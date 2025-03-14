@@ -10,7 +10,7 @@ namespace UnityFramework.Addressable.Managing
     {
         Dictionary<object, IAddressableResource> loadedResource = new Dictionary<object, IAddressableResource>();
 
-        private event System.Func<bool> OnRelease;
+        public event System.Func<bool> OnRelease;
 
         public AddressableResource<T> LoadResource<T>(object key)
         {
@@ -32,7 +32,6 @@ namespace UnityFramework.Addressable.Managing
                 Editor.AddressableManagingDataManager.TrackEditorLoad(handle, Editor.AddressableManagingDataManager.LoadType.SafeLoad, key);
 #endif
                 AddressableResourceHandle<T> addressableResourceHandle = new AddressableResourceHandle<T>(handle);
-                OnRelease += addressableResourceHandle.Release;
                 addressableResource = new AddressableResource<T>(addressableResourceHandle);
                 loadedResource.Add(assetKey, addressableResource);
             }
@@ -55,6 +54,7 @@ namespace UnityFramework.Addressable.Managing
                 
             }
             AddressableManager.AddressableLog($"LoadedResource Release!!", Color.blue);
+            OnRelease = null;
             loadedResource.Clear();
         }
     }

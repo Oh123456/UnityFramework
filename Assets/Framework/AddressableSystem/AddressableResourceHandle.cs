@@ -3,7 +3,8 @@ using System;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using UnityEngine;
-using System.Collections;
+using UnityFramework.Addressable.Managing;
+
 
 
 
@@ -50,9 +51,14 @@ namespace UnityFramework.Addressable
         public AddressableResource(AddressableResourceHandle<T> addressableResourceHandler)
         {
             this.addressableResourceHandler = addressableResourceHandler;
+            AddressableManager.Instance.GetAddressableDataManager().OnRelease += Release;
         }
 
-        public AddressableResourceHandle<T> AddressableResourceHandler => this.addressableResourceHandler;
+        public AddressableResource(AddressableResourceHandle<T> addressableResourceHandler, AddressableDataManager addressableDataManager)
+        {
+            this.addressableResourceHandler = addressableResourceHandler;
+            addressableDataManager.OnRelease += Release;
+        }
 
 #if USE_ADDRESSABLE_TASK
         public Task Task { get => addressableResource.Task; }
@@ -82,6 +88,10 @@ namespace UnityFramework.Addressable
             return addressableResourceHandler.WaitForCompletion();
         }
 
+        private bool Release()
+        {
+            return addressableResourceHandler.Release();
+        }
     }
 
     public struct AddressableResourceHandle<T> : IDisposable, IAddressableResource, IAddressableReleaseAble 

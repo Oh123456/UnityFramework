@@ -1,18 +1,23 @@
 using System.Collections;
 using System.Collections.Generic;
 
+
 using UnityEditor;
 
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 
-using static UnityFramework.Addressable.Editor.AddressableManagingDataManager;
-
+#if USE_ADDRESSABLE_TASK
+using System.Threading.Tasks;
+#else
+using Cysharp.Threading.Tasks;
+#endif
 
 #if UNITY_EDITOR
 namespace UnityFramework.Addressable.Editor
 {
+    using static UnityFramework.Addressable.Editor.AddressableManagingDataManager;
     public static class AddressableManagingDataManager
     {
         public enum LoadType
@@ -26,6 +31,8 @@ namespace UnityFramework.Addressable.Editor
         public const int SAFE_LOAD_STACK_COUNT = 4;
         public static Dictionary<string, AddressableManagingData> addressableManagingDatas = new Dictionary<string, AddressableManagingData>();
         private static bool? isTracking;
+
+        public static event System.Action OnUpdated;
 
         public static bool IsTracking
         {
@@ -52,7 +59,11 @@ namespace UnityFramework.Addressable.Editor
                 stackTrace = new System.Diagnostics.StackTrace(true);
             }
 
-            handle.Completed += (AsyncOperationHandle<T> handle) =>
+            
+
+
+
+            handle.Completed += async (AsyncOperationHandle<T> handle) =>
             {
                 Object loadedAsset = handle.Result as Object;
                 if (loadedAsset == null)
@@ -60,11 +71,23 @@ namespace UnityFramework.Addressable.Editor
                     AddressableManager.AddressableLog($"{handle.DebugName} is Not Object Type", Color.yellow);
                     return;
                 }
+                var loadResource = Addressables.LoadResourceLocationsAsync(key);
 
-                string assetPath = AssetDatabase.GetAssetPath(loadedAsset);
-                if (!string.IsNullOrEmpty(assetPath))
+#if USE_ADDRESSABLE_TASK
+                await loadResource.Task; 
+#else
+                await loadResource.ToUniTask();
+#endif
+                if (loadResource.Status != AsyncOperationStatus.Succeeded && loadResource.Result.Count <= 0)
                 {
-                    string assetGUID = AssetDatabase.AssetPathToGUID(assetPath);
+                    AddressableManager.AddressableLog(" 이 Addressable 에셋은 프로젝트 내부에 없음.", Color.red);
+                    return;
+                }
+
+                string assetGUID = loadResource.Result[0].PrimaryKey;
+
+                if (!string.IsNullOrEmpty(assetGUID))                
+                {
                     if (!addressableManagingDatas.TryGetValue(assetGUID, out var data))
                     {
                         data = new AddressableManagingData();
@@ -88,6 +111,7 @@ namespace UnityFramework.Addressable.Editor
                         }
                         trace.stackTrace = info;
                         trace.count++;
+                        OnUpdated?.Invoke();
                     }
 
                     AddressableManager.AddressableLog($"Addressable 에셋의 GUID: {assetGUID}", Color.yellow);
@@ -114,6 +138,7 @@ namespace UnityFramework.Addressable.Editor
                     addressableManagingDatas.Add(assetGUID, data);
                 }
                 data.loadCount--;
+                OnUpdated?.Invoke();
 
                 AddressableManager.AddressableLog($"Addressable 에셋의 GUID: {assetGUID}", Color.yellow);
             }
