@@ -78,7 +78,7 @@ namespace UnityFramework.UI
             return true;
         }
 
-        public bool GetCachedUI<T>(string name, out T ui) where T : UIBase
+        public bool TryGetCachedUI<T>(out T ui) where T : UIBase
         {
             bool result = uis.TryGetValue(typeof(T), out var baseUI);
             if (baseUI == null)
@@ -90,7 +90,7 @@ namespace UnityFramework.UI
         private T GetCachedUI<T>(string name) where T : UIBase
         {
             T ui = null;
-            if (!GetCachedUI(name, out ui))
+            if (!TryGetCachedUI(out ui))
             {
                 T prb = Resources.Load<T>(name);
                 ui = GameObject.Instantiate<T>(prb);
