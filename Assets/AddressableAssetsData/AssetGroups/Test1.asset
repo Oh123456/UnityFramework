@@ -16,13 +16,7 @@ MonoBehaviour:
   m_Data:
     m_SerializedData: []
   m_GUID: a1cd296025359c54b9ec875e6f476998
-  m_SerializeEntries:
-  - m_GUID: e31cbeaea14fb0149bc8c145c2ec28bf
-    m_Address: Assets/GIF/1/360render_13.jpeg
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - Image
-    FlaggedDuringContentUpdateRestriction: 0
+  m_SerializeEntries: []
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 3a88b6728ff4e534f84e308d2655ebfa, type: 2}
   m_SchemaSet:
