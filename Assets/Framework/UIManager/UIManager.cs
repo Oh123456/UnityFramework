@@ -5,7 +5,7 @@ using UnityFramework.Singleton;
 
 namespace UnityFramework.UI
 {
-    public class UIManager : LazySingleton<UIManager>
+    public partial class UIManager : LazySingleton<UIManager>
     {
         public class UIController 
         {
