@@ -56,6 +56,6 @@ namespace UnityFramework.UI
             uIController.Show = Show;
             uIController.Hide = Hide;
         }
-}
+    }
 
 }
