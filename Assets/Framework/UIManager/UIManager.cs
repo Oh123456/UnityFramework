@@ -5,7 +5,7 @@ using UnityFramework.Singleton;
 
 namespace UnityFramework.UI
 {
-    public class UIManager : LazySingleton<UIManager>
+    public sealed class UIManager : LazySingleton<UIManager>
     {
         public class UIController 
         {
@@ -38,6 +38,8 @@ namespace UnityFramework.UI
 
         public T Show<T>(string name) where T : UIBase
         {
+            if (!CheckType<T>())
+                return null;
             T ui = GetCachedUI<T>(name);
             UIController uIController = GetUIController();
             uIController.Initialize(ui);
@@ -98,6 +100,10 @@ namespace UnityFramework.UI
             }
 
             return ui;
+        }
+        private bool CheckType<T>() where T : UIBase    
+        {
+            return !typeof(T).IsAssignableFrom(typeof(UIBase));
         }
 
         private UIController GetUIController()
