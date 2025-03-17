@@ -159,8 +159,8 @@ namespace UnityFramework.Addressable.Editor
     public class AddressableManagingData
     {
         public class AddressableManagingDataStackTrace : System.IEquatable<AddressableManagingDataStackTrace>
-        {
-            private const string STACKTRACE_PATTERN = @"^([\w\.]+) \((.*?\.cs):(\d+)\)$";
+        {            
+            private const string STACKTRACE_PATTERN = @"^([\w\+<>]+)\.?([\w<>\.]+)?\s*\(([^()]+\.cs):(\d+)\)$";
 
             private string stackTrace = string.Empty;
             private string functionName = string.Empty;
@@ -182,9 +182,9 @@ namespace UnityFramework.Addressable.Editor
 
                 if (match.Success)
                 {
-                    functionName = match.Groups[1].Value;
-                    fullPath = match.Groups[2].Value;
-                    lineNumber = int.Parse(match.Groups[3].Value);
+                    functionName = $"{match.Groups[1].Value}.{match.Groups[2].Value}";
+                    fullPath = match.Groups[3].Value;
+                    lineNumber = int.Parse(match.Groups[4].Value);
 
                     int index = fullPath.IndexOf("Assets\\");
                     path = index == -1 ? fullPath : fullPath.Substring(index);

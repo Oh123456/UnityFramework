@@ -26,6 +26,7 @@ namespace UnityFramework.Addressable
     {
         public const string BUILD_LABELS_PATH = "Assets/Resources";
 
+        public event Action OnAllCompletedLoad;
         public event Action OnCompletedLoad;
         public event Action<AddressableDownLoadData> OnDownloadDependencies;
         public event Action<AddressableDownLoadData> OnDownload;
@@ -101,6 +102,8 @@ namespace UnityFramework.Addressable
                 DownLoadAddressables(handle, label);
 
             }
+
+            OnAllCompletedLoad?.Invoke();
         }
 
 

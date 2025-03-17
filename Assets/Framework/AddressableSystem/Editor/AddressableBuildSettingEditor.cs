@@ -84,6 +84,11 @@ namespace AddressableEditor
         static bool pathRemoteToggle = true;
         static Vector2 scrollPos;
 
+        private GUIStyle ProfilePopupStyle => profilePopupStyle == null ? EditorStyles.label : profilePopupStyle;
+        private GUIStyle RemoteFoldoutFontStyle => remoteFoldoutFontStyle == null ? EditorStyles.label : remoteFoldoutFontStyle;
+        private GUIStyle TitleFontStyle => titleFontStyle == null ? EditorStyles.label : titleFontStyle;
+        private GUIStyle RemoteFontStyle => remoteFontStyle == null ? EditorStyles.label : remoteFontStyle;
+
         private void OnEnable()
         {
             buildCompleteOpenFolder.Initialization(serializedObject);
@@ -104,14 +109,22 @@ namespace AddressableEditor
 
             ignoreChangeGroup.Initialization(serializedObject);
 
-            CreateTitleFontStyle();
-            CreateProfilePopup();
+
+            EditorApplication.delayCall += DelayCall;
+
         }
 
         private void OnDisable()
         {
             AddressableAssetSettings settings = AddressableAssetSettingsDefaultObject.Settings;
             settings.RemoteCatalogBuildPath.OnValueChanged -= ValueChangeAddressableAssetSettings;
+            EditorApplication.delayCall -= DelayCall;
+        }
+
+        private void DelayCall()
+        {
+            CreateTitleFontStyle();
+            CreateProfilePopup();
         }
 
         private void ValueChangeAddressableAssetSettings(ProfileValueReference profileValueReference)
@@ -163,10 +176,12 @@ namespace AddressableEditor
 
         private void CreateProfilePopup()
         {
+
             this.profilePopupStyle = new GUIStyle(EditorStyles.popup)
             {
                 alignment = TextAnchor.MiddleCenter,
             };
+
 
         }
 
@@ -190,7 +205,7 @@ namespace AddressableEditor
             if (color != titleColor)
             {
                 settingTitleColor.Property.colorValue = color;
-                CreateTitleFontStyle();
+                //CreateTitleFontStyle();
             }
 
             #region Options
@@ -203,7 +218,7 @@ namespace AddressableEditor
 
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.Space(15.0f);
-            EditorGUILayout.LabelField("Current Profile", profileFontStyle);
+            EditorGUILayout.LabelField("Current Profile", profileFontStyle == null ? EditorStyles.label : profileFontStyle);
             EditorGUILayout.Space(2.0f);
 
             if (GUILayout.Button("...", GUILayout.Width(25)))
@@ -217,7 +232,7 @@ namespace AddressableEditor
             popupRect.y += popupHeight;
 
             profileIndex = profileNames.IndexOf(currentPofileId);
-            int newIndex = EditorGUILayout.Popup(profileIndex, profileNames.ToArray(), this.profilePopupStyle);
+            int newIndex = EditorGUILayout.Popup(profileIndex, profileNames.ToArray(), this.ProfilePopupStyle);
             if (profileIndex != newIndex)
             {
                 profileIndex = newIndex;
@@ -226,7 +241,7 @@ namespace AddressableEditor
             EditorGUILayout.Space(2.0f);
 
             EditorGUI.indentLevel++;
-            pathRemoteToggle = EditorGUILayout.Foldout(pathRemoteToggle, new GUIContent("Remote"), remoteFoldoutFontStyle);
+            pathRemoteToggle = EditorGUILayout.Foldout(pathRemoteToggle, new GUIContent("Remote"), RemoteFoldoutFontStyle);
             if (pathRemoteToggle)
             {
                 GUI.enabled = false;
@@ -312,7 +327,7 @@ namespace AddressableEditor
             playModeIndex = settings.ActivePlayModeDataBuilderIndex;
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.LabelField("PlayMode", GUILayout.Width(60.0f));
-            int newPlayModeIndex = EditorGUILayout.Popup(playModeIndex, playModes, this.profilePopupStyle);
+            int newPlayModeIndex = EditorGUILayout.Popup(playModeIndex, playModes, this.ProfilePopupStyle);
             if (newPlayModeIndex != playModeIndex)
             {
                 playModeIndex = newPlayModeIndex;
@@ -353,7 +368,7 @@ namespace AddressableEditor
             #region Groups
             EditorGUILayout.Space(10.0f);
             EditorGUILayout.BeginHorizontal();
-            EditorGUILayout.LabelField("Groups", style: titleFontStyle);
+            EditorGUILayout.LabelField("Groups", style: TitleFontStyle);
 
             if (GUILayout.Button("...", GUILayout.Width(25)))
             {
@@ -377,7 +392,7 @@ namespace AddressableEditor
 
             EditorGUI.indentLevel++;
             EditorGUILayout.Space(5);
-            EditorGUILayout.LabelField("Remote", style: remoteFontStyle);
+            EditorGUILayout.LabelField("Remote", style: RemoteFontStyle);
             EditorGUILayout.Space(3);
             EditorGUI.indentLevel++;
 
@@ -387,7 +402,7 @@ namespace AddressableEditor
             EditorGUI.indentLevel--;
 
             EditorGUILayout.Space(10);
-            EditorGUILayout.LabelField("Local", style: remoteFontStyle);
+            EditorGUILayout.LabelField("Local", style: RemoteFontStyle);
             EditorGUILayout.Space(3);
             EditorGUI.indentLevel++;
 
@@ -459,7 +474,7 @@ namespace AddressableEditor
 
         private void PropertyField(EditorSerializedProperty editorSerializedProperty, string tooltip)
         {
-            if (editorSerializedProperty == null)
+            if (editorSerializedProperty == null || editorSerializedProperty.Property == null)
                 return;
             EditorGUILayout.PropertyField(editorSerializedProperty.Property, new GUIContent(editorSerializedProperty.PropertyName, tooltip));
         }
@@ -513,6 +528,8 @@ namespace AddressableEditor
 
         private void DrawTitle(string titileName)
         {
+            if (titleFontStyle == null)
+                return;
             EditorGUILayout.Space(10);
             EditorGUILayout.LabelField(titileName, style: titleFontStyle);
             EditorGUILayout.Space(5);
