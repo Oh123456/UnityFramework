@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityFramework.Addressable;
 using UnityFramework.UI;
+using UnityEngine.AddressableAssets;
+
 
 
 #if USE_ADDRESSABLE_TASK
@@ -15,8 +17,54 @@ using Cysharp.Threading.Tasks;
 
 namespace UnityFramework.UI
 {
+
+    public struct UnmanagedUIResource<T> where T : UIBase
+    {
+        public AddressableResource<T> addressableResource;
+        public T uiObject;
+    }
+
+    public struct UnmanagedUIResourceHandle<T> where T : UIBase
+    {
+        public AddressableResourceHandle<T> addressableResourceHandle;
+        public T uiObject;
+    }
+
     public partial class UIManager
     {
+        private interface IUIAddressalbeHandle
+        {
+            T GetResource<T>() where T : UIBase;
+            void Release();
+        }
+        private class UIAddressalbeHandle<T> : IUIAddressalbeHandle where T : UIBase
+        {
+            readonly AddressableResourceHandle<GameObject> addressableResourceHandle;
+            T uiBase;
+
+            public UIAddressalbeHandle(in AddressableResourceHandle<GameObject> addressableResourceHandle)
+            {
+                this.addressableResourceHandle = addressableResourceHandle;
+                uiBase = addressableResourceHandle.GetResource().GetComponent<T>();
+            }
+
+            public TUIBase GetResource<TUIBase>() where TUIBase : UIBase
+            {
+                return uiBase as TUIBase;
+            }
+
+            public void Release()
+            {
+                uiBase = null;
+                addressableResourceHandle.Release();
+            }
+        }
+
+
+        public delegate void UnmanagedAddressableUICompleted<T>(in UnmanagedUIResource<T> unmanagedAddressableResource) where T : UIBase;
+
+        private Dictionary<string, IUIAddressalbeHandle> unsafeLoads = new Dictionary<string, IUIAddressalbeHandle>();
+
         enum LoadType
         {
             Safe,
@@ -32,7 +80,8 @@ namespace UnityFramework.UI
             }
 
             T ui = await GetCachedAddressableUI<T>(key, LoadType.Safe);
-            ExecuteUIContoller(ui, showComplete);
+            ExecuteUIContoller(ui);
+            showComplete?.Invoke(ui);
             return;
         }
 
@@ -45,7 +94,21 @@ namespace UnityFramework.UI
             }
 
             T ui = await GetCachedAddressableUI<T>(key, LoadType.UnSafe);
-            ExecuteUIContoller(ui, showComplete);
+            ExecuteUIContoller(ui);
+            showComplete?.Invoke(ui);
+        }
+
+        public async void ShowUnmanagedAddressableUI<T>(object key, UnmanagedAddressableUICompleted<T> completed) where T : UIBase
+        {
+            if (!CheckType<T>())
+                return;
+
+            var unmanagedAddressableResource = new UnmanagedUIResource<T>();
+            AddressableResource<T> addressableResource = AddressableManager.Instance.LoadAsset<T>(key);
+            await addressableResource.Task;
+            unmanagedAddressableResource.addressableResource = addressableResource;
+            unmanagedAddressableResource.uiObject = GameObject.Instantiate(addressableResource.GetResource());
+            completed(unmanagedAddressableResource);
         }
 
 
@@ -67,14 +130,13 @@ namespace UnityFramework.UI
             return ui;
         }
 
-        private void ExecuteUIContoller<T>(T ui, System.Action<T> showComplete) where T : UIBase
+        private void ExecuteUIContoller<T>(T ui) where T : UIBase
         {
 
             UIController uIController = GetUIController();
             uIController.Initialize(ui);
             uIController.Show();
             showUIStack.Push(uIController);
-            showComplete?.Invoke(ui);
         }
 
 #if USE_ADDRESSABLE_TASK
@@ -86,15 +148,24 @@ namespace UnityFramework.UI
         {
             if (loadType == LoadType.Safe)
             {
-                AddressableResource<T> addressableResource = AddressableManager.Instance.LoadAsset<T>(key);
+                AddressableResource<GameObject> addressableResource = AddressableManager.Instance.LoadAsset<GameObject>(key);
                 await addressableResource.Task;
-                return addressableResource.GetResource();
+                GameObject gameObject = addressableResource.GetResource();
+                return gameObject.GetComponent<T>();
             }
             else
             {
-                AddressableResourceHandle<T> addressableResource = AddressableManager.UnsafeLoadAsset<T>(key);
-                await addressableResource.Task;
-                return addressableResource.GetResource();
+                string loadKey = (key is IKeyEvaluator evaluator ? evaluator.RuntimeKey : key) as string;
+                if (!unsafeLoads.TryGetValue(loadKey, out IUIAddressalbeHandle uiAddressalbeHandle))
+                {
+                    AddressableResourceHandle<GameObject> addressableResourceHandle = AddressableManager.UnsafeLoadAsset<GameObject>(key);
+                    await addressableResourceHandle.Task;
+                    uiAddressalbeHandle = new UIAddressalbeHandle<T>(in addressableResourceHandle);
+                    if (loadKey != null)
+                        unsafeLoads.Add(loadKey, uiAddressalbeHandle);
+                }
+
+                return uiAddressalbeHandle.GetResource<T>();
             }
         }
 
