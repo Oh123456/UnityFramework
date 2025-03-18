@@ -51,6 +51,11 @@ namespace UnityFramework.UI
             OnClose?.Invoke();
         }
 
+        public void SetSortOrder(int oreder)
+        {
+            canvas.sortingOrder = oreder;
+        }
+
         public void AddListener(UIManager.UIController uIController)
         {
             uIController.Show = Show;
