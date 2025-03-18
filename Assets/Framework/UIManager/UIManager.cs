@@ -36,17 +36,20 @@ namespace UnityFramework.UI
         private Stack<UIController> controllerPool = new Stack<UIController>(4);
 
 
-        public T Show<T>(string name) where T : UIBase
+        public T Show<T>(string name, int sortOrder = 0) where T : UIBase
         {
             if (!CheckType<T>())
                 return null;
             T ui = GetCachedUI<T>(name);
+            ui.SetSortOrder(sortOrder);
+
             UIController uIController = GetUIController();
             uIController.Initialize(ui);
             uIController.Show();
             showUIStack.Push(uIController);
             return ui;
         }
+
 
         public void Hide()
         {
