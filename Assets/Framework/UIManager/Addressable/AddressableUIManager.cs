@@ -21,10 +21,10 @@ namespace UnityFramework.UI
     {
         private interface IUIAddressalbeHandle
         {
-            T GetResource<T>() where T : UIBase;
+            T GetResource<T>() where T : MainUIBase;
             void Release();
         }
-        private class UIAddressalbeHandle<T> : IUIAddressalbeHandle where T : UIBase
+        private class UIAddressalbeHandle<T> : IUIAddressalbeHandle where T : MainUIBase
         {
             readonly AddressableResourceHandle<GameObject> addressableResourceHandle;
             T uiBase;
@@ -35,7 +35,7 @@ namespace UnityFramework.UI
                 uiBase = addressableResourceHandle.GetResource().GetComponent<T>();
             }
 
-            public TUIBase GetResource<TUIBase>() where TUIBase : UIBase
+            public TUIBase GetResource<TUIBase>() where TUIBase : MainUIBase
             {
                 return uiBase as TUIBase;
             }
@@ -48,35 +48,23 @@ namespace UnityFramework.UI
         }
 
         private Dictionary<string, IUIAddressalbeHandle> unsafeLoads = new Dictionary<string, IUIAddressalbeHandle>();
-
+        
         enum LoadType
         {
             Safe,
             UnSafe,
         }
 
-        public async void ShowAddressableSceneUI<T>(object key, System.Action<T> showComplete = null, int sortOrder = 0) where T : UIBase
+        public async void ShowAddressableSceneUI<T>(object key, System.Action<T> showComplete = null, int sortOrder = 0) where T : MainUIBase
         {
-            if (!CheckType<T>())
-            {
-                showComplete?.Invoke(null);
-                return;
-            }
-
             T ui = await GetCachedAddressableUI<T>(key, LoadType.Safe);
             ExecuteUIContoller(ui);
             showComplete?.Invoke(ui);
             return;
         }
 
-        public async void ShowAddressableUI<T>(object key, System.Action<T> showComplete = null, int sortOrder = 0) where T : UIBase
+        public async void ShowAddressableUI<T>(object key, System.Action<T> showComplete = null, int sortOrder = 0) where T : MainUIBase
         {
-            if (!CheckType<T>())
-            {
-                showComplete?.Invoke(null);
-                return;
-            }
-
             T ui = await GetCachedAddressableUI<T>(key, LoadType.UnSafe);
             ExecuteUIContoller(ui);
             showComplete?.Invoke(ui);
@@ -88,7 +76,7 @@ namespace UnityFramework.UI
 #else
         private async UniTask<T>
 #endif
-        GetCachedAddressableUI<T>(object key, LoadType loadType) where T : UIBase
+        GetCachedAddressableUI<T>(object key, LoadType loadType) where T : MainUIBase
         {
             T ui = null;
             if (!TryGetCachedUI(out ui))
@@ -101,7 +89,7 @@ namespace UnityFramework.UI
             return ui;
         }
 
-        private void ExecuteUIContoller<T>(T ui) where T : UIBase
+        private void ExecuteUIContoller<T>(T ui) where T : MainUIBase
         {
 
             UIController uIController = GetUIController();
@@ -115,7 +103,7 @@ namespace UnityFramework.UI
 #else
         private async UniTask<T>
 #endif
-        GetPrefab<T>(object key, LoadType loadType) where T : UIBase
+        GetPrefab<T>(object key, LoadType loadType) where T : MainUIBase
         {
             if (loadType == LoadType.Safe)
             {
