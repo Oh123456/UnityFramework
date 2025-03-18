@@ -19,7 +19,7 @@ namespace UnityFramework.UI
 
         public bool IsClosed => !gameObject.activeSelf;
 
-        private void Reset()
+        protected virtual void Reset()
         {
             canvas = GetComponent<Canvas>();
             graphicRaycaster = GetComponent<GraphicRaycaster>();
