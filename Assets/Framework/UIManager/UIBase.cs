@@ -19,7 +19,7 @@ namespace UnityFramework.UI
 
         public bool IsClosed => !gameObject.activeSelf;
 
-        private void Reset()
+        protected virtual void Reset()
         {
             canvas = GetComponent<Canvas>();
             graphicRaycaster = GetComponent<GraphicRaycaster>();
@@ -49,6 +49,11 @@ namespace UnityFramework.UI
                 return;
             gameObject.SetActive(false);
             OnClose?.Invoke();
+        }
+
+        public void SetSortOrder(int oreder)
+        {
+            canvas.sortingOrder = oreder;
         }
 
         public void AddListener(UIManager.UIController uIController)
