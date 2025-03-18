@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,13 +8,13 @@ namespace UnityFramework.UI
     interface ISubUIBase
     {
         public void Show();
-
         public void Hide();
+        public bool IsIndependent();
         UIBase FindRootUIBase();
     }
 
-    [RequireComponent(typeof(Canvas)), RequireComponent(typeof(GraphicRaycaster))]
-    public class SubUIBase : UIBase, ISubUIBase
+	[RequireComponent(typeof(Canvas))]
+	public class SubUI : UIBase , ISubUIBase
     {
         enum ShowType
         {
@@ -24,7 +23,7 @@ namespace UnityFramework.UI
         }
 
         [SerializeField] UIBase root;
-        [SerializeField][Tooltip("Auto �� Automatically shows when the Root is shown. \nCustom �� Remains hidden even when the Root is shown; the user must manually show it.")] ShowType showType = ShowType.Auto;
+        [SerializeField][Tooltip("Auto → Automatically shows when the Root is shown. \nCustom → Remains hidden even when the Root is shown; the user must manually show it.")] ShowType showType = ShowType.Auto;
 
         protected override void Reset()
         {
@@ -34,15 +33,19 @@ namespace UnityFramework.UI
 
         private void Start()
         {
+            // 독립 캔버스가 아니면 같이 꺼짐으로 의미 X
+            if (!canvas.overrideSorting)
+                return;
+
             if (showType == ShowType.Auto)
                 root.OnShow += base.Show;
             root.OnHide += base.Hide;
         }
 
         public new void Show()
-        {
-            base.Show();
-        }
+		{ 
+			base.Show();
+		}
 
         public new void Hide()
         {
@@ -51,7 +54,13 @@ namespace UnityFramework.UI
 
         public UIBase FindRootUIBase()
         {
-            return UIUtils.FindParentUIBase(transform as RectTransform);
+            return UIUtils.FindParentIndependentUIBase(transform as RectTransform);
         }
-    }
+
+        public bool IsIndependent()
+        {
+            return canvas.overrideSorting;  
+        }
+    } 
 }
+ 

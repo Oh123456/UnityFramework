@@ -1,14 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
+
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace UnityFramework.UI
 {
-    [RequireComponent(typeof(Canvas)), RequireComponent(typeof(GraphicRaycaster))]
-    public class UIBase : MonoBehaviour
+    [RequireComponent(typeof(Canvas))]
+    public abstract class UIBase : MonoBehaviour
     {
-        [SerializeField] private Canvas canvas;
+        [SerializeField] protected Canvas canvas;
         [SerializeField] private GraphicRaycaster graphicRaycaster;
 
         protected bool isShow = false;
@@ -28,7 +29,8 @@ namespace UnityFramework.UI
         protected virtual void Show()
         {
             canvas.enabled = true;
-            graphicRaycaster.enabled = true;
+            if (graphicRaycaster != null)
+                graphicRaycaster.enabled = true;
             isShow = true;
             if (!gameObject.activeSelf)
                 gameObject.SetActive(true);
@@ -38,7 +40,8 @@ namespace UnityFramework.UI
         protected virtual void Hide()
         {
             canvas.enabled = false;
-            graphicRaycaster.enabled = false;
+            if (graphicRaycaster != null)
+                graphicRaycaster.enabled = false;
             isShow = false;
             OnHide?.Invoke();
         }
@@ -56,10 +59,26 @@ namespace UnityFramework.UI
             canvas.sortingOrder = oreder;
         }
 
-        public void AddListener(UIManager.UIController uIController)
+
+        [System.Diagnostics.Conditional("UNITY_EDITOR")]
+        public virtual void EditorActiveToggle()
         {
-            uIController.Show = Show;
-            uIController.Hide = Hide;
+            canvas.enabled = !canvas.enabled;
+            graphicRaycaster.enabled = !graphicRaycaster.enabled;
+        }
+
+        [System.Diagnostics.Conditional("UNITY_EDITOR")]
+        public virtual void EditorShow()
+        {
+            canvas.enabled = true;
+            graphicRaycaster.enabled = true;
+        }
+
+        [System.Diagnostics.Conditional("UNITY_EDITOR")]
+        public virtual void EditorHide()
+        {
+            canvas.enabled = false;
+            graphicRaycaster.enabled = false;
         }
     }
 
