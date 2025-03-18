@@ -9,22 +9,22 @@ namespace UnityFramework.UI
     {
         public class UIController 
         {
-            UIBase uIBase;
+            MainUIBase mainUIBase;
 
             public System.Action Show;
             public System.Action Hide;
 
-            public UIBase UIBase => this.uIBase;
+            public MainUIBase MainUIBase => this.mainUIBase;
 
-            public void Initialize(UIBase uIBase)
+            public void Initialize(MainUIBase uIBase)
             {
-                this.uIBase = uIBase;
-                this.uIBase.AddListener(this);
+                this.mainUIBase = uIBase;
+                this.mainUIBase.AddListener(this);
             }
 
             public void Release()
             {
-                uIBase = null;
+                mainUIBase = null;
                 Show = null;
                 Hide = null;                
             }
@@ -36,10 +36,8 @@ namespace UnityFramework.UI
         private Stack<UIController> controllerPool = new Stack<UIController>(4);
 
 
-        public T Show<T>(string name, int sortOrder = 0) where T : UIBase
+        public T Show<T>(string name, int sortOrder = 0) where T : MainUIBase
         {
-            if (!CheckType<T>())
-                return null;
             T ui = GetCachedUI<T>(name);
             ui.SetSortOrder(sortOrder);
 
@@ -49,7 +47,6 @@ namespace UnityFramework.UI
             showUIStack.Push(uIController);
             return ui;
         }
-
 
         public void Hide()
         {
@@ -68,7 +65,7 @@ namespace UnityFramework.UI
             if (GetActiveUIController(out UIController uIController))
             {
                 uIController.Hide();
-                uIController.UIBase.Close();
+                uIController.MainUIBase.Close();
                 uIController.Release();
                 controllerPool.Push(uIController);
             }
@@ -83,7 +80,7 @@ namespace UnityFramework.UI
             return true;
         }
 
-        public bool TryGetCachedUI<T>(out T ui) where T : UIBase
+        public bool TryGetCachedUI<T>(out T ui) where T : MainUIBase
         {
             bool result = uis.TryGetValue(typeof(T), out var baseUI);
             if (baseUI == null)
@@ -92,7 +89,7 @@ namespace UnityFramework.UI
             return result;
         }
 
-        private T GetCachedUI<T>(string name) where T : UIBase
+        private T GetCachedUI<T>(string name) where T : MainUIBase
         {
             T ui = null;
             if (!TryGetCachedUI(out ui))
@@ -103,10 +100,6 @@ namespace UnityFramework.UI
             }
 
             return ui;
-        }
-        private bool CheckType<T>() where T : UIBase    
-        {
-            return !typeof(T).IsAssignableFrom(typeof(UIBase));
         }
 
         private UIController GetUIController()
