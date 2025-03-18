@@ -17,19 +17,6 @@ using Cysharp.Threading.Tasks;
 
 namespace UnityFramework.UI
 {
-
-    public struct UnmanagedUIResource<T> where T : UIBase
-    {
-        public AddressableResource<T> addressableResource;
-        public T uiObject;
-    }
-
-    public struct UnmanagedUIResourceHandle<T> where T : UIBase
-    {
-        public AddressableResourceHandle<T> addressableResourceHandle;
-        public T uiObject;
-    }
-
     public partial class UIManager
     {
         private interface IUIAddressalbeHandle
@@ -60,9 +47,6 @@ namespace UnityFramework.UI
             }
         }
 
-
-        public delegate void UnmanagedAddressableUICompleted<T>(in UnmanagedUIResource<T> unmanagedAddressableResource) where T : UIBase;
-
         private Dictionary<string, IUIAddressalbeHandle> unsafeLoads = new Dictionary<string, IUIAddressalbeHandle>();
 
         enum LoadType
@@ -71,7 +55,7 @@ namespace UnityFramework.UI
             UnSafe,
         }
 
-        public async void ShowAddressableSceneUI<T>(object key, System.Action<T> showComplete = null) where T : UIBase
+        public async void ShowAddressableSceneUI<T>(object key, System.Action<T> showComplete = null, int sortOrder = 0) where T : UIBase
         {
             if (!CheckType<T>())
             {
@@ -85,7 +69,7 @@ namespace UnityFramework.UI
             return;
         }
 
-        public async void ShowAddressableUI<T>(object key, System.Action<T> showComplete = null) where T : UIBase
+        public async void ShowAddressableUI<T>(object key, System.Action<T> showComplete = null, int sortOrder = 0) where T : UIBase
         {
             if (!CheckType<T>())
             {
@@ -96,19 +80,6 @@ namespace UnityFramework.UI
             T ui = await GetCachedAddressableUI<T>(key, LoadType.UnSafe);
             ExecuteUIContoller(ui);
             showComplete?.Invoke(ui);
-        }
-
-        public async void ShowUnmanagedAddressableUI<T>(object key, UnmanagedAddressableUICompleted<T> completed) where T : UIBase
-        {
-            if (!CheckType<T>())
-                return;
-
-            var unmanagedAddressableResource = new UnmanagedUIResource<T>();
-            AddressableResource<T> addressableResource = AddressableManager.Instance.LoadAsset<T>(key);
-            await addressableResource.Task;
-            unmanagedAddressableResource.addressableResource = addressableResource;
-            unmanagedAddressableResource.uiObject = GameObject.Instantiate(addressableResource.GetResource());
-            completed(unmanagedAddressableResource);
         }
 
 
