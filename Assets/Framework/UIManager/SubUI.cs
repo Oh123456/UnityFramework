@@ -31,7 +31,7 @@ namespace UnityFramework.UI
             root = FindRootUIBase();
         }
 
-        private void Start()
+        protected override void Initialize()
         {
             // 독립 캔버스가 아니면 같이 꺼짐으로 의미 X
             if (!canvas.overrideSorting)

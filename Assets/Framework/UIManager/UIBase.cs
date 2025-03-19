@@ -26,6 +26,15 @@ namespace UnityFramework.UI
             graphicRaycaster = GetComponent<GraphicRaycaster>();
         }
 
+        private void Start()
+        {
+            Initialize();
+        }
+
+        protected virtual void Initialize()
+        { 
+        }
+
         protected virtual void Show()
         {
             canvas.enabled = true;
@@ -64,21 +73,24 @@ namespace UnityFramework.UI
         public virtual void EditorActiveToggle()
         {
             canvas.enabled = !canvas.enabled;
-            graphicRaycaster.enabled = !graphicRaycaster.enabled;
+            if (graphicRaycaster != null)
+                graphicRaycaster.enabled = !graphicRaycaster.enabled;
         }
 
         [System.Diagnostics.Conditional("UNITY_EDITOR")]
         public virtual void EditorShow()
         {
             canvas.enabled = true;
-            graphicRaycaster.enabled = true;
+            if (graphicRaycaster != null)
+                graphicRaycaster.enabled = true;
         }
 
         [System.Diagnostics.Conditional("UNITY_EDITOR")]
         public virtual void EditorHide()
         {
             canvas.enabled = false;
-            graphicRaycaster.enabled = false;
+            if (graphicRaycaster != null)
+                graphicRaycaster.enabled = false;
         }
     }
 
