@@ -6,6 +6,7 @@ using UnityFramework.PoolObject;
 
 namespace UnityFramework.Pool.Test
 {
+
 	public class PoolTester : MonoBehaviour
 	{
 		[SerializeField] TestMono testMono;
@@ -109,15 +110,26 @@ namespace UnityFramework.Pool.Test
 
             if (Input.GetKeyDown(KeyCode.Q))
             {
-                ArrayPoolObject<int> arrayPoolObject = PoolManager.GetArray<int>(array.Length, true);
+                using (ArrayPoolObject<int> arrayPoolObject = PoolManager.GetArray<int>(array.Length))
                 {
-                    for (int i = 0; i < array.Length; i++)
+                    arrayPoolObject.SetDatas(array);
+                    int count = arrayPoolObject.MaxLength;
+                    for (int i = 0; i < count; i++)
                     {
-                        arrayPoolObject[i] = array[i];
+                        Debug.Log($"{arrayPoolObject[i]}");
                     }
+
+
                 }
 
-                arrayPoolObject.Dispose();
+                //{
+                //    for (int i = 0; i < array.Length; i++)
+                //    {
+                //        arrayPoolObject[i] = array[i];
+                //    }
+                //}
+
+                //arrayPoolObject.Dispose();
             }
         }
     }

@@ -4,8 +4,6 @@ using UnityFramework.PoolObject;
 
 namespace UnityFramework.Pool
 {
-
-
     public static class PoolManager
     {
         #region Class
@@ -27,12 +25,12 @@ namespace UnityFramework.Pool
         #region Mono
         static System.Lazy<MonoPoolManager> monoPoolManager = new System.Lazy<MonoPoolManager>(() => new MonoPoolManager());
 
-        public static T GetMonoObject<T>(IPoolObject prefab, bool isAutoActivate = true) where T : MonoBehaviour, IPoolObject, new()
+        public static T GetMonoObject<T>(IMonoPoolObject prefab, Transform parents = null,bool isAutoActivate = true) where T : MonoBehaviour, IMonoPoolObject, new()
         {
-            return monoPoolManager.Value.GetObject<T>(prefab, isAutoActivate: isAutoActivate);
+            return monoPoolManager.Value.GetObject<T>(prefab, parents: parents, isAutoActivate: isAutoActivate);
         }
 
-        public static void SetMonoObject<T>(IPoolObject poolObject, bool isAutoDeactivate = true) where T : MonoBehaviour, IPoolObject
+        public static void SetMonoObject<T>(IMonoPoolObject poolObject, bool isAutoDeactivate = true) where T : MonoBehaviour, IMonoPoolObject
         {
             monoPoolManager.Value.SetObject<T>(poolObject, isAutoDeactivate: isAutoDeactivate);
         }
@@ -40,9 +38,9 @@ namespace UnityFramework.Pool
         #endregion
 
 
-        public static ArrayPoolObject<T> GetArray<T>(int size, bool clearArray = false)
+        public static ArrayPoolObject<T> GetArray<T>(int size)
         {
-            return new ArrayPoolObject<T>(size, clearArray: clearArray);
+            return new ArrayPoolObject<T>(size);
         }
     }
 

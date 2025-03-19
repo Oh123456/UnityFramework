@@ -14,6 +14,11 @@ namespace UnityFramework.PoolObject
         public void Deactivate();
     }
 
+    public interface IMonoPoolObject : IPoolObject
+    {
+        public int KeyCode { get; set; }
+    }
+
 
     public abstract class ClassPoolObject : IPoolObject, System.IDisposable
     {
@@ -40,9 +45,11 @@ namespace UnityFramework.PoolObject
         }
     }
 
-    public abstract class MonoPoolObject : MonoBehaviour, IPoolObject
+    public abstract class MonoPoolObject : MonoBehaviour, IMonoPoolObject
     {
         bool isActive = false;
+        int keyCode = 0;
+        public int KeyCode { get => keyCode; set => keyCode = value; }
 
         public virtual void Activate()
         {
@@ -65,7 +72,6 @@ namespace UnityFramework.PoolObject
     public struct ArrayPoolObject<T> : System.IDisposable
     {
         T[] array;
-        bool clearArray;
 
         public T this[int index]
         {
@@ -73,17 +79,27 @@ namespace UnityFramework.PoolObject
             set { array[index] = value; }
         }
 
+        public T[] Array => array;
+
         public int MaxLength => array.Length;
 
-        public ArrayPoolObject(int size, bool clearArray)
+        public ArrayPoolObject(int size)
         {
             array = ArrayPool<T>.Shared.Rent(size);
-            this.clearArray = clearArray;
+        }
+
+        public void SetDatas(T[] values)
+        {
+            int lenght = values.Length;
+            for (int i = 0; i < lenght; i++)
+            {
+                array[i] = values[i];
+            }
         }
 
         public void Dispose()
         {
-            Dispose(clearArray);
+            Dispose(true);
         }
 
         public void Dispose(bool clearArray)

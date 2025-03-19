@@ -11,6 +11,7 @@ namespace UnityFramework.Pool
 
     public struct PoolKey : System.IEquatable<PoolKey>
     {
+
         private readonly System.Type typeKey;
         private readonly MonoBehaviour prefab;
 
@@ -20,6 +21,7 @@ namespace UnityFramework.Pool
             this.prefab = null;   
         }
 
+
         public PoolKey(MonoBehaviour prefab)
         {
             this.typeKey = prefab.GetType();
@@ -28,7 +30,10 @@ namespace UnityFramework.Pool
 
         public bool Equals(PoolKey other)
         {
-            return typeKey.Equals(other.typeKey);
+            if (prefab == null)
+                return typeKey.Equals(other.typeKey);
+            else
+                return ((IMonoPoolObject)prefab).KeyCode.Equals(((IMonoPoolObject)other.prefab).KeyCode);
         }
 
         public override int GetHashCode()
@@ -37,8 +42,22 @@ namespace UnityFramework.Pool
             if (prefab == null)
                 return typeHash;
 
-            int prefabHash = prefab.GetInstanceID();
-            return prefabHash ^ typeHash; // XOR 연산으로 해시값 조합
+            if (prefab.gameObject.scene.IsValid() &&
+                prefab is IMonoPoolObject monoPoolObject)
+                return monoPoolObject.KeyCode;
+
+            int prefabHash = prefab.GetHashCode();
+
+            unchecked
+            {
+                const int FNV_OFFSET_BASIS = (int)2166136261;
+                const int FNV_PRIME = 16777619;
+                int hash = FNV_OFFSET_BASIS;
+                hash = (hash ^ typeHash) * FNV_PRIME;
+                hash = (hash ^ prefabHash) * FNV_PRIME;
+
+                return hash;
+            }
         }
 
     }
@@ -62,7 +81,8 @@ namespace UnityFramework.Pool
                 else
                     poolObject = objects.Pop();
                 // 혹시라도 생성되있는애가 풀에 들어와 있을경우
-                isValid = poolObject.IsValid();
+                // 혹은 오브젝트가 널이라면
+                isValid = poolObject == null ? true : poolObject.IsValid();
             }
             return poolObject;
         }
@@ -87,7 +107,7 @@ namespace UnityFramework.Pool
         }
     }
 
-    public class MonoPool<T> : Pool where T : MonoBehaviour, IPoolObject
+    public class MonoPool<T> : Pool where T : MonoBehaviour, IMonoPoolObject
     {
         T monoInstance;
         public MonoPool(IPoolObject instance) : base(instance)
@@ -99,7 +119,9 @@ namespace UnityFramework.Pool
 
         protected override IPoolObject CreateObject()
         {
-            return GameObject.Instantiate(monoInstance);
+            IMonoPoolObject monoPoolObject = GameObject.Instantiate(monoInstance);
+            monoPoolObject.KeyCode = monoInstance.KeyCode;
+            return monoPoolObject;
         }
     }
 

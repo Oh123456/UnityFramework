@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+
 using UnityEngine;
+
 using UnityFramework.PoolObject;
 
 namespace UnityFramework.Pool.Manager
@@ -9,33 +11,46 @@ namespace UnityFramework.Pool.Manager
     {
         Dictionary<PoolKey, Pool> monoPool = new Dictionary<PoolKey, Pool>();
 
-        public T GetObject<T>(IPoolObject prefab, bool isAutoActivate = true) where T : MonoBehaviour, IPoolObject, new()
+        Transform monoPoolRepository;
+
+        public MonoPoolManager()
+        {
+            GameObject gameObject = new GameObject("MonoPoolRepository");
+            monoPoolRepository = gameObject.transform;
+            GameObject.DontDestroyOnLoad(monoPoolRepository);
+        }
+
+        public T GetObject<T>(IPoolObject prefab, Transform parents = null, bool isAutoActivate = true) where T : MonoBehaviour, IMonoPoolObject, new()
         {
             Pool pool = GetPool<T>(prefab);
             IPoolObject poolObject = pool.GetObject();
             if (isAutoActivate)
                 poolObject.Activate();
+            ((T)poolObject).transform.parent = parents;
             return poolObject as T;
         }
 
-        public void SetObject<T>(IPoolObject poolObject, bool isAutoDeactivate = true) where T : MonoBehaviour, IPoolObject
+        public void SetObject<T>(IPoolObject poolObject, bool isAutoDeactivate = true) where T : MonoBehaviour, IMonoPoolObject
         {
-            if (!FIndPool((MonoBehaviour)poolObject, out Pool pool))
+            MonoBehaviour mono = (MonoBehaviour)poolObject;
+            if (!FIndPool(mono, out Pool pool))
             {
                 Debug.Log("юс╫ц");
                 return;
             }
             if (isAutoDeactivate)
                 poolObject.Deactivate();
+            mono.transform.parent = monoPoolRepository;
             pool.SetObject(poolObject);
         }
 
-        Pool GetPool<T>(IPoolObject poolObject) where T : MonoBehaviour, IPoolObject, new()
+        Pool GetPool<T>(IPoolObject poolObject) where T : MonoBehaviour, IMonoPoolObject, new()
         {
             PoolKey poolKey = new PoolKey((MonoBehaviour)poolObject);
 
             if (!monoPool.TryGetValue(poolKey, out Pool pool))
             {
+                ((IMonoPoolObject)poolObject).KeyCode = poolKey.GetHashCode();
                 pool = new MonoPool<T>(poolObject);
                 monoPool.Add(poolKey, pool);
             }
@@ -43,7 +58,7 @@ namespace UnityFramework.Pool.Manager
             return pool;
         }
 
-        bool FIndPool(MonoBehaviour monoBehaviour , out Pool pool)
+        bool FIndPool(MonoBehaviour monoBehaviour, out Pool pool)
         {
             PoolKey poolKey = new PoolKey(monoBehaviour);
 
