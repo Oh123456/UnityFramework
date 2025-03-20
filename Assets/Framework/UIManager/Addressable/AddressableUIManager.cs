@@ -63,6 +63,19 @@ namespace UnityFramework.UI
             return;
         }
 
+#if USE_ADDRESSABLE_TASK
+        public async Task<T>
+#else
+        public async UniTask<T>
+#endif
+        ShowAddressableSceneUI<T>(object key, int sortOrder = 0) where T : MainUIBase
+        {
+            T ui = await GetCachedAddressableUI<T>(key, LoadType.Safe);
+            ExecuteUIContoller(ui);
+            return ui;
+        }
+
+
         public async void ShowAddressableUI<T>(object key, System.Action<T> showComplete = null, int sortOrder = 0) where T : MainUIBase
         {
             T ui = await GetCachedAddressableUI<T>(key, LoadType.UnSafe);
@@ -70,6 +83,27 @@ namespace UnityFramework.UI
             showComplete?.Invoke(ui);
         }
 
+#if USE_ADDRESSABLE_TASK
+        public async Task<T>
+#else
+        public async UniTask<T>
+#endif
+        ShowAddressableUI<T>(object key, int sortOrder = 0) where T : MainUIBase
+        {
+            T ui = await GetCachedAddressableUI<T>(key, LoadType.UnSafe);
+            var uIController = ExecuteUIContoller(ui);
+            return ui;
+        }
+
+#if USE_ADDRESSABLE_TASK
+        public async Task<T>
+#else
+        public async UniTask<T>
+#endif
+        ShowAddressableUnmanagedUI<T>(object key, int sortOrder = 0) where T : MainUIBase
+        {
+            return await GetCachedAddressableUI<T>(key, LoadType.UnSafe);
+        }
 
 #if USE_ADDRESSABLE_TASK
         private async Task<T>
@@ -89,13 +123,15 @@ namespace UnityFramework.UI
             return ui;
         }
 
-        private void ExecuteUIContoller<T>(T ui) where T : MainUIBase
+        private UIController ExecuteUIContoller<T>(T ui) where T : MainUIBase
         {
 
             UIController uIController = GetUIController();
             uIController.Initialize(ui);
             uIController.Show();
             showUIStack.Push(uIController);
+
+            return uIController;
         }
 
 #if USE_ADDRESSABLE_TASK
