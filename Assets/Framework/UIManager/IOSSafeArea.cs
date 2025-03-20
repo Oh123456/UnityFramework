@@ -57,6 +57,7 @@ namespace UnityFramework.UI
             GameObject gameObject = new GameObject("IOSSafeArea", new System.Type[] { typeof(RectTransform) , typeof(SafeArea) });
             gameObject.transform.parent = Selection.activeGameObject.transform;
             gameObject.transform.localScale = Vector3.one;
+            gameObject.layer = LayerMask.NameToLayer("UI");
             RectTransform rectTransform = gameObject.GetComponent<RectTransform>();
             rectTransform.anchorMin = Vector2.zero;
             rectTransform.anchorMax = Vector2.one;

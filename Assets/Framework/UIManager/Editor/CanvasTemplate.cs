@@ -46,6 +46,7 @@ public class CanvasTemplateCreater
 
 
         GameObject canvasObject = new GameObject("Canvas");
+        canvasObject.layer = LayerMask.NameToLayer("UI");
         Canvas canvas = canvasObject.AddComponent<Canvas>();
         canvas.additionalShaderChannels = AdditionalCanvasShaderChannels.TexCoord1 | AdditionalCanvasShaderChannels.Normal | AdditionalCanvasShaderChannels.Tangent;
         canvas.renderMode = RenderMode.ScreenSpaceOverlay;
@@ -57,7 +58,7 @@ public class CanvasTemplateCreater
             canvasObject.AddComponent<GraphicRaycaster>();
     }
 
-    [MenuItem("GameObject/UI/SubCavns",false,2059)]
+    [MenuItem("GameObject/UI/SubCanvas", false,2059)]
     public static void CreaterSubCanvs()
     {
         GameObject canvasObject = null;
@@ -65,10 +66,8 @@ public class CanvasTemplateCreater
         if (Selection.activeGameObject == null)
             canvasObject = CreateCanvas();
                
-
-
-
         GameObject subCanvasObject = new GameObject("SubCanvas");
+        subCanvasObject.layer = LayerMask.NameToLayer("UI");
         subCanvasObject.transform.parent = canvasObject.transform;  
         Canvas canvas = subCanvasObject.AddComponent<Canvas>();
         canvas.additionalShaderChannels = AdditionalCanvasShaderChannels.TexCoord1 | AdditionalCanvasShaderChannels.Normal | AdditionalCanvasShaderChannels.Tangent;
@@ -79,6 +78,7 @@ public class CanvasTemplateCreater
     private static GameObject CreateCanvas()
     {
         GameObject canvasObject = new GameObject("Canvas");
+        canvasObject.layer = LayerMask.NameToLayer("UI");
         Canvas canvas = canvasObject.AddComponent<Canvas>();
         canvas.additionalShaderChannels = AdditionalCanvasShaderChannels.TexCoord1 | AdditionalCanvasShaderChannels.Normal | AdditionalCanvasShaderChannels.Tangent;
         canvas.renderMode = RenderMode.ScreenSpaceOverlay;
