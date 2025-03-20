@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+
 using UnityFramework.Singleton;
 
 namespace UnityFramework.UI
@@ -35,6 +37,12 @@ namespace UnityFramework.UI
         private Stack<UIController> showUIStack = new Stack<UIController>(4);
         private Stack<UIController> controllerPool = new Stack<UIController>(4);
 
+        public UIManager()
+        {
+#if !CUSTOM_UI_RELEASE
+            SceneManager.sceneUnloaded += UnloadUIs;
+#endif
+        }
 
         public T Show<T>(string name, int sortOrder = 0) where T : MainUIBase
         {
@@ -120,6 +128,17 @@ namespace UnityFramework.UI
             {
                 showUIStack.Pop();
                 uIController.Hide();
+                uIController.Release();
+                controllerPool.Push(uIController);
+            }
+        }
+
+        public void UnloadUIs(Scene scene)
+        {
+            
+            while (showUIStack.Count > 0)
+            {
+                UIController uIController = showUIStack.Pop();
                 uIController.Release();
                 controllerPool.Push(uIController);
             }
