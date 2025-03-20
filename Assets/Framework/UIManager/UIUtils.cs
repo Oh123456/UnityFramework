@@ -33,23 +33,18 @@ namespace UnityFramework.UI
             {
                 temp = currentParent;
 
-                currentParent = currentParent.parent;
                 if (currentParent == null)
                 {
+                    if (temp == null)
+                        break;
                     uIBase = temp.GetComponent<UIBase>();
                     break;
                 }
 
+                currentParent = currentParent.parent;
+
                 if (!temp.TryGetComponent<UIBase>(out uIBase))
                     continue;
-                
-
-                if (uIBase is ISubUIBase subUIBase)
-                {
-                    if (!subUIBase.IsIndependent())
-                        continue;
-                }
-
 
                 break;
             }

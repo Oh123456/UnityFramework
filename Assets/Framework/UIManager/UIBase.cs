@@ -32,11 +32,15 @@ namespace UnityFramework.UI
         }
 
         protected virtual void Initialize()
-        { 
+        {
+            isShow = canvas.enabled;
         }
 
         protected virtual void Show()
         {
+            if (isShow)
+                return;
+
             canvas.enabled = true;
             if (graphicRaycaster != null)
                 graphicRaycaster.enabled = true;
@@ -48,6 +52,9 @@ namespace UnityFramework.UI
 
         protected virtual void Hide()
         {
+            if (!isShow)
+                return;
+
             canvas.enabled = false;
             if (graphicRaycaster != null)
                 graphicRaycaster.enabled = false;
@@ -57,7 +64,7 @@ namespace UnityFramework.UI
 
         public virtual void Close()
         {
-            if (isShow)
+            if (!isShow)
                 return;
             gameObject.SetActive(false);
             OnClose?.Invoke();

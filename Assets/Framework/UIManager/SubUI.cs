@@ -5,16 +5,16 @@ using UnityEngine.UI;
 
 namespace UnityFramework.UI
 {
-    interface ISubUIBase
+    interface ISubUI 
     {
         public void Show();
         public void Hide();
         public bool IsIndependent();
-        UIBase FindRootUIBase();
+        UIBase FindParentUIBase();
     }
 
 	[RequireComponent(typeof(Canvas))]
-	public class SubUI : UIBase , ISubUIBase
+	public class SubUI : UIBase , ISubUI
     {
         enum ShowType
         {
@@ -22,24 +22,21 @@ namespace UnityFramework.UI
             Custom,
         }
 
-        [SerializeField] UIBase root;
+        [SerializeField] UIBase parentUI;
         [SerializeField][Tooltip("Auto → Automatically shows when the Root is shown. \nCustom → Remains hidden even when the Root is shown; the user must manually show it.")] ShowType showType = ShowType.Auto;
 
         protected override void Reset()
         {
             base.Reset();
-            root = FindRootUIBase();
+            parentUI = FindParentUIBase();
         }
 
         protected override void Initialize()
         {
-            // 독립 캔버스가 아니면 같이 꺼짐으로 의미 X
-            if (!canvas.overrideSorting)
-                return;
-
+            base.Initialize();  
             if (showType == ShowType.Auto)
-                root.OnShow += base.Show;
-            root.OnHide += base.Hide;
+                parentUI.OnShow += base.Show;
+            parentUI.OnHide += base.Hide;
         }
 
         public new void Show()
@@ -52,7 +49,7 @@ namespace UnityFramework.UI
             base.Hide();
         }
 
-        public UIBase FindRootUIBase()
+        public UIBase FindParentUIBase()
         {
             return UIUtils.FindParentIndependentUIBase(transform as RectTransform);
         }

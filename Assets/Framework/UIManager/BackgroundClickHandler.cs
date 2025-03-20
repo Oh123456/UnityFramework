@@ -23,7 +23,7 @@ namespace UnityFramework.UI
 
         public void OnPointerClick(PointerEventData eventData)
         {
-            if (cotnrolUIbase is ISubUIBase subUIBase)
+            if (cotnrolUIbase is ISubUI subUIBase)
             {
                 subUIBase.Hide();
                 return;

@@ -109,5 +109,20 @@ namespace UnityFramework.UI
 
             return controllerPool.Pop();
         }
+
+        public void ExecuteBackButton()
+        {
+            if (showUIStack.Count == 0)
+                return;
+
+            UIController uIController = showUIStack.Peek();
+            if (uIController.MainUIBase.ExecuteButton())
+            {
+                showUIStack.Pop();
+                uIController.Hide();
+                uIController.Release();
+                controllerPool.Push(uIController);
+            }
+        }
     }
 }
