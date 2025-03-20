@@ -26,8 +26,11 @@ namespace UnityFramework.Pool.Manager
             IPoolObject poolObject = pool.GetObject();
             if (isAutoActivate)
                 poolObject.Activate();
-            ((T)poolObject).transform.parent = parents;
-            return poolObject as T;
+            T tPoolObject = ((T)poolObject);
+            Transform transform = tPoolObject.transform;
+            transform.SetParent(parents);
+            transform.localScale = ((T)prefab).transform.localScale;
+            return tPoolObject;
         }
 
         public void SetObject<T>(IPoolObject poolObject, bool isAutoDeactivate = true) where T : MonoBehaviour, IMonoPoolObject
