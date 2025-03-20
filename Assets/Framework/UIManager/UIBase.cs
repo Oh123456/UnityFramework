@@ -32,7 +32,8 @@ namespace UnityFramework.UI
         }
 
         protected virtual void Initialize()
-        { 
+        {
+            isShow = canvas.enabled;
         }
 
         protected virtual void Show()

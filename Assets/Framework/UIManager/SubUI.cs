@@ -33,6 +33,7 @@ namespace UnityFramework.UI
 
         protected override void Initialize()
         {
+            base.Initialize();  
             if (showType == ShowType.Auto)
                 parentUI.OnShow += base.Show;
             parentUI.OnHide += base.Hide;
