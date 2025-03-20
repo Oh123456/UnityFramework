@@ -1,7 +1,5 @@
 using System.Collections.Generic;
 
-using UnityEditor.SearchService;
-
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.SceneManagement;
@@ -33,7 +31,7 @@ namespace UnityFramework.Addressable.Managing
 
             IAddressableResource addressableResource = null;
 
-            // ¾øÀ¸¸é Ãß°¡
+            // ì—†ìœ¼ë©´ ì¶”ê°€
             if (!loadedResource.TryGetValue(assetKey, out addressableResource))
             {
                 AddressableManager.AddressableLog($"Loaded Addressable resource KeyCode : {assetKey}", Color.yellow);

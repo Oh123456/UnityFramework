@@ -39,50 +39,66 @@ namespace UnityFramework.Addressable
         public AddressableManager()
         {
             UnityEditor.EditorApplication.playModeStateChanged += (playModeStateChange) =>
+            {
+                switch (playModeStateChange)
                 {
-                    switch (playModeStateChange)
-                    {
-                        case UnityEditor.PlayModeStateChange.EnteredEditMode:
-                            break;
-                        case UnityEditor.PlayModeStateChange.ExitingEditMode:
-                            break;
-                        case UnityEditor.PlayModeStateChange.EnteredPlayMode:
-                            break;
-                        case UnityEditor.PlayModeStateChange.ExitingPlayMode:
-                            if (this.addressableDataManager.IsValueCreated)
-                                this.addressableDataManager.Value.Release();
-                            break;                        
-                    }
-                    if (playModeStateChange == UnityEditor.PlayModeStateChange.EnteredPlayMode)
-                    {
+                    case UnityEditor.PlayModeStateChange.EnteredEditMode:
+                        break;
+                    case UnityEditor.PlayModeStateChange.ExitingEditMode:
+                        break;
+                    case UnityEditor.PlayModeStateChange.EnteredPlayMode:
+                        break;
+                    case UnityEditor.PlayModeStateChange.ExitingPlayMode:
+                        if (this.addressableDataManager.IsValueCreated)
+                            this.addressableDataManager.Value.Release();
+                        break;
+                }
+                if (playModeStateChange == UnityEditor.PlayModeStateChange.EnteredPlayMode)
+                {
 
-                    }
-                    Debug.Log($"PlayModeStateChange : {playModeStateChange}");
-                };
+                }
+                Debug.Log($"PlayModeStateChange : {playModeStateChange}");
+            };
         }
 
 #endif
 
-        public void UpdateLabelNames(List<string> label)
-        {
-            this.labelNames = label;
-        }
-
-        public async void DownLoad()
+        /// <summary>
+        /// A function in Addressables that downloads remote asset bundles, storing them in the local cache via the network, allowing them to be loaded later. 
+        /// </summary>
+        /// <param name="customLabels">If the list of labels to download is set to null, all currently used labels are automatically detected, and the corresponding assets are downloaded. This allows necessary resources to be loaded without explicitly specifying labels.</param>
+        public async void DownLoad(List<string> customLabels = null)
         {
             AddressableLog("Addressables Start");
-
-            AddressableBuildLabels labels = Resources.Load<AddressableBuildLabels>(AddressableBuildLabels.NAME);
-
-            if (labels == null)
+            if (customLabels == null)
             {
-                AddressableLog($"AddressableBuildLabels Not Found");
-                return;
+                AddressableBuildLabels labels = Resources.Load<AddressableBuildLabels>(AddressableBuildLabels.NAME);
+
+                if (labels == null)
+                {
+                    AddressableLog($"AddressableBuildLabels Not Found");
+                    return;
+                }
+
+                this.labelNames = labels.Labels;
+            }
+            else
+            {
+                this.labelNames = customLabels;
             }
 
-            this.labelNames = labels.Labels;
-
             int count = this.labelNames.Count;
+            int downLoadCount = 0;
+
+            System.Action downloadCallback = () =>
+            {
+                ++downLoadCount;
+                if (downLoadCount >= count)
+                {
+                    OnAllCompletedLoad?.Invoke();
+                    OnAllCompletedLoad = null;
+                }
+            };
             for (int i = 0; i < count; i++)
             {
                 string label = this.labelNames[i];
@@ -99,11 +115,13 @@ namespace UnityFramework.Addressable
 #else
                 await handle.ToUniTask();
 #endif
+
+                OnCompletedLoad += downloadCallback;
+
                 DownLoadAddressables(handle, label);
 
             }
 
-            OnAllCompletedLoad?.Invoke();
         }
 
 
@@ -137,7 +155,7 @@ namespace UnityFramework.Addressable
             });
 
 #if USE_ADDRESSABLE_TASK
-        await handler.Task;
+            await handler.Task;
 #else
             await handler.ToUniTask();
 #endif
@@ -170,7 +188,6 @@ namespace UnityFramework.Addressable
             this.OnCompletedLoad = null;
             this.OnDownloadDependencies = null;
             this.OnDownload = null;
-
         }
 
     }
