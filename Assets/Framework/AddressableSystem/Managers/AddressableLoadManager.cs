@@ -26,6 +26,11 @@ namespace UnityFramework.Addressable
 
         System.Lazy<AddressableDataManager> addressableDataManager = new System.Lazy<AddressableDataManager>(() => new AddressableDataManager());
 
+        /// <summary>
+        /// If the loaded asset is not properly managed, it will not be released from memory, which may result in memory leaks.
+        /// </summary>
+        /// <param name="key">AddressableKey</param>
+        /// <returns> UnsafeHandler</returns>
         public static AddressableResourceHandle<T> UnsafeLoadAsset<T>(object key)
         {
             var handle = Addressables.LoadAssetAsync<T>(key);
@@ -39,11 +44,82 @@ namespace UnityFramework.Addressable
             return addressableResourceHandle;
         }
 
+        /// <summary>
+        /// If the loaded asset is not properly managed, it will not be released from memory, potentially leading to memory leaks. However, by returning the handler using the out keyword, unnecessary copying is reduced, improving performance optimization.
+        /// </summary>
+        /// <param name="key">AddressableKey</param>
+        /// <param name="addressableResourceHandle">UnsafeHandler</param>
+        public static void UnsafeLoadAsset<T>(object key, out AddressableResourceHandle<T> addressableResourceHandle)
+        {
+            var handle = Addressables.LoadAssetAsync<T>(key);
+            addressableResourceHandle = new AddressableResourceHandle<T>(handle);
+#if UNITY_EDITOR
+            System.Action<string> action = addressableResourceHandle.SetEditorAssetKey;
+            Editor.AddressableManagingDataManager.TrackEditorLoad(handle, Editor.AddressableManagingDataManager.LoadType.UnsafeLoad, key, (assetKey) =>
+            {
+                action(assetKey);
+            });
+#endif
+            return;
+        }
+
+        /// <summary>
+        /// This is an Addressables asset managed on a per-scene basis, and it is automatically released when the scene transitions. As a result, memory is efficiently managed without requiring manual deallocation.
+        /// </summary>
+        /// <param name="key">AddressableKey</param>
+        /// <returns>AddressableHandler </returns>
         public AddressableResource<T> LoadAsset<T>(object key)
         {
             return this.addressableDataManager.Value.LoadResource<T>(key);
         }
 
+        /// <summary>
+        /// The asset is first loaded into memory, and then a new instance is created based on it, allowing it to be used within the game.
+        /// </summary>
+        /// <typeparam name="T">Object Type</typeparam>
+        /// <param name="key">key</param>
+        /// <param name="addressableResourceHandle"> Unsafe Handler </param>
+        /// <param name="OnCompleted"> Create CallBack </param>
+        public static void UnsafeInstantiateAsset<T>(object key, out AddressableResourceHandle<T> addressableResourceHandle, System.Action<GameObject> OnCompleted) where T : Object
+        {
+            UnsafeLoadAsset(key, out addressableResourceHandle);
+            WiatInstantiateAsset(addressableResourceHandle,OnCompleted);
+        }
+
+
+        /// <summary>
+        /// The asset is first loaded into memory, and then a new instance is created based on it, allowing it to be used within the game.
+        /// </summary>
+        /// <typeparam name="T">Object Type</typeparam>
+        /// <param name="key">key</param>
+        /// <param name="addressableResource"> Addressable Handler </param>
+        /// <param name="OnCompleted"> Create CallBack </param>
+        public AddressableResource<T> InstantiateAsset<T>(object key, System.Action<GameObject> OnCompleted) where T : Object
+        {
+            AddressableResource<T> addressableResource = LoadAsset<T>(key);
+            WiatInstantiateAsset(addressableResource, OnCompleted);
+            return addressableResource;
+        }
+
+
+        private async void WiatInstantiateAsset<T>(AddressableResource<T> addressableResource, System.Action<GameObject> OnCompleted) where T : Object
+        {
+            await addressableResource.Task;
+            GameObject gameObject = (GameObject.Instantiate(addressableResource.GetResource())) as GameObject;
+            OnCompleted?.Invoke(gameObject);
+        }
+
+        private static async void WiatInstantiateAsset<T>(AddressableResourceHandle<T> addressableResourceHandle, System.Action<GameObject> OnCompleted) where T : Object
+        {
+            await addressableResourceHandle.Task;
+            GameObject gameObject = (GameObject.Instantiate(addressableResourceHandle.GetResource())) as GameObject;
+            OnCompleted?.Invoke(gameObject);
+        }
+
+
+        /// <summary>
+        /// As confirmed so far, scene loading using Addressables does not function properly on mobile devices.
+        /// </summary>
         public async void LoadScene(string sceneName, UnityEngine.SceneManagement.LoadSceneMode loadSceneMode)
         {
             AsyncOperationHandle<SceneInstance> asyncOperationHandle = Addressables.LoadSceneAsync(sceneName, loadSceneMode);
