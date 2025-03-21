@@ -48,7 +48,7 @@ namespace UnityFramework.UI
         }
 
         private Dictionary<string, IUIAddressalbeHandle> unsafeLoads = new Dictionary<string, IUIAddressalbeHandle>();
-        
+
         enum LoadType
         {
             Safe,
@@ -164,6 +164,16 @@ namespace UnityFramework.UI
             }
         }
 
+
+        public void ReleaseUnsafeUI(object key)
+        {
+            string stringkey = (string)(key is IKeyEvaluator keyEvaluator ? keyEvaluator.RuntimeKey : key);
+            if (unsafeLoads.TryGetValue(stringkey, out IUIAddressalbeHandle uIAddressalbeHandle))
+            {
+                uIAddressalbeHandle.Release();
+                unsafeLoads.Remove(stringkey);
+            }
+        }
     }
 
 }
