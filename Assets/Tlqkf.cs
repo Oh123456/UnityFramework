@@ -19,7 +19,7 @@ public class Tlqkf : MonoBehaviour
     void Start()
     {
         AddressableManager.Instance.DownLoad();
-        AddressableManager.Instance.OnCompletedLoad += () =>
+        AddressableManager.Instance.OnAllCompletedLoad += () =>
         {
             Debug.Log("다운로드 완료 ");
         };

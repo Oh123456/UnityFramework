@@ -133,6 +133,7 @@ namespace UnityFramework.Addressable
         /// EditorValue
         /// </summary>
         public string editor_AssetKey;
+        public void SetEditorAssetKey(string key) => editor_AssetKey = key; 
 #endif
 
         public AddressableResourceHandle(AsyncOperationHandle<T> asyncOperationHandle)

@@ -10,16 +10,46 @@ using UnityFramework.Addressable.Managing;
 
 #if USE_ADDRESSABLE_TASK
 using System.Threading.Tasks;
+using TaksLables = System.Threading.Tasks.Task<long>;
 #else
 using Cysharp.Threading.Tasks;
+using TaksLables = Cysharp.Threading.Tasks.UniTask<long>;
 #endif
 
 namespace UnityFramework.Addressable
 {
+    public enum ByteUnit : long
+    {
+        B  = 1,
+        KB = 1024,
+        MB = 1024 * 1024,
+        GB = 1024 * 1024 * 1024,
+    }
+
     public struct AddressableDownLoadData
     {
         public AsyncOperationHandle handle;
         public string label;
+    }
+
+    public struct AddressableDownLoadUtility
+    {       
+        public static ByteUnit GetByteUnit(long downLoadSize)
+        {
+            if (downLoadSize < (long)ByteUnit.KB)
+                return ByteUnit.B;
+            if (downLoadSize < (long)ByteUnit.MB)
+                return ByteUnit.KB;
+            if (downLoadSize < (long)ByteUnit.GB)
+                return ByteUnit.MB;
+
+            return ByteUnit.GB;
+        }
+
+        public static float ToUnit(long downLoadSize, ByteUnit byteUnit)
+        {
+            return (float)downLoadSize / (float)byteUnit;
+        }
     }
 
     public partial class AddressableManager : Singleton.LazySingleton<AddressableManager>
@@ -27,13 +57,12 @@ namespace UnityFramework.Addressable
         public const string BUILD_LABELS_PATH = "Assets/Resources";
 
         public event Action OnAllCompletedLoad;
-        public event Action OnCompletedLoad;
         public event Action<AddressableDownLoadData> OnDownloadDependencies;
         public event Action<AddressableDownLoadData> OnDownload;
 
-        List<string> labelNames;
+        private event Action OnCompletedLoad;
 
-
+        AddressableBuildLabels addressableBuildLabels;
 
 #if UNITY_EDITOR
         public AddressableManager()
@@ -63,12 +92,60 @@ namespace UnityFramework.Addressable
 
 #endif
 
+        public async TaksLables CheckDownLoadBundle(List<string> customLabels = null)
+        {
+            AddressableLog("DouwnLoadCheck");
+            List<string> labels = CheckLabels(customLabels);
+            if (labels == null)
+                return 0;
+
+            AddressableLog($"SizeCheckLabel : {labels}");
+            var handle = Addressables.GetDownloadSizeAsync(labels);
+#if USE_ADDRESSABLE_TASK
+            await handle.Task; 
+#else
+            await handle.ToUniTask();
+#endif
+            long size = handle.Result;
+            Addressables.Release(handle);
+            return size;
+
+        }
+
+        public async void DownLoadBundle(List<string> downLoadLabels)
+        {
+            AddressableLog("Addressables Start");
+
+            List<string> labels = CheckLabels(downLoadLabels);
+            if (labels == null)
+                return ;
+
+            var handler = Addressables.DownloadDependenciesAsync(downLoadLabels);
+            this.OnDownload?.Invoke(new AddressableDownLoadData()
+            {
+                handle = handler,
+                label = downLoadLabels[0]
+            });
+
+#if USE_ADDRESSABLE_TASK
+            await handler.Task;
+#else
+            await handler.ToUniTask();
+#endif
+
+            DownladAddressable(handler);
+            Addressables.Release(handler);
+            CompleteAll();
+        }
+
         /// <summary>
         /// A function in Addressables that downloads remote asset bundles, storing them in the local cache via the network, allowing them to be loaded later. 
         /// </summary>
         /// <param name="customLabels">If the list of labels to download is set to null, all currently used labels are automatically detected, and the corresponding assets are downloaded. This allows necessary resources to be loaded without explicitly specifying labels.</param>
+        [System.Obsolete("Use DownLoadBundle")]
         public async void DownLoad(List<string> customLabels = null)
         {
+            List<string> labelNames;
             AddressableLog("Addressables Start");
             if (customLabels == null)
             {
@@ -80,14 +157,14 @@ namespace UnityFramework.Addressable
                     return;
                 }
 
-                this.labelNames = labels.Labels;
+                labelNames = labels.Labels;
             }
             else
             {
-                this.labelNames = customLabels;
+                labelNames = customLabels;
             }
 
-            int count = this.labelNames.Count;
+            int count = labelNames.Count;
             int downLoadCount = 0;
 
             System.Action downloadCallback = () =>
@@ -95,13 +172,12 @@ namespace UnityFramework.Addressable
                 ++downLoadCount;
                 if (downLoadCount >= count)
                 {
-                    OnAllCompletedLoad?.Invoke();
-                    OnAllCompletedLoad = null;
+                    CompleteAll();
                 }
             };
             for (int i = 0; i < count; i++)
             {
-                string label = this.labelNames[i];
+                string label = labelNames[i];
                 AddressableLog($"DownLabel : {label}");
                 var handle = Addressables.GetDownloadSizeAsync(label);
                 this.OnDownloadDependencies?.Invoke(new AddressableDownLoadData()
@@ -123,6 +199,31 @@ namespace UnityFramework.Addressable
             }
 
         }
+
+        private List<string> CheckLabels(List<string> customLabels)
+        {
+            List<string> labelNames = null;
+            if (customLabels == null)
+            {
+                if (addressableBuildLabels == null)
+                    addressableBuildLabels = Resources.Load<AddressableBuildLabels>(AddressableBuildLabels.NAME);
+
+                if (addressableBuildLabels == null)
+                {
+                    AddressableLog($"AddressableBuildLabels Not Found");
+                    return null;
+                }
+
+                labelNames = addressableBuildLabels.Labels;
+            }
+            else
+            {
+                labelNames = customLabels;
+            }
+
+            return labelNames;
+        }
+
 
 
         async void DownLoadAddressables(AsyncOperationHandle<long> completedHandler, string label)
@@ -180,16 +281,17 @@ namespace UnityFramework.Addressable
         void CompletedLoad()
         {
             this.OnCompletedLoad?.Invoke();
-            ClearEvents();
-        }
-
-        public void ClearEvents()
-        {
             this.OnCompletedLoad = null;
-            this.OnDownloadDependencies = null;
-            this.OnDownload = null;
         }
 
+        private void CompleteAll()
+        {
+            OnAllCompletedLoad?.Invoke();
+            OnAllCompletedLoad = null;
+            OnDownload = null;
+            OnDownloadDependencies = null;
+            OnCompletedLoad = null;
+        }
     }
 
 }
