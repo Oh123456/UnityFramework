@@ -10,7 +10,6 @@ namespace UnityFramework.AD
     public class RewardedAdController : RewardableAdController
     {
 #if UNITY_ANDROID
-        //private const string adUnitId = "ca-app-pub-8211238575744446/3080951728";
         private const string adUnitId = "ca-app-pub-3940256099942544/5224354917";
 #elif UNITY_IPHONE
         private const string adUnitId = "ca-app-pub-3940256099942544/1712485313";
@@ -37,7 +36,7 @@ namespace UnityFramework.AD
             {
                 if (error != null)
                 {
-                    ADLogError("Rewarded ad failed to load an ad with error : " + error);
+                    ADLogError($"Rewarded ad failed to load an ad with error : {error}");
                     return;
                 }
                 // 알 수 없는 이유로 작업이 실패한 경우.
@@ -47,7 +46,7 @@ namespace UnityFramework.AD
                     return;
                 }
 
-                ADLog("Rewarded ad loaded with response : " + ad.GetResponseInfo());
+                ADLog($"Rewarded ad loaded with response : {ad.GetResponseInfo()}");
                 rewardedAd = ad;
 
                 // 기능을 확장하려면 광고 이벤트에 등록하세요.

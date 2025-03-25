@@ -39,8 +39,7 @@ namespace UnityFramework.AD
                     // If the operation failed with a reason.
                     if (error != null)
                     {
-                        ADLogError("Rewarded interstitial ad failed to load an ad with error : "
-                                        + error);
+                        ADLogError($"Rewarded interstitial ad failed to load an ad with error : {error}");
                         return;
                     }
                     // If the operation failed for unknown reasons.
@@ -52,8 +51,7 @@ namespace UnityFramework.AD
                     }
 
                     // The operation completed successfully.
-                    ADLog("Rewarded interstitial ad loaded with response : "
-                        + ad.GetResponseInfo());
+                    ADLog($"Rewarded interstitial ad loaded with response : {ad.GetResponseInfo()}");
                     rewardedInterstitialAd = ad;
 
                     // Register to ad events to extend functionality.
