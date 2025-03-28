@@ -1,4 +1,4 @@
-using UnityEditor;
+ï»¿using UnityEditor;
 using UnityEditor.AddressableAssets.Settings;
 using UnityEditor.AddressableAssets.Build;
 using UnityEditor.AddressableAssets;
@@ -55,7 +55,7 @@ namespace AddressableEditor
 
             AddressableAssetSettings settings = AddressableAssetSettingsDefaultObject.Settings;
 
-            Debug.Log("¸ğµç Addressable ºôµå µ¥ÀÌÅÍ »èÁ¦...");
+            Debug.Log("ëª¨ë“  Addressable ë¹Œë“œ ë°ì´í„° ì‚­ì œ...");
             foreach (var builder in settings.DataBuilders)
             {
                 if (builder is IDataBuilder dataBuilder)
@@ -66,7 +66,7 @@ namespace AddressableEditor
             if (Directory.Exists(buildPath))
             {
                 Directory.Delete(buildPath, true);
-                Debug.Log($"Addressable ºôµå Æú´õ »èÁ¦ ¿Ï·á: {buildPath}");
+                Debug.Log($"Addressable ë¹Œë“œ í´ë” ì‚­ì œ ì™„ë£Œ: {buildPath}");
             }
 
             ClearCache(settings);

@@ -1,4 +1,4 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 
 using UnityEditor;
@@ -68,10 +68,10 @@ namespace AddressableEditor
         private readonly string[] menuItems = { "Unsafes", "Safes", "Options" };
         private readonly string[] IndicatorColors =
         {
-            $"<color=#{ColorUtility.ToHtmlStringRGB(Color.gray)}>¡Ü</color>",
-            $"<color=#{ColorUtility.ToHtmlStringRGB(Color.green)}>¡Ü</color>",
-            $"<color=#{ColorUtility.ToHtmlStringRGB(Color.red)}>¡Ü</color>" ,
-            $"<color=#{ColorUtility.ToHtmlStringRGB(Color.yellow)}>¡Ü</color>" ,
+            $"<color=#{ColorUtility.ToHtmlStringRGB(Color.gray)}>â—</color>",
+            $"<color=#{ColorUtility.ToHtmlStringRGB(Color.green)}>â—</color>",
+            $"<color=#{ColorUtility.ToHtmlStringRGB(Color.red)}>â—</color>" ,
+            $"<color=#{ColorUtility.ToHtmlStringRGB(Color.yellow)}>â—</color>" ,
         };
 
         public static void Clear()
@@ -130,11 +130,11 @@ namespace AddressableEditor
 
             GUILayout.BeginHorizontal();
 
-            // ¿ŞÂÊ ÆĞ³Î (¸ñÂ÷ / ³×ºñ°ÔÀÌ¼Ç)
+            // ì™¼ìª½ íŒ¨ë„ (ëª©ì°¨ / ë„¤ë¹„ê²Œì´ì…˜)
             GUILayout.BeginVertical(GUILayout.Width(splitWidth));
             leftScrollPos = GUILayout.BeginScrollView(leftScrollPos, GUILayout.ExpandHeight(true));
 
-            //GUILayout.Label("¸ñÂ÷", EditorStyles.boldLabel);
+            //GUILayout.Label("ëª©ì°¨", EditorStyles.boldLabel);
             GUILayout.Space(10.0f);
             for (int i = 0; i < menuItems.Length; i++)
             {
@@ -155,9 +155,9 @@ namespace AddressableEditor
 
             DrawLine(splitWidth, windowRect);
 
-            GUILayout.Space(splitterWidth); // ¼± ³Êºñ Ãß°¡
+            GUILayout.Space(splitterWidth); // ì„  ë„ˆë¹„ ì¶”ê°€
 
-            // ¿À¸¥ÂÊ ÆĞ³Î (¼±ÅÃÇÑ Ç×¸ñÀÇ »ó¼¼ Á¤º¸)
+            // ì˜¤ë¥¸ìª½ íŒ¨ë„ (ì„ íƒí•œ í•­ëª©ì˜ ìƒì„¸ ì •ë³´)
             GUILayout.BeginVertical(GUI.skin.box);
             rightScrollPos = GUILayout.BeginScrollView(rightScrollPos, GUILayout.ExpandHeight(true));
 
@@ -193,7 +193,7 @@ namespace AddressableEditor
         private void DrawLine(float splitWidth, Rect windowRect)
         {
             Rect splitterRect = new Rect(splitWidth, 0, splitterWidth, windowRect.height);
-            EditorGUI.DrawRect(splitterRect, new Color(0.4f, 0.4f, 0.4f, 1f)); // È¸»ö ¼± Ç¥½Ã
+            EditorGUI.DrawRect(splitterRect, new Color(0.4f, 0.4f, 0.4f, 1f)); // íšŒìƒ‰ ì„  í‘œì‹œ
             EditorGUIUtility.AddCursorRect(splitterRect, MouseCursor.ResizeHorizontal);
 
             if (Event.current.type == EventType.MouseDown && splitterRect.Contains(Event.current.mousePosition))
@@ -425,11 +425,11 @@ namespace AddressableEditor
             Object obj = AssetDatabase.LoadAssetAtPath<Object>(path);
             if (obj != null)
             {
-                AssetDatabase.OpenAsset(obj, line); // ÇØ´ç ÁÙ¿¡¼­ ¿­±â!
+                AssetDatabase.OpenAsset(obj, line); // í•´ë‹¹ ì¤„ì—ì„œ ì—´ê¸°!
             }
             else
             {
-                Debug.LogWarning($"ÆÄÀÏÀ» Ã£À» ¼ö ¾øÀ½: {path}");
+                Debug.LogWarning($"íŒŒì¼ì„ ì°¾ì„ ìˆ˜ ì—†ìŒ: {path}");
             }
         }
     }

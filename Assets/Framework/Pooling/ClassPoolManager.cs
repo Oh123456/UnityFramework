@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityFramework.PoolObject;
 
@@ -21,7 +21,7 @@ namespace UnityFramework.Pool.Manager
         {
             if (!FIndPool(poolObject.GetType(), out Pool pool))
             {
-                Debug.Log("�ӽ�");
+                Debug.Log("임시");
                 return;
             }
             if (isAutoDeactivate)

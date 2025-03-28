@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 
 using UnityEditor;
@@ -37,7 +37,7 @@ public class CanvasTemplateCreater
 
         if (guids.Length == 0)
         {
-            Debug.LogWarning("CanvasTemplate가 없습니다");
+            Debug.LogWarning("CanvasTemplate媛 ?놁뒿?덈떎");
             return;
         }
 

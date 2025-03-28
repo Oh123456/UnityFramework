@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 
 using UnityEngine;
@@ -38,7 +38,7 @@ namespace UnityFramework.Pool.Manager
             MonoBehaviour mono = (MonoBehaviour)poolObject;
             if (!FIndPool(mono, out Pool pool))
             {
-                Debug.Log("�ӽ�");
+                Debug.Log("임시");
                 return;
             }
             if (isAutoDeactivate)

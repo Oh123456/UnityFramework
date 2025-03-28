@@ -290,18 +290,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   curve:
     moveCurves:
-    - {x: 0.113333344, y: -0.74}
+    - {x: 0.2933333, y: -0.74666667}
     - {x: 0.6866666, y: 0.18666661}
     - {x: 0, y: 1}
     - {x: -1, y: 0}
     curveMode: 0
     curvePlayeMode: 2
     vector2CurveHanldeDatas:
-    - inHandle: {x: 1, y: 0}
-      outHandle: {x: -1, y: 0}
-    - inHandle: {x: 1, y: 0}
-      outHandle: {x: -1, y: 0}
     - inHandle: {x: 0, y: 0}
+      outHandle: {x: 1.86, y: -0.42}
+    - inHandle: {x: 0, y: 0}
+      outHandle: {x: -0.84, y: 1.13}
+    - inHandle: {x: -1.19, y: 0.29}
       outHandle: {x: 0, y: 0}
     - inHandle: {x: 0, y: 0}
       outHandle: {x: 0, y: 0}

@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 using UnityEngine;
 using UnityEngine.AddressableAssets;
@@ -31,7 +31,7 @@ namespace UnityFramework.Addressable.Managing
 
             IAddressableResource addressableResource = null;
 
-            // 없으면 추가
+            // ?놁쑝硫?異붽?
             if (!loadedResource.TryGetValue(assetKey, out addressableResource))
             {
                 AddressableManager.AddressableLog($"Loaded Addressable resource KeyCode : {assetKey}", Color.yellow);

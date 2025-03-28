@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityFramework.Pool.Manager;
 using UnityFramework.PoolObject;
 

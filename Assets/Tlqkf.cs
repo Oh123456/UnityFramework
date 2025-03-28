@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
@@ -21,7 +21,7 @@ public class Tlqkf : MonoBehaviour
         AddressableManager.Instance.DownLoad();
         AddressableManager.Instance.OnAllCompletedLoad += () =>
         {
-            Debug.Log("�ٿ�ε� �Ϸ� ");
+            Debug.Log("다운로드 완료 ");
         };
     }
 

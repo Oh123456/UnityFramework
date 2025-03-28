@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -15,9 +15,9 @@ namespace UnityFramework.UI
         }
 
         /// <summary>
-        /// 뒤로가기 버튼을 눌렀을떄
+        /// ?ㅻ줈媛湲?踰꾪듉???뚮??꾨뻹
         /// </summary>
-        /// <returns>true 반환시 뒤로가기 성공 false 일시 다른 무언가가 대신 꺼져야하는 상황</returns>
+        /// <returns>true 諛섑솚???ㅻ줈媛湲??깃났 false ?쇱떆 ?ㅻⅨ 臾댁뼵媛媛 ???爰쇱졇?쇳븯???곹솴</returns>
         public virtual bool ExecuteButton()
         {
             return true;

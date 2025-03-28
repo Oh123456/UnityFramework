@@ -1,4 +1,4 @@
-using System.Buffers;
+﻿using System.Buffers;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -14,8 +14,8 @@ using UnityFramework;
 public class Vector2CurveDrawer : PropertyDrawer
 {
     private const int BUTTON_SIZE = 100;
-    protected const int GRAPH_SIZE = 300; // 그래프 크기 (px)
-    protected const int GRAPH_SIZE_X = 500; // 그래프 크기 (px)
+    protected const int GRAPH_SIZE = 300; // 洹몃옒???ш린 (px)
+    protected const int GRAPH_SIZE_X = 500; // 洹몃옒???ш린 (px)
     protected const int LIST_SIZE_X = GRAPH_SIZE_X + 50;
     protected const string MOVEC_URVES = "moveCurves";
     private const string ADD_POINT = "Add Point";
@@ -23,7 +23,7 @@ public class Vector2CurveDrawer : PropertyDrawer
 
     protected const float xValue = 20.0f;
     protected const float yValue = 30.0f;
-    protected int selectedPointIndex = -1; // 선택된 점의 인덱스
+    protected int selectedPointIndex = -1; // ?좏깮???먯쓽 ?몃뜳??
     private Vector2 lastMousePos;
     private List<Vector2> smoothPoints = new List<Vector2>();
 
@@ -37,20 +37,20 @@ public class Vector2CurveDrawer : PropertyDrawer
 
         GUIContent gUIContent = new GUIContent();
 
-        // 라벨과 UI 그리기
+        // ?쇰꺼怨?UI 洹몃━湲?
         Rect foldoutRect = new Rect(position.x + 10.0f, position.y, position.width, EditorGUIUtility.singleLineHeight);
         property.isExpanded = EditorGUI.Foldout(foldoutRect, property.isExpanded, label);
 
         if (property.isExpanded)
         {
             EditorGUI.indentLevel++;
-            // color 필드
+            // color ?꾨뱶
             Rect graphRect = new Rect(position.x + xValue, position.y + yValue, GRAPH_SIZE, GRAPH_SIZE);
-            GUI.Box(graphRect, ""); // 그래프 배경
+            GUI.Box(graphRect, ""); // 洹몃옒??諛곌꼍
             GUI.Label(new Rect(position.x + xValue + 10.0f + GRAPH_SIZE, position.y + GRAPH_SIZE - 30.0f, GRAPH_SIZE, BUTTON_SIZE), $"SelectedPointIndex : {selectedPointIndex}");
             SerializedProperty curveProp = property.FindPropertyRelative(MOVEC_URVES);
             Rect posRect = new Rect(position.x, position.y + yValue + 10.0f, position.width, EditorGUIUtility.singleLineHeight);
-            DrawGraph(graphRect, curveProp, property); // 그래프 그리기
+            DrawGraph(graphRect, curveProp, property); // 洹몃옒??洹몃━湲?
             EditorGUI.PropertyField(new Rect(position.x, position.y + yValue + 20.0f + GRAPH_SIZE, LIST_SIZE_X, GRAPH_SIZE), curveProp, new GUIContent(MOVEC_URVES));
             ChildPropertys(position, property, label);
 
@@ -64,9 +64,9 @@ public class Vector2CurveDrawer : PropertyDrawer
 
     protected virtual void DrawGraph(Rect rect, SerializedProperty curveProp, SerializedProperty target)
     {
-        if (curveProp.arraySize < 2) return; // 최소한 두 개의 점이 있어야 선을 그림
+        if (curveProp.arraySize < 2) return; // 理쒖냼????媛쒖쓽 ?먯씠 ?덉뼱???좎쓣 洹몃┝
 
-        Handles.color = Color.black; // 선 색상 설정
+        Handles.color = Color.black; // ???됱긽 ?ㅼ젙
         List<Vector2> points = new List<Vector2>();
 
         Event e = Event.current;
@@ -87,7 +87,7 @@ public class Vector2CurveDrawer : PropertyDrawer
             Vector2 point = pointProp.vector2Value;
 
 
-            // 좌표계를 0~1 범위로 정규화하여 그래프에 맞게 변환
+            // 醫뚰몴怨꾨? 0~1 踰붿쐞濡??뺢퇋?뷀븯??洹몃옒?꾩뿉 留욊쾶 蹂??
             Vector2 graphPoint = new Vector2(
                 Mathf.Lerp(rect.x, rect.x + rect.width, (point.x + 1) * 0.5f),
                 Mathf.Lerp(rect.y + rect.height, rect.y, (point.y + 1) * 0.5f)
@@ -95,10 +95,10 @@ public class Vector2CurveDrawer : PropertyDrawer
 
             points.Add(graphPoint);
 
-            // 점을 선택 (마우스 클릭 감지)
+            // ?먯쓣 ?좏깮 (留덉슦???대┃ 媛먯?)
             if (e.type == EventType.MouseDown && e.button == 0)
             {
-                if (Vector2.Distance(lastMousePos, graphPoint) < 10f) // 클릭 감지 범위
+                if (Vector2.Distance(lastMousePos, graphPoint) < 10f) // ?대┃ 媛먯? 踰붿쐞
                 {
                     selectedPointIndex = i;
                     e.Use();
@@ -123,7 +123,7 @@ public class Vector2CurveDrawer : PropertyDrawer
 
             DrawDot(in rect, graphPoint, curveProp, i);
 
-            if (rect.Contains(e.mousePosition) && e.type == EventType.ContextClick) // 우클릭 감지
+            if (rect.Contains(e.mousePosition) && e.type == EventType.ContextClick) // ?고겢由?媛먯?
             {
                 GenericMenu menu = new GenericMenu();
                 menu.AddItem(addPointGUIContent, false, () => AddPoint(curveProp, rect));
@@ -134,7 +134,7 @@ public class Vector2CurveDrawer : PropertyDrawer
         }
 
         Handles.color = Color.green;
-        // 점들을 선으로 연결
+        // ?먮뱾???좎쑝濡??곌껐
 
         var list = GenerateCatmullRomSpline(rect, points);
 
@@ -179,7 +179,7 @@ public class Vector2CurveDrawer : PropertyDrawer
         else if (index == curveProp.arraySize - 1)
             Handles.color = Color.white;
         else
-            Handles.color = Color.gray; // 선 색상 설정
+            Handles.color = Color.gray; // ???됱긽 ?ㅼ젙
 
         if (Handles.Button(graphPoint, Quaternion.identity, 5, 10, Handles.CircleHandleCap))
         {
@@ -197,13 +197,13 @@ public class Vector2CurveDrawer : PropertyDrawer
     {
         Undo.RecordObject(property.serializedObject.targetObject, ADD_POINT);
 
-        // 마우스 클릭 위치를 그래프 내부 좌표로 변환
+        // 留덉슦???대┃ ?꾩튂瑜?洹몃옒???대? 醫뚰몴濡?蹂??
         Vector2 graphMousePos = new Vector2(
             Mathf.InverseLerp(graphRect.x, graphRect.x + GRAPH_SIZE, lastMousePos.x) * 2 - 1,
             Mathf.InverseLerp(graphRect.y + GRAPH_SIZE, graphRect.y, lastMousePos.y) * 2 - 1
         );
 
-        // 가장 가까운 두 점 찾기
+        // 媛??媛源뚯슫 ????李얘린
         int insertIndex = 0;
         float closestDist = float.MaxValue;
 
@@ -214,18 +214,18 @@ public class Vector2CurveDrawer : PropertyDrawer
             Vector2 v1 = p1.vector2Value;
             Vector2 v2 = p2.vector2Value;
 
-            // 마우스 위치가 두 점을 잇는 선분과 얼마나 가까운지 확인
+            // 留덉슦???꾩튂媛 ???먯쓣 ?뉖뒗 ?좊텇怨??쇰쭏??媛源뚯슫吏 ?뺤씤
             Vector2 projectedPoint = ClosestPointOnLineSegment(v1, v2, graphMousePos);
             float dist = Vector2.Distance(graphMousePos, projectedPoint);
 
             if (dist < closestDist)
             {
                 closestDist = dist;
-                insertIndex = i + 1; // 현재 위치 다음에 삽입
+                insertIndex = i + 1; // ?꾩옱 ?꾩튂 ?ㅼ쓬???쎌엯
             }
         }
 
-        // 리스트에 새 점 삽입
+        // 由ъ뒪?몄뿉 ?????쎌엯
         property.InsertArrayElementAtIndex(insertIndex);
         property.GetArrayElementAtIndex(insertIndex).vector2Value = graphMousePos;
 
@@ -235,12 +235,12 @@ public class Vector2CurveDrawer : PropertyDrawer
 
     protected virtual void AddCatmullRomSpline(in Rect rect, in List<Vector2> points, int i, List<Vector2> smoothPoints)
     {
-        // 시작과 끝에서 제어점 처리
+        // ?쒖옉怨??앹뿉???쒖뼱??泥섎━
         Vector2 p0 = (i == 0) ? points[i] : points[i - 1];
         Vector2 p1 = points[i];
         Vector2 p2 = points[i + 1];
         Vector2 p3 = (i == points.Count - 2) ? points[i + 1] : points[i + 2];
-        // 해당 구간을 세분화하여 부드러운 곡선 생성
+        // ?대떦 援ш컙???몃텇?뷀븯??遺?쒕윭??怨≪꽑 ?앹꽦
         for (int j = 0; j < 100; j++)
         {
             float t = j * 0.01f;// (float)resolution;                
@@ -274,12 +274,12 @@ public class Vector2CurveDrawer : PropertyDrawer
 
     public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
     {
-        float height = EditorGUIUtility.singleLineHeight; // 기본 높이
+        float height = EditorGUIUtility.singleLineHeight; // 湲곕낯 ?믪씠
         if (property.isExpanded)
         {
 
             height += PropertyHeight(property, MOVEC_URVES);
-            height += GRAPH_SIZE + 20; // 그래프 높이 추가
+            height += GRAPH_SIZE + 20; // 洹몃옒???믪씠 異붽?
 
         }
         return height + yValue;

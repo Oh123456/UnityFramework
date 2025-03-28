@@ -1,4 +1,4 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityFramework.Singleton;
@@ -15,9 +15,9 @@ namespace UnityFramework.Coroutine
         readonly WaitForEndOfFrame waitForEndOfFrame = new WaitForEndOfFrame();
         readonly WaitForFixedUpdate waitForFixedUpdate = new WaitForFixedUpdate();
 #endif
-        // º¸Åë ÀÌ ¸Å´ÏÀú¸¦ »ç¿ëÇÏ´Â ÁÖ¸ñÀûÀÌ±â¿¡ ¹Ù·Î »ı¼ºÇÑ´Ù
+        // ë³´í†µ ì´ ë§¤ë‹ˆì €ë¥¼ ì‚¬ìš©í•˜ëŠ” ì£¼ëª©ì ì´ê¸°ì— ë°”ë¡œ ìƒì„±í•œë‹¤
         Dictionary<float, WaitForSeconds> waitForSecondDictionary = new Dictionary<float, WaitForSeconds>();
-        //ÀÌ°Å´Â °ÅÀÇ °ÅÀÇ °ÅÀÇ »ç¿ë ¾ÈÇÏ±â¿¡ Lazy·Î ÃÊµ¿ ¸Ş¸ğ¸®¸¦ Àâ´Â´Ù
+        //ì´ê±°ëŠ” ê±°ì˜ ê±°ì˜ ê±°ì˜ ì‚¬ìš© ì•ˆí•˜ê¸°ì— Lazyë¡œ ì´ˆë™ ë©”ëª¨ë¦¬ë¥¼ ì¡ëŠ”ë‹¤
         System.Lazy<Dictionary<float, WaitForSecondsRealtime>> waitForSecondsRealtimeDictionary = new System.Lazy<Dictionary<float, WaitForSecondsRealtime>>(() => new Dictionary<float, WaitForSecondsRealtime>());
 
         public WaitForEndOfFrame WaitForEndOfFrame
@@ -39,7 +39,7 @@ namespace UnityFramework.Coroutine
         }
 
         /// <summary>
-        /// ÀúÀåµÈ WaitForSeconds ¸¦ °¡Á®¿É´Ï´Ù.
+        /// ì €ì¥ëœ WaitForSeconds ë¥¼ ê°€ì ¸ì˜µë‹ˆë‹¤.
         /// </summary>        
         public void WaitForSecond(float time, out WaitForSeconds waitForSeconds)
         {
@@ -51,7 +51,7 @@ namespace UnityFramework.Coroutine
         }
 
         /// <summary>
-        /// ÀúÀåµÈ WaitForSecondsRealtime ¸¦ °¡Á®¿É´Ï´Ù.
+        /// ì €ì¥ëœ WaitForSecondsRealtime ë¥¼ ê°€ì ¸ì˜µë‹ˆë‹¤.
         /// </summary>
         public void WaitForSecondsRealtime(float time, out WaitForSecondsRealtime waitForSecondsRealtime)
         {

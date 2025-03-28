@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 
 using UnityEditor;
@@ -94,12 +94,12 @@ public class Vector2CurveExtendedDrawer : Vector2CurveDrawer
             if (hanldeData != null)
             {
                 var inHandle = hanldeData.GetArrayElementAtIndex(i);
-                p1 = inHandle.FindPropertyRelative("outHandle").vector2Value;
-                p1 = new Vector2(Mathf.Lerp(-rect.width, rect.width, (1.0f + p1.x) * 0.5f), Mathf.Lerp(-rect.height, rect.height, (1.0f + p1.y) * 0.5f));
+                p1 = inHandle.FindPropertyRelative("outHandle").vector2Value * rect.width;
+                //p1 = new Vector2(Mathf.Lerp(-rect.width, rect.width, (1.0f + p1.x) * 0.5f), Mathf.Lerp(-rect.height, rect.height, (1.0f + p1.y) * 0.5f));
 
                 var outHandle = hanldeData.GetArrayElementAtIndex(i + 1);
-                p2 = outHandle.FindPropertyRelative("inHandle").vector2Value;
-                p2 = new Vector2(Mathf.Lerp(-rect.width, rect.width, (1.0f + p2.x) * 0.5f), Mathf.Lerp(-rect.height, rect.height, (1.0f + p2.y) * 0.5f));
+                p2 = outHandle.FindPropertyRelative("inHandle").vector2Value * rect.width;
+                //p2 = new Vector2(Mathf.Lerp(-rect.width, rect.width, (1.0f + p2.x) * 0.5f), Mathf.Lerp(-rect.height, rect.height, (1.0f + p2.y) * 0.5f));
             }
 
             for (int j = 0; j < 100; j++)

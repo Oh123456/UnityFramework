@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -19,15 +19,15 @@ namespace AddressableEditor
     {
         static AddressableBuildSetting currentAddressableBuildSetting;
 
-        // Ä³½Ã »èÁ¦
+        // ìºì‹œ ì‚­ì œ
         private static void ClearCache(AddressableAssetSettings settings)
         {
-            Debug.Log("±âÁ¸ Addressable ºôµå µ¥ÀÌÅÍ »èÁ¦...");
+            Debug.Log("ê¸°ì¡´ Addressable ë¹Œë“œ ë°ì´í„° ì‚­ì œ...");
             Caching.ClearCache();
             AddressableAssetSettings.CleanPlayerContent(settings.ActivePlayerDataBuilder);
         }
 
-        // ºôµå ½ÃÀÛ
+        // ë¹Œë“œ ì‹œì‘
         private static void BuildPlayerContent(AddressableAssetSettings settings)
         {
 
@@ -51,7 +51,7 @@ namespace AddressableEditor
 
 
 
-            Debug.Log("Addressable ºôµå ½ÃÀÛ...");
+            Debug.Log("Addressable ë¹Œë“œ ì‹œì‘...");
             AddressableAssetSettings.BuildPlayerContent(out AddressablesPlayerBuildResult result);
 
             if (result == null)
@@ -65,15 +65,15 @@ namespace AddressableEditor
 
             if (currentAddressableBuildSetting.BuildCompleteOpenFolder)
                 OpenBuilFolder(settings);
-            Debug.Log("Addressable ºôµå ¿Ï·á!");
+            Debug.Log("Addressable ë¹Œë“œ ì™„ë£Œ!");
         }
 
-        // ¾îµå·¹¼­ºí È®ÀÎ
+        // ì–´ë“œë ˆì„œë¸” í™•ì¸
         private static bool CheckAddressableSetting()
         {
             bool isSetting = AddressableAssetSettingsDefaultObject.SettingsExists;
             if (!isSetting)
-                Debug.LogError("Addressable ¼³Á¤ÀÌ Á¸ÀçÇÏÁö ¾Ê½À´Ï´Ù. ¸ÕÀú AddressableÀ» ¼³Á¤ÇÏ¼¼¿ä!");
+                Debug.LogError("Addressable ì„¤ì •ì´ ì¡´ì¬í•˜ì§€ ì•ŠìŠµë‹ˆë‹¤. ë¨¼ì € Addressableì„ ì„¤ì •í•˜ì„¸ìš”!");
             CheckBuildSetting();
             return isSetting;
         }
@@ -82,7 +82,7 @@ namespace AddressableEditor
         {
             if (!AssetDatabase.IsValidFolder(BUILD_SETTING_PATH))
             {
-                Debug.Log($"'{BUILD_SETTING_PATH}' Æú´õ°¡ ¾ø¾î »ı¼ºÇÕ´Ï´Ù.");
+                Debug.Log($"'{BUILD_SETTING_PATH}' í´ë”ê°€ ì—†ì–´ ìƒì„±í•©ë‹ˆë‹¤.");
                 Directory.CreateDirectory(BUILD_SETTING_PATH);
                 AssetDatabase.Refresh();
             }
@@ -91,7 +91,7 @@ namespace AddressableEditor
 
             if (currentAddressableBuildSetting == null)
                 currentAddressableBuildSetting = AssetDatabase.LoadAssetAtPath<AddressableBuildSetting>(fullName);
-            // ºôµå ¼¼ÆÃ ¸¸µé°í ÀúÀåÇÏ±â
+            // ë¹Œë“œ ì„¸íŒ… ë§Œë“¤ê³  ì €ì¥í•˜ê¸°
             if (currentAddressableBuildSetting == null)
             {
                 currentAddressableBuildSetting = ScriptableObject.CreateInstance<AddressableBuildSetting>();
@@ -121,7 +121,7 @@ namespace AddressableEditor
             }
             else
             {
-                Debug.LogError(" ÇöÀç ÇÃ·§Æû¿¡¼­ Æú´õ ¿­±â¸¦ Áö¿øÇÏÁö ¾Ê½À´Ï´Ù.");
+                Debug.LogError(" í˜„ì¬ í”Œë«í¼ì—ì„œ í´ë” ì—´ê¸°ë¥¼ ì§€ì›í•˜ì§€ ì•ŠìŠµë‹ˆë‹¤.");
             }
         }
 
@@ -146,7 +146,7 @@ namespace AddressableEditor
 
         private static void BuildClearFolder(AddressableAssetSettings settings)
         {
-            Debug.Log("Æú´õ Á¤¸®Áß.....");
+            Debug.Log("í´ë” ì •ë¦¬ì¤‘.....");
             try
             {
                 string buildPath = settings.RemoteCatalogBuildPath.GetValue(settings);
@@ -156,7 +156,7 @@ namespace AddressableEditor
                 foreach (string file in files)
                 {
                     File.Delete(file);
-                    Debug.LogWarning($"ÆÄÀÏ »èÁ¦ {file}");
+                    Debug.LogWarning($"íŒŒì¼ ì‚­ì œ {file}");
                 }
             }
             catch (System.Exception e)
@@ -194,8 +194,8 @@ namespace AddressableEditor
 
             foreach (Match match in matches)
             {
-                // ÀÓ½Ã
-                // ´Ù¸¥ ·êÀ» Àû¿ë½ÃÅ³ ¹æ¹ıÀº ÃßÈÄ¿¡..
+                // ì„ì‹œ
+                // ë‹¤ë¥¸ ë£°ì„ ì ìš©ì‹œí‚¬ ë°©ë²•ì€ ì¶”í›„ì—..
 
 
                 for (int i = 0; i < rules.Count; i++)
@@ -215,26 +215,26 @@ namespace AddressableEditor
 
             if (!Directory.Exists(buildPath))
             {
-                Debug.LogWarning($"{buildPath} ¿¡ °ªÀÌ ¾ø½À´Ï´Ù.");
+                Debug.LogWarning($"{buildPath} ì— ê°’ì´ ì—†ìŠµë‹ˆë‹¤.");
             }
             else
             {
                 if (!Directory.Exists(backUpPath))
                 {
                     Directory.CreateDirectory(backUpPath);
-                    Debug.Log($"´ë»ó Æú´õ »ı¼º: {backUpPath}");
+                    Debug.Log($"ëŒ€ìƒ í´ë” ìƒì„±: {backUpPath}");
                 }
 
-                // ºôµå ¿ÀºêÁ§Æ®
+                // ë¹Œë“œ ì˜¤ë¸Œì íŠ¸
                 string[] files = Directory.GetFiles(buildPath);
 
                 foreach (var file in files)
                 {
                     string newFileName = Path.Combine(backUpPath, Path.GetFileName(file));
 
-                    File.Copy(file, newFileName);  // ÆÄÀÏÀ» »õ·Î¿î ÀÌ¸§À¸·Î º¹»ç
+                    File.Copy(file, newFileName);  // íŒŒì¼ì„ ìƒˆë¡œìš´ ì´ë¦„ìœ¼ë¡œ ë³µì‚¬
                     if (isRemoveOrigin)
-                        File.Delete(file);  // ¿øº» ÆÄÀÏ »èÁ¦
+                        File.Delete(file);  // ì›ë³¸ íŒŒì¼ ì‚­ì œ
                 }
             }
 

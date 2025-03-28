@@ -1,4 +1,4 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using UnityEngine;
@@ -80,8 +80,8 @@ namespace UnityFramework.Pool
                     poolObject = CreateObject();
                 else
                     poolObject = objects.Pop();
-                // È¤½Ã¶óµµ »ı¼ºµÇÀÖ´Â¾Ö°¡ Ç®¿¡ µé¾î¿Í ÀÖÀ»°æ¿ì
-                // È¤Àº ¿ÀºêÁ§Æ®°¡ ³ÎÀÌ¶ó¸é
+                // í˜¹ì‹œë¼ë„ ìƒì„±ë˜ìˆëŠ”ì• ê°€ í’€ì— ë“¤ì–´ì™€ ìˆì„ê²½ìš°
+                // í˜¹ì€ ì˜¤ë¸Œì íŠ¸ê°€ ë„ì´ë¼ë©´
                 isValid = poolObject == null ? true : poolObject.IsValid();
             }
             return poolObject;

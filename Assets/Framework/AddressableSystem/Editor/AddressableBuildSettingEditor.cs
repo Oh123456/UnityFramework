@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Buffers;
 using System.Collections;
 using System.Collections.Generic;
@@ -260,21 +260,21 @@ namespace AddressableEditor
             EditorGUI.indentLevel--;
             EditorGUILayout.Space(7.0f + popupHeight);
 
-            PropertyField(buildCompleteOpenFolder, "ºôµå ¿Ï·áÈÄ ºôµå Æú´õ ¿­±â");
-            PropertyField(buildCilerFolder, "ºôµå½Ã ºôµå Æú´õ »èÁ¦");
+            PropertyField(buildCompleteOpenFolder, "ë¹Œë“œ ì™„ë£Œí›„ ë¹Œë“œ í´ë” ì—´ê¸°");
+            PropertyField(buildCilerFolder, "ë¹Œë“œì‹œ ë¹Œë“œ í´ë” ì‚­ì œ");
 
             var option = (AddressableBuildSetting.BuildClearOptionFlags)(buildCilerFolder.Property.intValue);
             if (option.HasFlag(AddressableBuildSetting.BuildClearOptionFlags.BackUp))
             {
                 EditorGUI.indentLevel++;
-                PropertyField(backUpPath, "¹é¾÷ À§Ä¡");
-                PropertyField(backUpFoliderNameRulesTpye, "¹é¾÷ Æú´õ ÀÌ¸§ Å¸ÀÔ");
+                PropertyField(backUpPath, "ë°±ì—… ìœ„ì¹˜");
+                PropertyField(backUpFoliderNameRulesTpye, "ë°±ì—… í´ë” ì´ë¦„ íƒ€ì…");
                 EditorGUI.indentLevel++;
                 EditorGUILayout.Space(3.0f);
                 bool isDefulat = backUpFoliderNameRulesTpye.Property.intValue == (int)AddressableBuildSetting.BackUpFoliderNameRulesTpye.Default;
                 GUI.enabled = !isDefulat;
-                PropertyField(backUpFodierNameRule, "¹é¾÷ Æú´õ ÀÌ¸§ ±ÔÄ¢");
-                PropertyField(addressablePatternRules, "¹é¾÷ Æú´õ ÀÌ¸§ ±ÔÄ¢ ÆĞÅÏ");
+                PropertyField(backUpFodierNameRule, "ë°±ì—… í´ë” ì´ë¦„ ê·œì¹™");
+                PropertyField(addressablePatternRules, "ë°±ì—… í´ë” ì´ë¦„ ê·œì¹™ íŒ¨í„´");
                 GUI.enabled = true;
                 EditorGUI.indentLevel--;
                 EditorGUI.indentLevel--;
@@ -306,7 +306,7 @@ namespace AddressableEditor
 
             #region Debugs
             DrawTitle("Debugs");
-            PropertyField(assetBundleBuildResults, "ºôµå ¿Ï·á ·Î±× È°¼ºÈ­");
+            PropertyField(assetBundleBuildResults, "ë¹Œë“œ ì™„ë£Œ ë¡œê·¸ í™œì„±í™”");
 
 
             var DataBuilders = settings.DataBuilders;
@@ -458,7 +458,7 @@ namespace AddressableEditor
                 var schema = group.GetSchema<BundledAssetGroupSchema>();
                 if (schema == null) continue;
 
-                // ÇöÀç ¼±ÅÃµÈ ÇÁ·ÎÆÄÀÏ º¯¼ö¸í °¡Á®¿À±â
+                // í˜„ì¬ ì„ íƒëœ í”„ë¡œíŒŒì¼ ë³€ìˆ˜ëª… ê°€ì ¸ì˜¤ê¸°
                 string buildPathValue = schema.BuildPath.GetValue(settings);
                 if (removetString.Contains(buildPathValue))
                     remoteQueue.Enqueue(group);
@@ -513,7 +513,7 @@ namespace AddressableEditor
 
                     schema.BuildPath.SetVariableByName(settings, "Remote.BuildPath");
                     schema.LoadPath.SetVariableByName(settings, "Remote.LoadPath");
-                    Debug.Log($"Group '{group.Name}'À»(¸¦) Remote·Î º¯°æ");
+                    Debug.Log($"Group '{group.Name}'ì„(ë¥¼) Remoteë¡œ ë³€ê²½");
 
                     Undo.RegisterCompleteObjectUndo(group, $"Groups to Remote");
                     EditorUtility.SetDirty(group);

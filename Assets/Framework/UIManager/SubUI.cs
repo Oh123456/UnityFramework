@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -23,7 +23,7 @@ namespace UnityFramework.UI
         }
 
         [SerializeField] UIBase parentUI;
-        [SerializeField][Tooltip("Auto → Automatically shows when the Root is shown. \nCustom → Remains hidden even when the Root is shown; the user must manually show it.")] ShowType showType = ShowType.Auto;
+        [SerializeField][Tooltip("Auto ??Automatically shows when the Root is shown. \nCustom ??Remains hidden even when the Root is shown; the user must manually show it.")] ShowType showType = ShowType.Auto;
 
         protected override void Reset()
         {

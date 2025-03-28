@@ -1,4 +1,4 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -9,9 +9,9 @@ namespace AddressableEditor
         const string BUILD_SETTING_PATH = "Assets/Editor";
         const string BUILD_SETTING_NAME = "AddressableBuildSetting.asset";
 
-        const string BUILD_WARNING = "The IsBuildCilerFolder option is enabled in Editor/AddressableBuildSetting.\r\nDuring the build process, everything except the folder will be deleted before building. \r\n\n Editor/AddressableBuildSetting¿¡ IsBuildCilerFolder ¿É¼ÇÀÌ È°¼ºÈ­°¡ µµÀÖ½À´Ï´Ù. \r\nºôµå½Ã Æú´õ¸¦ Á¦¿ÜÇÏ°í ÀüºÎ »èÁ¦µÈÈÄ ºôµåÇÕ´Ï´Ù.";
-        const string BUILD_BACKUP_PATH_WARNING = "The backUpPath value in Editor/AddressableBuildSetting is empty.\r\nIn this case, the process will automatically proceed in the Documents folder. \r\n\n Editor/AddressableBuildSetting¿¡ backUpPath °ªÀÌ ºñ¾î ÀÖ½À´Ï´Ù.\r\nÀÌ °æ¿ì ¹®¼­ Æú´õ¿¡ ÀÚµ¿À¸·Î ÁøÇàµË´Ï´Ù. ";
-        const string BUILD_BACKUP_RULE_WARNING = "The backUpFolderNameRule value in Editor/AddressableBuildSetting is empty.\r\nIn this case, the current time will be automatically applied. \r\n\n Editor/AddressableBuildSetting¿¡ backUpFodierNameRule °ªÀÌ ºñ¾î ÀÖ½À´Ï´Ù. \r\nÀÌ °æ¿ì ÇöÀç ½Ã°¢À¸·Î ÀÚµ¿À¸·Î Àû¿ëµË´Ï´Ù.";
+        const string BUILD_WARNING = "The IsBuildCilerFolder option is enabled in Editor/AddressableBuildSetting.\r\nDuring the build process, everything except the folder will be deleted before building. \r\n\n Editor/AddressableBuildSettingì— IsBuildCilerFolder ì˜µì…˜ì´ í™œì„±í™”ê°€ ë„ìˆìŠµë‹ˆë‹¤. \r\në¹Œë“œì‹œ í´ë”ë¥¼ ì œì™¸í•˜ê³  ì „ë¶€ ì‚­ì œëœí›„ ë¹Œë“œí•©ë‹ˆë‹¤.";
+        const string BUILD_BACKUP_PATH_WARNING = "The backUpPath value in Editor/AddressableBuildSetting is empty.\r\nIn this case, the process will automatically proceed in the Documents folder. \r\n\n Editor/AddressableBuildSettingì— backUpPath ê°’ì´ ë¹„ì–´ ìˆìŠµë‹ˆë‹¤.\r\nì´ ê²½ìš° ë¬¸ì„œ í´ë”ì— ìë™ìœ¼ë¡œ ì§„í–‰ë©ë‹ˆë‹¤. ";
+        const string BUILD_BACKUP_RULE_WARNING = "The backUpFolderNameRule value in Editor/AddressableBuildSetting is empty.\r\nIn this case, the current time will be automatically applied. \r\n\n Editor/AddressableBuildSettingì— backUpFodierNameRule ê°’ì´ ë¹„ì–´ ìˆìŠµë‹ˆë‹¤. \r\nì´ ê²½ìš° í˜„ì¬ ì‹œê°ìœ¼ë¡œ ìë™ìœ¼ë¡œ ì ìš©ë©ë‹ˆë‹¤.";
 
     }
 

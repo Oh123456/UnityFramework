@@ -1,4 +1,4 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 
 
@@ -85,7 +85,7 @@ namespace UnityFramework.Addressable.Editor
 #endif
                 if (loadResource.Status != AsyncOperationStatus.Succeeded && loadResource.Result.Count <= 0)
                 {
-                    AddressableManager.AddressableLog(" ÀÌ Addressable ¿¡¼ÂÀº ÇÁ·ÎÁ§Æ® ³»ºÎ¿¡ ¾øÀ½.", Color.red);
+                    AddressableManager.AddressableLog(" ì´ Addressable ì—ì…‹ì€ í”„ë¡œì íŠ¸ ë‚´ë¶€ì— ì—†ìŒ.", Color.red);
                     return;
                 }
 
@@ -124,11 +124,11 @@ namespace UnityFramework.Addressable.Editor
                         OnUpdated?.Invoke();
                     }
 
-                    AddressableManager.AddressableLog($"Addressable ¿¡¼ÂÀÇ GUID: {assetGUID}", Color.yellow);
+                    AddressableManager.AddressableLog($"Addressable ì—ì…‹ì˜ GUID: {assetGUID}", Color.yellow);
                 }
                 else
                 {
-                    AddressableManager.AddressableLog(" ÀÌ Addressable ¿¡¼ÂÀº ÇÁ·ÎÁ§Æ® ³»ºÎ¿¡ ¾øÀ½.", Color.red);
+                    AddressableManager.AddressableLog(" ì´ Addressable ì—ì…‹ì€ í”„ë¡œì íŠ¸ ë‚´ë¶€ì— ì—†ìŒ.", Color.red);
                 }
             };
         }
@@ -146,7 +146,7 @@ namespace UnityFramework.Addressable.Editor
                 data.loadCount--;
                 OnUpdated?.Invoke();
 
-                AddressableManager.AddressableLog($"Addressable ¿¡¼ÂÀÇ GUID: {assetKey}", Color.yellow);
+                AddressableManager.AddressableLog($"Addressable ì—ì…‹ì˜ GUID: {assetKey}", Color.yellow);
             }
         }
 
@@ -210,7 +210,7 @@ namespace UnityFramework.Addressable.Editor
         public string name;
         public int loadCount = 0;
         /// <summary>
-        /// ¿¡µğÅÍ¿ë
+        /// ì—ë””í„°ìš©
         /// </summary>
         public bool foldout = false;
         public List<bool> foldouts = new List<bool>(2) { false, false };

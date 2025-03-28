@@ -1,4 +1,4 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 
 using UnityEngine;
@@ -49,7 +49,7 @@ namespace UnityFramework
 
                     int cycle = (int)t;
                     float frac = t - cycle;
-                    // ºñÆ® ¿¬»êÀ¸·Î È¦¼ö Â¦¼ö °Ë»ç
+                    // ë¹„íŠ¸ ì—°ì‚°ìœ¼ë¡œ í™€ìˆ˜ ì§ìˆ˜ ê²€ì‚¬
                     t = (cycle & 1) == 1 ? 1.0f - frac : frac;
                     break;
 

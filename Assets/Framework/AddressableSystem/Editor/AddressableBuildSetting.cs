@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Collections.Generic;
 using System.IO;
 
@@ -134,7 +134,7 @@ namespace AddressableEditor
 
                 if (script == null)
                     continue;
-                // Æ¯Á¤ ÆÄÀÏ¸í°ú ÀÏÄ¡ÇÏ´Â °æ¿ì¸¸ Ãß°¡
+                // íŠ¹ì • íŒŒì¼ëª…ê³¼ ì¼ì¹˜í•˜ëŠ” ê²½ìš°ë§Œ ì¶”ê°€
                 for (int j = 0; j < scriptNames.Length; j++)
                 {
                     string name = $"{script.name}.cs";
@@ -176,7 +176,7 @@ namespace AddressableEditor
                 Resources.UnloadAsset(lastAddressableBuildLabels);
             if (!AssetDatabase.IsValidFolder(AddressableManager.BUILD_LABELS_PATH))
             {
-                Debug.Log($"'{AddressableManager.BUILD_LABELS_PATH}' Æú´õ°¡ ¾ø¾î »ı¼ºÇÕ´Ï´Ù.");
+                Debug.Log($"'{AddressableManager.BUILD_LABELS_PATH}' í´ë”ê°€ ì—†ì–´ ìƒì„±í•©ë‹ˆë‹¤.");
                 Directory.CreateDirectory(AddressableManager.BUILD_LABELS_PATH);
                 AssetDatabase.Refresh();
             }

@@ -1,4 +1,4 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using UnityFramework.PoolObject;
 
 namespace UnityFramework.Pool.Test
@@ -11,19 +11,19 @@ namespace UnityFramework.Pool.Test
         public TestClass()
         {
             index = count++;
-            Debug.Log($"»ı¼º {index}");
+            Debug.Log($"ìƒì„± {index}");
         }
 
         public override void Activate()
         {
             base.Activate();
-            Debug.Log($"È°¼ºÈ­ {index}");
+            Debug.Log($"í™œì„±í™” {index}");
         }
 
         public override void Deactivate()
         {
             base.Deactivate();
-            Debug.Log($"ºñÈ°¼ºÈ­ {index}");
+            Debug.Log($"ë¹„í™œì„±í™” {index}");
         }
     }
 
@@ -35,19 +35,19 @@ namespace UnityFramework.Pool.Test
         public TestClass2()
         {
             index = count++;
-            Debug.Log($"2 »ı¼º {index}");
+            Debug.Log($"2 ìƒì„± {index}");
         }
 
         public override void Activate()
         {
             base.Activate();
-            Debug.Log($"2 È°¼ºÈ­ {index}");
+            Debug.Log($"2 í™œì„±í™” {index}");
         }
 
         public override void Deactivate()
         {
             base.Deactivate();
-            Debug.Log($"2 ºñÈ°¼ºÈ­ {index}");
+            Debug.Log($"2 ë¹„í™œì„±í™” {index}");
         }
     }
 }
