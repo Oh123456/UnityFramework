@@ -290,10 +290,63 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   curve:
     moveCurves:
-    - {x: 1, y: -1}
-    - {x: -1, y: 0.9666667}
-    - {x: 1, y: 1}
+    - {x: 0.113333344, y: -0.74}
+    - {x: 0.6866666, y: 0.18666661}
+    - {x: 0, y: 1}
+    - {x: -1, y: 0}
+    curveMode: 0
     curvePlayeMode: 2
+    vector2CurveHanldeDatas:
+    - inHandle: {x: 1, y: 0}
+      outHandle: {x: -1, y: 0}
+    - inHandle: {x: 1, y: 0}
+      outHandle: {x: -1, y: 0}
+    - inHandle: {x: 0, y: 0}
+      outHandle: {x: 0, y: 0}
+    - inHandle: {x: 0, y: 0}
+      outHandle: {x: 0, y: 0}
+  curves:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 0.2743319
+      value: 0.5040072
+      inSlope: 2.5046377
+      outSlope: 2.5046377
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.3850133
+    - serializedVersion: 3
+      time: 0.43878388
+      value: 0.51210225
+      inSlope: Infinity
+      outSlope: Infinity
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 2
+      outSlope: 2
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   time: 0
 --- !u!1 &1751378799
 GameObject:

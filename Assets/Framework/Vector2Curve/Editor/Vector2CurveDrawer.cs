@@ -9,24 +9,27 @@ using UnityEngine;
 using UnityFramework;
 
 
+
 [CustomPropertyDrawer(typeof(Vector2Curve), true)]
 public class Vector2CurveDrawer : PropertyDrawer
 {
     private const int BUTTON_SIZE = 100;
-    private const int GRAPH_SIZE = 300; // 그래프 크기 (px)
-    private const int GRAPH_SIZE_X = 500; // 그래프 크기 (px)
-    private const string MOVEC_URVES = "moveCurves";
-    private const string ADD_POINT = "Add Point";    
-    private const string CURVE_MODE = "curveMode";    
+    protected const int GRAPH_SIZE = 300; // 그래프 크기 (px)
+    protected const int GRAPH_SIZE_X = 500; // 그래프 크기 (px)
+    protected const int LIST_SIZE_X = GRAPH_SIZE_X + 50;
+    protected const string MOVEC_URVES = "moveCurves";
+    private const string ADD_POINT = "Add Point";
     private GUIContent addPointGUIContent = new GUIContent(ADD_POINT);
 
-    private const float xValue = 20.0f;
-    private const float yValue = 30.0f;
-    private int selectedPointIndex = -1; // 선택된 점의 인덱스
+    protected const float xValue = 20.0f;
+    protected const float yValue = 30.0f;
+    protected int selectedPointIndex = -1; // 선택된 점의 인덱스
     private Vector2 lastMousePos;
     private List<Vector2> smoothPoints = new List<Vector2>();
 
     private bool showRealCure = false;
+
+
 
     public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
     {
@@ -48,13 +51,9 @@ public class Vector2CurveDrawer : PropertyDrawer
             SerializedProperty curveProp = property.FindPropertyRelative(MOVEC_URVES);
             Rect posRect = new Rect(position.x, position.y + yValue + 10.0f, position.width, EditorGUIUtility.singleLineHeight);
             DrawGraph(graphRect, curveProp, property); // 그래프 그리기
-            EditorGUI.PropertyField(new Rect(position.x, position.y + yValue + 20.0f + GRAPH_SIZE, GetPropertyHeight(property, null), GRAPH_SIZE), curveProp, new GUIContent(MOVEC_URVES));
-
-            SerializedProperty modeProp = property.FindPropertyRelative(CURVE_MODE);
-            EditorGUILayout.PropertyField(modeProp);
-
-            //modeProp.enu
+            EditorGUI.PropertyField(new Rect(position.x, position.y + yValue + 20.0f + GRAPH_SIZE, LIST_SIZE_X, GRAPH_SIZE), curveProp, new GUIContent(MOVEC_URVES));
             ChildPropertys(position, property, label);
+
             EditorGUI.indentLevel--;
         }
 
@@ -63,8 +62,7 @@ public class Vector2CurveDrawer : PropertyDrawer
         EditorGUI.EndProperty();
     }
 
-
-    private void DrawGraph(Rect rect, SerializedProperty curveProp, SerializedProperty target)
+    protected virtual void DrawGraph(Rect rect, SerializedProperty curveProp, SerializedProperty target)
     {
         if (curveProp.arraySize < 2) return; // 최소한 두 개의 점이 있어야 선을 그림
 
@@ -105,10 +103,14 @@ public class Vector2CurveDrawer : PropertyDrawer
                     selectedPointIndex = i;
                     e.Use();
                 }
+                else if (rect.Contains(lastMousePos))
+                {
+                    selectedPointIndex = -1;
+                }
 
             }
 
-            if (selectedPointIndex == i && e.type == EventType.MouseDrag)
+            if (rect.Contains(lastMousePos) && selectedPointIndex == i && e.type == EventType.MouseDrag)
             {
                 Vector2 newPoint = new Vector2(
                     Mathf.InverseLerp(rect.x, rect.x + rect.width, lastMousePos.x) * 2 - 1,
@@ -119,20 +121,7 @@ public class Vector2CurveDrawer : PropertyDrawer
                 e.Use();
             }
 
-            if (selectedPointIndex == i)
-                Handles.color = Color.red;
-            else if (i == 0)
-                Handles.color = Color.blue;
-            else if (i == curveProp.arraySize - 1)
-                Handles.color = Color.white;
-            else
-                Handles.color = Color.gray; // 선 색상 설정
-
-            if (Handles.Button(graphPoint, Quaternion.identity, 5, 10, Handles.CircleHandleCap))
-            {
-                selectedPointIndex = i;
-            }
-
+            DrawDot(in rect, graphPoint, curveProp, i);
 
             if (rect.Contains(e.mousePosition) && e.type == EventType.ContextClick) // 우클릭 감지
             {
@@ -147,11 +136,10 @@ public class Vector2CurveDrawer : PropertyDrawer
         Handles.color = Color.green;
         // 점들을 선으로 연결
 
-        var list = GenerateCatmullRomSpline(points);
+        var list = GenerateCatmullRomSpline(rect, points);
 
         for (int i = 0; i < list.Count - 1; i++)
         {
-            //Handles.DrawAAPolyLine(points[i], points[i + 1]);
             Handles.DrawLine(list[i], list[i + 1]);
         }
 
@@ -182,9 +170,27 @@ public class Vector2CurveDrawer : PropertyDrawer
 
     }
 
+    protected virtual void DrawDot(in Rect rect, Vector2 graphPoint, SerializedProperty curveProp, int index)
+    {
+        if (selectedPointIndex == index)
+            Handles.color = Color.red;
+        else if (index == 0)
+            Handles.color = Color.blue;
+        else if (index == curveProp.arraySize - 1)
+            Handles.color = Color.white;
+        else
+            Handles.color = Color.gray; // 선 색상 설정
+
+        if (Handles.Button(graphPoint, Quaternion.identity, 5, 10, Handles.CircleHandleCap))
+        {
+            selectedPointIndex = index;
+        }
+
+    }
+
     protected virtual void ChildPropertys(Rect position, SerializedProperty property, GUIContent label)
     {
-        
+
     }
 
     void AddPoint(SerializedProperty property, Rect graphRect)
@@ -227,24 +233,27 @@ public class Vector2CurveDrawer : PropertyDrawer
 
     }
 
-    private List<Vector2> GenerateCatmullRomSpline(List<Vector2> points /*int resolution*/)
+    protected virtual void AddCatmullRomSpline(in Rect rect, in List<Vector2> points, int i, List<Vector2> smoothPoints)
+    {
+        // 시작과 끝에서 제어점 처리
+        Vector2 p0 = (i == 0) ? points[i] : points[i - 1];
+        Vector2 p1 = points[i];
+        Vector2 p2 = points[i + 1];
+        Vector2 p3 = (i == points.Count - 2) ? points[i + 1] : points[i + 2];
+        // 해당 구간을 세분화하여 부드러운 곡선 생성
+        for (int j = 0; j < 100; j++)
+        {
+            float t = j * 0.01f;// (float)resolution;                
+            smoothPoints.Add(Vector2Curve.CatmullRom(p0, p1, p2, p3, t));
+        }
+    }
+
+    private List<Vector2> GenerateCatmullRomSpline(in Rect rect, List<Vector2> points /*int resolution*/)
     {
         smoothPoints.Clear();
-
         for (int i = 0; i < points.Count - 1; i++)
         {
-            // 시작과 끝에서 제어점 처리
-            Vector2 p0 = (i == 0) ? points[i] : points[i - 1];
-            Vector2 p1 = points[i];
-            Vector2 p2 = points[i + 1];
-            Vector2 p3 = (i == points.Count - 2) ? points[i + 1] : points[i + 2];
-
-            // 해당 구간을 세분화하여 부드러운 곡선 생성
-            for (int j = 0; j < 100; j++)
-            {
-                float t = j * 0.01f;// (float)resolution;                
-                smoothPoints.Add(Vector2Curve.CatmullRom(p0, p1, p2, p3, t));
-            }
+            AddCatmullRomSpline(rect, points, i, smoothPoints);
         }
         return smoothPoints;
     }
@@ -276,9 +285,9 @@ public class Vector2CurveDrawer : PropertyDrawer
         return height + yValue;
     }
 
-    float PropertyHeight(SerializedProperty property , string propertyName)
-    { 
-        SerializedProperty pointsProp = property.FindPropertyRelative(MOVEC_URVES);
+    protected float PropertyHeight(SerializedProperty property, string propertyName)
+    {
+        SerializedProperty pointsProp = property.FindPropertyRelative(propertyName);
 
         return EditorGUI.GetPropertyHeight(pointsProp, true);
     }

@@ -10,7 +10,7 @@ public class Vector2CureTest : MonoBehaviour
     [SerializeField] Vector2CurveExtended curve;
     [SerializeField] AnimationCurve curves;
     [SerializeField] float time = 0.0f;
-    [SerializeField] protected Vector2CurveKeyFrame[] test;
+   
     private void Start()
     {
         StartCoroutine(DrawLine());
