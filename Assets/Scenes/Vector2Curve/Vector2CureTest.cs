@@ -42,16 +42,16 @@ public class Vector2CureTest : MonoBehaviour
 
         float time = 0.0f;
         int segment = 1000;
-        float t = 1 / segment;
+        float t = 1.0f / (float)segment;
         Vector3 start = curve.Evaluate(0.0f);
         for (int i = 1; i < segment; i++)
         {
-            time += t * i;
+            time = t * i;
             Vector3 end = curve.Evaluate(time);
 
             Gizmos.color = Color.red;
             Gizmos.DrawLine(start, end);
-            end = start;
+            start = end ;
         }
     }
 }

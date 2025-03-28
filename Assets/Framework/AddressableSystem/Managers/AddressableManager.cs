@@ -112,7 +112,7 @@ namespace UnityFramework.Addressable
 
         }
 
-        public async void DownLoadBundle(List<string> downLoadLabels)
+        public async void DownLoadBundle(List<string> downLoadLabels = null)
         {
             AddressableLog("Addressables Start");
 
@@ -120,11 +120,11 @@ namespace UnityFramework.Addressable
             if (labels == null)
                 return ;
 
-            var handler = Addressables.DownloadDependenciesAsync(downLoadLabels);
+            var handler = Addressables.DownloadDependenciesAsync(labels, Addressables.MergeMode.Union);
             this.OnDownload?.Invoke(new AddressableDownLoadData()
             {
                 handle = handler,
-                label = downLoadLabels[0]
+                label = labels[0]
             });
 
 #if USE_ADDRESSABLE_TASK

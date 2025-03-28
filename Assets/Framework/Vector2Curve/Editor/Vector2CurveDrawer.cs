@@ -87,7 +87,7 @@ public class Vector2CurveDrawer : PropertyDrawer
             Vector2 point = pointProp.vector2Value;
 
 
-            // 醫뚰몴怨꾨? 0~1 踰붿쐞濡??뺢퇋?뷀븯??洹몃옒?꾩뿉 留욊쾶 蹂??
+            // 그래프를 정규화 
             Vector2 graphPoint = new Vector2(
                 Mathf.Lerp(rect.x, rect.x + rect.width, (point.x + 1) * 0.5f),
                 Mathf.Lerp(rect.y + rect.height, rect.y, (point.y + 1) * 0.5f)
@@ -98,7 +98,7 @@ public class Vector2CurveDrawer : PropertyDrawer
             // ?먯쓣 ?좏깮 (留덉슦???대┃ 媛먯?)
             if (e.type == EventType.MouseDown && e.button == 0)
             {
-                if (Vector2.Distance(lastMousePos, graphPoint) < 10f) // ?대┃ 媛먯? 踰붿쐞
+                if (Vector2.Distance(lastMousePos, graphPoint) < 10f) // 버튼 클릭 범위
                 {
                     selectedPointIndex = i;
                     e.Use();
@@ -123,7 +123,7 @@ public class Vector2CurveDrawer : PropertyDrawer
 
             DrawDot(in rect, graphPoint, curveProp, i);
 
-            if (rect.Contains(e.mousePosition) && e.type == EventType.ContextClick) // ?고겢由?媛먯?
+            if (rect.Contains(e.mousePosition) && e.type == EventType.ContextClick) // 마우스 클릭
             {
                 GenericMenu menu = new GenericMenu();
                 menu.AddItem(addPointGUIContent, false, () => AddPoint(curveProp, rect));
@@ -134,7 +134,7 @@ public class Vector2CurveDrawer : PropertyDrawer
         }
 
         Handles.color = Color.green;
-        // ?먮뱾???좎쑝濡??곌껐
+        // 선그리기
 
         var list = GenerateCatmullRomSpline(rect, points);
 
@@ -197,7 +197,7 @@ public class Vector2CurveDrawer : PropertyDrawer
     {
         Undo.RecordObject(property.serializedObject.targetObject, ADD_POINT);
 
-        // 留덉슦???대┃ ?꾩튂瑜?洹몃옒???대? 醫뚰몴濡?蹂??
+        // 그래프를 정규화
         Vector2 graphMousePos = new Vector2(
             Mathf.InverseLerp(graphRect.x, graphRect.x + GRAPH_SIZE, lastMousePos.x) * 2 - 1,
             Mathf.InverseLerp(graphRect.y + GRAPH_SIZE, graphRect.y, lastMousePos.y) * 2 - 1
@@ -235,12 +235,12 @@ public class Vector2CurveDrawer : PropertyDrawer
 
     protected virtual void AddCatmullRomSpline(in Rect rect, in List<Vector2> points, int i, List<Vector2> smoothPoints)
     {
-        // ?쒖옉怨??앹뿉???쒖뼱??泥섎━
+
         Vector2 p0 = (i == 0) ? points[i] : points[i - 1];
         Vector2 p1 = points[i];
         Vector2 p2 = points[i + 1];
         Vector2 p3 = (i == points.Count - 2) ? points[i + 1] : points[i + 2];
-        // ?대떦 援ш컙???몃텇?뷀븯??遺?쒕윭??怨≪꽑 ?앹꽦
+        // 세그먼트
         for (int j = 0; j < 100; j++)
         {
             float t = j * 0.01f;// (float)resolution;                

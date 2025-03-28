@@ -32,6 +32,7 @@ namespace UnityFramework
         [SerializeField] CurveMode curveMode = CurveMode.Catmull_Rom;
         [SerializeField] CurvePlayeMode curvePlayeMode = CurvePlayeMode.Loop;
         [SerializeField] Vector2CurveHanldeData[] vector2CurveHanldeDatas;
+        [SerializeField] float testValue = 1.0f;
 
         public Vector2CurveExtended() : base()
         {
@@ -61,12 +62,12 @@ namespace UnityFramework
             {
                 if (t >= 1.0f)
                     return lastPosint;
-                return Vector2CurveExtended.EvaluateCubicHermite(t, moveCurves, vector2CurveHanldeDatas);
+                return EvaluateCubicHermite(t, moveCurves, vector2CurveHanldeDatas);
             }
         }
 
 
-        public static Vector2 EvaluateCubicHermite(float t, in Vector2[] moveCurves, in Vector2CurveHanldeData[] vector2CurveHanldeDatas)
+        public Vector2 EvaluateCubicHermite(float t, in Vector2[] moveCurves, in Vector2CurveHanldeData[] vector2CurveHanldeDatas)
         {
 
 
@@ -78,8 +79,8 @@ namespace UnityFramework
             int index = (int)realValue;
 
             Vector2 p0 = moveCurves[index];
-            Vector2 p1 = Clamp(vector2CurveHanldeDatas[index].outHandle);
-            Vector2 p2 = Clamp(vector2CurveHanldeDatas[index + 1].inHandle);
+            Vector2 p1 = Clamp(vector2CurveHanldeDatas[index].outHandle) * testValue;
+            Vector2 p2 = Clamp(vector2CurveHanldeDatas[index + 1].inHandle) * testValue;
             Vector2 p3 = moveCurves[index + 1];
 
 
