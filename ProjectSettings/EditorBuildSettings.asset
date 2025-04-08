@@ -15,7 +15,8 @@ EditorBuildSettings:
     path: Assets/Scenes/AdMob/AdMob.unity
     guid: 8e57525363c860547a6c73851925985c
   - enabled: 1
-    path: Assets/Scenes/New Scene.unity
+    path: Assets/Scenes/TestWorlds/New Scene.unity
     guid: 2b752ffb7c2d595479b068c3f80f0f80
   m_configObjects:
     com.unity.addressableassets: {fileID: 11400000, guid: c43e8758c28434c40b9b6338dcbfbb73, type: 2}
+    com.unity.input.settings: {fileID: 11400000, guid: 885f5ed7fd5429a4fab857202779cc07, type: 2}
