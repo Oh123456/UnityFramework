@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 using UnityFramework.Algorithm;
+using UnityFramework.Collections;
 
 public class SortTest : MonoBehaviour
 {
@@ -10,10 +11,16 @@ public class SortTest : MonoBehaviour
     [SerializeField] int[] array;
     [SerializeField] int[] result;
 
+    PriorityQueue<int> test;
 
     private void Start()
     {
         StartCoroutine(FUCK());
+
+        //test = new PriorityQueue<int>();
+        //StartCoroutine(FUCK2());
+
+
     }
 
 
@@ -26,7 +33,54 @@ public class SortTest : MonoBehaviour
         }
     }
 
+    IEnumerator FUCK2()
+    {
+        for (int i = 0; i < randomCount; i++)
+        {
+            test.Enqueue(Random.Range(0, int.MaxValue - 10));
+        }
 
+        int index = 0;
+        foreach (var i in test)
+        {
+            Debug.Log($"index {index} : {i}");   
+        }
+
+
+        while (true)
+        {
+            Test2();
+            yield return null;
+        }
+    }
+
+    private void Test2()
+    {
+
+        //int maxValue = test.Dequeue();
+        //int count = 0;
+        //while (!test.Empty())
+        {
+            var testValue = test.Dequeue();
+            Debug.Log($"max{testValue}");
+            //if (maxValue < testValue)
+            //{
+            //    Debug.Log("망함");
+            //}
+
+            //test.Enqueue(int.MaxValue);
+            test.Enqueue(Random.Range(0, int.MaxValue));
+            //if (count > 100)
+            //{
+            //    for (int i = 0; i < 99; i++)
+            //    {
+            //        test.Enqueue(Random.Range(0, int.MaxValue - 10));
+            //    }
+
+            //    test.Enqueue(int.MaxValue);
+            //}
+        }
+    }
     private void Test()
     {
         array = new int[randomCount];
@@ -46,7 +100,7 @@ public class SortTest : MonoBehaviour
         System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
         sw.Start();
 
-        temp.MakeHeap();
+        temp.MaekAndHeapSort();
 
         sw.Stop();
         Debug.Log($"실행 시간: {sw.ElapsedMilliseconds}ms");
@@ -68,7 +122,5 @@ public class SortTest : MonoBehaviour
             if (result[minIndex] > result[i])
                 minIndex = i;
         }
-
-        Debug.Log($"MaxIndex {maxIndex} MinIndex {minIndex} test {ArrayAlgorithm.testValue}");
     }
 }
