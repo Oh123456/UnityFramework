@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 using UnityEngine;
 
@@ -42,7 +42,7 @@ namespace UnityFramework.Singleton
         {
             protected static T instance;
 
-            public T Instance
+            public static T Instance
             {
                 get
                 {

@@ -4,16 +4,27 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace UnityFramework.FSM
-{
-
-    public class StateMachine
+{    
+    public struct StateMachineData
     {
-        protected object owner;
-        private Dictionary<int, State> states = new Dictionary<int, State>();
-        private State currentState = null;
-        private int defaultID = 0;        
+        public object owner;
+        public Dictionary<int, State> states;
+        public State currentState;
+        public int defaultID;
+    }
 
-        public int CurrentID => currentState == null ? defaultID : currentState.ID;
+    public abstract class StateMachine : IStateMachine
+    {
+
+        private StateMachineData stateMachineData = new StateMachineData()
+        { 
+            owner = null,
+            states = new Dictionary<int, State>(),
+            currentState = null,
+            defaultID = 0,
+        };
+
+        public int CurrentID => stateMachineData.currentState == null ? stateMachineData.defaultID : stateMachineData.currentState.ID;
 
         /// <summary>
         /// 
@@ -24,21 +35,34 @@ namespace UnityFramework.FSM
         {
             if (!owner.GetType().IsClass)
                 throw new System.InvalidOperationException("클래스 타입이 아닙니다.");
-            this.owner = owner;
-
+            stateMachineData.owner = owner;
+            SetStates();
+            SetDefulatID(out stateMachineData.defaultID);
+            ResetState();
         }
 
-        public object GetOwner() { return owner; }
-        public T GetOwner<T>() where T : class { return owner as T; }
+        /// <summary>
+        /// 상태 세팅 초기화애서 호출이됨
+        /// </summary>
+        protected abstract void SetStates();
+
+        /// <summary>
+        /// 기본 상태 ID 세팅 생성자에서 호출됨
+        /// </summary>
+        /// <param name="defaultID"></param>
+        protected abstract void SetDefulatID(out int defaultID);
+
+        public object GetOwner() { return stateMachineData.owner; }
+        public T GetOwner<T>() where T : class { return stateMachineData.owner as T; }
 
         /// <summary>
         /// 상태 추가
         /// </summary>
         /// <param name="id"> </param>
         /// <param name="state"></param>
-        public void AddState(int id, State state)
+        public void AddState(State state)
         {
-            if (states.TryAdd(id, state))
+            if (stateMachineData.states.TryAdd(state.ID, state))
                 state.SetOwnerMachine(this);
         }
 
@@ -49,7 +73,7 @@ namespace UnityFramework.FSM
         /// <param name="id"></param>
         public void RemoveState(int id)
         {
-            if (states.Remove(id,out State state))
+            if (stateMachineData.states.Remove(id,out State state))
                 state.SetOwnerMachine(null);   
         }
 
@@ -59,20 +83,20 @@ namespace UnityFramework.FSM
         /// <param name="id">기본상태 ID</param>
         public void SetDefaultState(int id)
         {
-            defaultID = id;
-            Reset();
+            stateMachineData.defaultID = id;
+            ResetState();
         }
 
         /// <summary>
         /// 기본 상태로 전환
         /// </summary>
-        public void Reset()
+        public void ResetState()
         {
-            currentState?.Exit();
-            if (!states.TryGetValue(defaultID, out currentState))
+            stateMachineData.currentState?.Exit();
+            if (!stateMachineData.states.TryGetValue(stateMachineData.defaultID, out stateMachineData.currentState))
                 return;
-            currentState.Enter();
-        }
+            stateMachineData.currentState.Enter();
+        }        
 
         /// <summary>
         /// 상태 변환
@@ -80,23 +104,26 @@ namespace UnityFramework.FSM
         /// <param name="id"></param>
         public void ChangeState(int id)
         {
+            // 같은 ID 제외
             if (CurrentID == id)
                 return;
 
-            if (!states.TryGetValue(id, out State nextState))
+            // 현재 상태에서 변환 이 가능한지 검사
+            if (!stateMachineData.currentState.ConditionChangeID(id))
                 return;
 
-            if (!nextState.ConditionChangeID(id))
+            // 상태 존재 검사
+            if (!stateMachineData.states.TryGetValue(id, out State nextState))
                 return;
 
-            currentState?.Exit();
-            currentState = nextState;
-            currentState.Enter();
+            stateMachineData.currentState?.Exit();
+            stateMachineData.currentState = nextState;
+            stateMachineData.currentState.Enter();
         }
 
         public void Update()
         {
-            currentState.Update();
+            stateMachineData.currentState.Update();
         }
 
     }

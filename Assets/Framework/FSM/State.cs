@@ -8,23 +8,25 @@ namespace UnityFramework.FSM
     {
         protected int id;
         protected string name;
-        protected StateMachine ownerMachine;
+        protected IStateMachine ownerMachine;
         protected HashSet<int> changeAble = new HashSet<int>();
 
         public int ID => id;
 
-        public State(int id)
+        public State()
         {
-            this.id = id;
+            SetID(out id);
             SetChangeAble(changeAble);
         }
 
-        public void SetOwnerMachine(StateMachine stateMachine)
+
+        public void SetOwnerMachine(IStateMachine stateMachine)
         {
             ownerMachine = stateMachine;    
         }
 
 		protected abstract void SetChangeAble(HashSet<int> changeAble);
+        protected abstract void SetID(out int id);
 		public bool ConditionChangeID(int id) => changeAble.Contains(id);
 		
         public virtual void Enter() { }
