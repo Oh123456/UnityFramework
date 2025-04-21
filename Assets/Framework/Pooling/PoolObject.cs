@@ -1,23 +1,12 @@
-﻿using System.Buffers;
-using System.Collections;
-using System.Collections.Generic;
-using System.Drawing;
+using System.Buffers;
+
 using UnityEngine;
+
 using UnityFramework.Pool;
 
 namespace UnityFramework.PoolObject
 {
-    public interface IPoolObject
-    {
-        public bool IsValid();
-        public void Activate();
-        public void Deactivate();
-    }
 
-    public interface IMonoPoolObject : IPoolObject
-    {
-        public int KeyCode { get; set; }
-    }
 
 
     public abstract class ClassPoolObject : IPoolObject, System.IDisposable
