@@ -15,10 +15,10 @@ public class SortTest : MonoBehaviour
 
     private void Start()
     {
-        StartCoroutine(FUCK());
+        //StartCoroutine(FUCK());
 
-        //test = new PriorityQueue<int>();
-        //StartCoroutine(FUCK2());
+        test = new PriorityQueue<int>();
+        StartCoroutine(FUCK2());
 
 
     }
@@ -52,6 +52,7 @@ public class SortTest : MonoBehaviour
             Test2();
             yield return null;
         }
+
     }
 
     private void Test2()
@@ -65,7 +66,7 @@ public class SortTest : MonoBehaviour
             Debug.Log($"max{testValue}");
             //if (maxValue < testValue)
             //{
-            //    Debug.Log("¸ÁÇÔ");
+            //    Debug.Log("ë§í•¨");
             //}
 
             //test.Enqueue(int.MaxValue);
@@ -103,7 +104,7 @@ public class SortTest : MonoBehaviour
         temp.MaekAndHeapSort();
 
         sw.Stop();
-        Debug.Log($"½ÇÇà ½Ã°£: {sw.ElapsedMilliseconds}ms");
+        Debug.Log($"ì‹¤í–‰ ì‹œê°„: {sw.ElapsedMilliseconds}ms");
 
         for (int i = 0; i < array.Length; i++)
         {

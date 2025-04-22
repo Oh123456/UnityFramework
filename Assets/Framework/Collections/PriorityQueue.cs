@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -105,7 +105,7 @@ namespace UnityFramework.Collections
 
         Enumerator GetEnumerator()
         {
-            return new Enumerator(array);
+            return new Enumerator(array , lastIndex);
         }
 
         void ICollection.CopyTo(Array array, int index)
@@ -139,13 +139,15 @@ namespace UnityFramework.Collections
         {
             private readonly T[] array; 
             private int index;
+            private int lastIndex;
             public T Current { get => array[index]; }
 
             object IEnumerator.Current => throw new NotImplementedException();
 
-            public Enumerator(T[] array)
+            public Enumerator(T[] array, int lastIndex)
             {
                 this.array = array;
+                this.lastIndex = lastIndex;
                 index = -1;
             }
 
@@ -157,7 +159,7 @@ namespace UnityFramework.Collections
             public bool MoveNext()
             {
                 index++;
-                return index < array.Length;
+                return index <= lastIndex;
             }
 
             public void Reset()
