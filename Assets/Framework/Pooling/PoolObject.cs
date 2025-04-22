@@ -7,8 +7,6 @@ using UnityFramework.Pool;
 namespace UnityFramework.PoolObject
 {
 
-
-
     public abstract class ClassPoolObject : IPoolObject, System.IDisposable
     {
         bool isActive = false;

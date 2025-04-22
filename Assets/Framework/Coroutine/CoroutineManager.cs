@@ -1,14 +1,14 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityFramework.Singleton;
 
-namespace UnityFramework.Coroutine
+namespace UnityFramework.CoroutineUtility
 {
 
     public class CoroutineManager : LazySingleton<CoroutineManager>
     {
-#if !PREALLOC_YIELD_OBJECTS
+#if RUN_TIME_ALLOC_YIELD_OBJECTS
         WaitForEndOfFrame waitForEndOfFrame = null;
         WaitForFixedUpdate waitForFixedUpdate = null;
 #else
@@ -75,19 +75,19 @@ namespace UnityFramework.Coroutine
 
         }
 
-        [System.Diagnostics.Conditional("PREALLOC_YIELD_OBJECTS")]
+        [System.Diagnostics.Conditional("RUN_TIME_ALLOC_YIELD_OBJECTS")]
         private void CreateWaitForFixedUpdate()
         {
-#if !PREALLOC_YIELD_OBJECTS
+#if RUN_TIME_ALLOC_YIELD_OBJECTS
             if (waitForFixedUpdate == null)
                 waitForFixedUpdate = new WaitForFixedUpdate();
 #endif
         }
 
-        [System.Diagnostics.Conditional("PREALLOC_YIELD_OBJECTS")]
+        [System.Diagnostics.Conditional("RUN_TIME_ALLOC_YIELD_OBJECTS")]
         private void CreateWaitForEndOfFrame()
         {
-#if !PREALLOC_YIELD_OBJECTS
+#if RUN_TIME_ALLOC_YIELD_OBJECTS
             if (waitForEndOfFrame == null)
                 waitForEndOfFrame = new WaitForEndOfFrame();
 #endif
