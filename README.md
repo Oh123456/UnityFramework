@@ -278,9 +278,38 @@ public class BackgroundClickHandler : MonoBehaviour, IPointerClickHandler
 IPointerClickHandler를 통한 클릭 감지후 Hide를 시도합니다.
 
 
+# CoroutineManager <a href="https://github.com/Oh123456/UnityFramework/tree/main/Assets/Framework/Coroutine"><img src="https://img.shields.io/badge/Git-F05032?style=flat-square&logo=GitURL&logoColor=white"/></a>
+유니티에 강력한 기능중하나인 `코루틴(Coroutine)`을 `잘 못 사용`하거나 각각의 객체마다 YieldInstruction을 생성하는것은 `메모리 낭비`와 `GC 부담`이 커질수있기에 `보안`하기위해서 만들었습니다. 
+```
+readonly WaitForEndOfFrame waitForEndOfFrame = new WaitForEndOfFrame();
+readonly WaitForFixedUpdate waitForFixedUpdate = new WaitForFixedUpdate();
+Dictionary<float, WaitForSeconds> waitForSecondDictionary = new Dictionary<float, WaitForSeconds>();
+```
+자주 사용되는것들은 `캐싱`하여 사용하여 GC부담과 메모리 낭비를 최소화합니다.
+
+# Pooling <a href="https://github.com/Oh123456/UnityFramework/tree/main/Assets/Framework/Pooling"><img src="https://img.shields.io/badge/Git-F05032?style=flat-square&logo=GitURL&logoColor=white"/></a>
+유니티에서는 게임진행중에 발생되는 `GC`가 `매우 치명적`이고 객체 `생성`과 `파괴`에 많은 `비용`이 들기에 Pooling 시스템은 필수입니다. 
+
+해당 프레임워크에서는 `Class`, `Mono`, `ArrayPool(C# 기본 제공 기능)`이 제공 됩니다.
+
+각 풀은 Dictionary 기반으로 객체들을 관리합니다.
+
+### PoolKey
+
+```
+public struct PoolKey : System.IEquatable<PoolKey>
+{
+
+	private readonly System.Type typeKey;
+	private readonly MonoBehaviour prefab;
+
+...
+```
+구조체를 사용하기에 `GC부담없이` `키 검사`가 가능합니다. 기본적을 클래스 `타입(Type)`으로 `Key`를 관리합니다. MonoPool일경우 `프리팹(Prefab)`까지 같은지 검사합니다.
 
 
-
+## ClassPool
+C# 에서는 `레퍼런스 타입`들은 모두 `힙`에 할당되고 `GC` 대상이기에 자주생성되는 `Class` 마저도 `Pooling`을 해주면 성능향상에 도움이 됩니다.
 
 
 
