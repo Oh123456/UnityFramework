@@ -157,12 +157,12 @@ public class SubUI : UIBase , ISubUI
 ```
 private Dictionary<System.Type, UIBase> uis = new Dictionary<System.Type, UIBase>();
 ```
-Dictionary 를 통하여 한번이라도 Show 한 UI는 계속 데이터를 캐싱 합니다.
+Dictionary 를 통하여 `한번이라도` Show 한 UI는 계속 `데이터를 캐싱` 합니다.
 
 ```
 private Stack<UIController> showUIStack = new Stack<UIController>(4);
 ```
-Stack을 사용하여 가장 최근에 show된 객체를 Hide하는 모바일 친화적 방식입니다.
+`Stack`을 사용하여 `가장 최근`에 Show된 객체를 Hide하는 `모바일 친화적` 방식입니다.
 
 ```
 public T Show<T>(string name, int sortOrder = 0) where T : MainUIBase
@@ -201,8 +201,21 @@ public void Close()
 }
 
 ```
-Show 하면 
+Show 하면 `캐싱된 데이터`가 없다면 `Resources 폴더` 내부에 `이름 기반`으로 로드해서 복제 합니다. `Stack`을 이용하기에 `Hide`, `Close` 할시 `가장 최근에` Show된 UI가 먼저 `Hide`, `Close` 가 됩니다.
 
+```
+public void UnloadUIs(Scene scene)
+{
+    while (showUIStack.Count > 0)
+    {
+        UIController uIController = showUIStack.Pop();
+        uIController.Release();
+        controllerPool.Push(uIController);
+    }
+}
+
+```
+`Scene 전환`시 `복제된 UI`들 `파괴`되기에 `Stack`을 `비움`으로써 `예외를 예방`합니다.
 
 ## IOSSafeArea 
 ```
