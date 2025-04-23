@@ -9,6 +9,8 @@
 
 추후에 PC환경에도 대응할수있게 보완할 예정입니다.
 
+AddressableSystem과 연동하여 사용하는 방법은 AddressableSystem 설명 페이지를 참고해주세요.
+
 ${\textsf{\color{#1589F0}namespace}}$  `UnityFramework.UI`
 
 ## UIBase
@@ -149,7 +151,7 @@ public class SubUI : UIBase , ISubUI
 
 예외적으로 `외부`에서 `Show`, `Hide`,`Close` 가 `가능`합니다.
 
-※ 계층이 적은경우에는 SubUI를 사용하는게 성능이 안 좋을수있습니다.
+> ${\textsf{\color{#FF9800}※ 계층이 적은경우에는 SubUI를 사용하는게 성능이 안 좋을수있습니다.}}$  
 
 ## UIManager
 전반적으로 MainUIBase를 상속받은 UI들을 관리하는 클래스입니다.
@@ -284,6 +286,6 @@ IPointerClickHandler를 통한 클릭 감지후 Hide를 시도합니다.
 
 
 
-# Collections
+# Collections <a href="https://github.com/Oh123456/UnityFramework/tree/main/Assets/Framework/Collections"><img src="https://img.shields.io/badge/Git-F05032?style=flat-square&logo=GitURL&logoColor=white"/></a>
 ## PriorityQueue
 유니티 C# 에서는 PriorityQueue가 지원을 하지 않기에 
