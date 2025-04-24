@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityFramework.Pool.Manager;
 using UnityFramework.PoolObject;
 
@@ -41,6 +41,11 @@ namespace UnityFramework.Pool
         public static ArrayPoolObject<T> GetArray<T>(int size)
         {
             return new ArrayPoolObject<T>(size);
+        }
+
+        public static void SetArray<T>(ref ArrayPoolObject<T> arrayPoolObject)
+        {
+            arrayPoolObject.Dispose();
         }
     }
 
