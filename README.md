@@ -297,6 +297,19 @@ Dictionary<float, WaitForSeconds> waitForSecondDictionary = new Dictionary<float
 각 풀은 Dictionary 기반으로 `풀(Pool)`들을 관리합니다.
 
 ${\textsf{\color{#1589F0}namespace}}$  `UnityFramework.Pool`
+## PoolManager
+각각의 Pool를 사용할수있게해주는 매니저 입니다.
+
+```
+public static T GetClassObject<T>(bool isAutoActivate = true) where T : class, IPoolObject, new()
+public static void SetClassObject(IPoolObject poolObject, bool isAutoDeactivate = true)
+public static T GetMonoObject<T>(IMonoPoolObject prefab, Transform parents = null,bool isAutoActivate = true) where T : MonoBehaviour, IMonoPoolObject, new()
+public static void SetMonoObject<T>(IMonoPoolObject poolObject, bool isAutoDeactivate = true) where T : MonoBehaviour, IMonoPoolObject
+public static ArrayPoolObject<T> GetArray<T>(int size)
+public static void SetArray<T>(ref ArrayPoolObject<T> arrayPoolObject)
+```
+`isAutoActivate`, `isAutoDeactivate` 옵션은 Get,Set 이 이루워질때 `자동`으로 `활성화`,`비활성화` 옵션입니다. 
+
 ### PoolKey
 
 ```
