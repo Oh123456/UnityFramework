@@ -246,7 +246,7 @@ void ApplySafeArea()
 ```
 SafeArea의 RectTransform을 조절하여 하위 자식들의 캔버스 영역을 조절합니다. 
 
-미리 준비된 템플릿을 제공합니다.
+>미리 준비된 템플릿을 제공합니다.
 ![ex](https://github.com/user-attachments/assets/59a14186-17bf-4358-9a39-2b3a8eeb6d36)
 ## BackgroundClickHandler
 모바일 환경이나 PC 환경에서도 팝업 이미지가 뜬고난뒤 딤처리된 배경을 클릭할때 해당 최상위 팝업이 꺼지는 기능입니다. 
@@ -438,6 +438,75 @@ array.Dispose();
 
 # FSM <a href="https://github.com/Oh123456/UnityFramework/tree/main/Assets/Framework/FSM"><img src="https://img.shields.io/badge/GitHub_Pages-222222?style=flat-square&logo=GitHub&logoColor=white"/></a>
 
+AI, 혹은 캐릭터의 상태를 관리할수있는 상태 머신입니다.
+
+${\textsf{\color{#1589F0}namespace}}$  `UnityFramework.FSM`
+
+## StateMachine
+State관리하는 상태 머신입니다.
+
+### StateMachineData
+```
+//상태머신 데이터 구조체
+public struct StateMachineData
+{
+    public object owner;
+    public Dictionary<int, State> states;
+    public State currentState;
+    public int defaultID;
+}
+
+```
+Dictionary int Key 기반으로 State를 관리합니다. 
+
+#### AddState
+```
+// 상태 추가
+public void AddState(State state)
+{
+    if (stateMachineData.states.TryAdd(state.ID, state))
+        state.SetOwnerMachine(this);
+}
+```
+> 중복으로 키가 들어올경우 무시합니다.
+
+#### ChangeState
+```
+//상태 변경
+public void ChangeState(int id)
+{
+    // 같은 ID 제외
+    if (CurrentID == id)
+        return;
+
+    // 현재 상태에서 변환 이 가능한지 검사
+    if (!stateMachineData.currentState.ConditionChangeID(id))
+        return;
+
+    // 상태 존재 검사
+    if (!stateMachineData.states.TryGetValue(id, out State nextState))
+        return;
+
+    stateMachineData.currentState?.Exit();
+    stateMachineData.currentState = nextState;
+    stateMachineData.currentState.Enter();
+}
+```
+State가 변경시 해당 State에서 변경할려는 State로 변경이 가능한지 검사후 변경이 진행됩니다. 
+
+#### Update
+```
+public abstract class StateMachine : IStateMachine
+{
+
+public void Update()
+{
+    stateMachineData.currentState.Update();
+}
+
+...
+```
+기본적으로 일반 클래스이기에 Mono의 Update에서 호출이 되야합니다.
 
 # Collections <a href="https://github.com/Oh123456/UnityFramework/tree/main/Assets/Framework/Collections"><img src="https://img.shields.io/badge/GitHub_Pages-222222?style=flat-square&logo=GitHub&logoColor=white"/></a>
 ## PriorityQueue
