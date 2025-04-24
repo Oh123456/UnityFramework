@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -15,6 +15,7 @@ namespace UnityFramework.UI
 
             public System.Action Show;
             public System.Action Hide;
+            public System.Action Close;
 
             public MainUIBase MainUIBase => this.mainUIBase;
 
@@ -28,7 +29,8 @@ namespace UnityFramework.UI
             {
                 mainUIBase = null;
                 Show = null;
-                Hide = null;                
+                Hide = null;     
+                Close = null;
             }
 
         }
@@ -73,7 +75,7 @@ namespace UnityFramework.UI
             if (GetActiveUIController(out UIController uIController))
             {
                 uIController.Hide();
-                uIController.MainUIBase.Close();
+                uIController.Close();
                 uIController.Release();
                 controllerPool.Push(uIController);
             }

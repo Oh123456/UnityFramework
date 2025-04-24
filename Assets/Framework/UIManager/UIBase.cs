@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 
 using UnityEngine;
@@ -62,7 +62,7 @@ namespace UnityFramework.UI
             OnHide?.Invoke();
         }
 
-        public virtual void Close()
+        protected virtual void Close()
         {
             if (!isShow)
                 return;

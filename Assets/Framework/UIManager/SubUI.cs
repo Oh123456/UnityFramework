@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -47,6 +47,11 @@ namespace UnityFramework.UI
         public new void Hide()
         {
             base.Hide();
+        }
+
+        public new void Close()
+        { 
+            base.Close();
         }
 
         public UIBase FindParentUIBase()

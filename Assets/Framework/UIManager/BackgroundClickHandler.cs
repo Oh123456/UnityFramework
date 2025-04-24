@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -18,7 +18,7 @@ namespace UnityFramework.UI
         private void Start()
         {
             if (cotnrolUIbase == null)
-                Destroy(gameObject);
+                Destroy(this);
         }
 
         public void OnPointerClick(PointerEventData eventData)

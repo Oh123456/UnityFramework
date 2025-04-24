@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -12,12 +12,13 @@ namespace UnityFramework.UI
         {
             uIController.Show = Show;
             uIController.Hide = Hide;
+            uIController.Close = Close;
         }
 
         /// <summary>
-        /// ?ㅻ줈媛湲?踰꾪듉???뚮??꾨뻹
+        /// 백버튼을 눌렀을때 다른 SubUI가 꺼져야하는 경우
         /// </summary>
-        /// <returns>true 諛섑솚???ㅻ줈媛湲??깃났 false ?쇱떆 ?ㅻⅨ 臾댁뼵媛媛 ???爰쇱졇?쇳븯???곹솴</returns>
+        /// <returns>true MainUI가 Hide 가능할때</returns>
         public virtual bool ExecuteButton()
         {
             return true;
