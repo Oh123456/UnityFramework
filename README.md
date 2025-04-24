@@ -280,6 +280,8 @@ IPointerClickHandler를 통한 클릭 감지후 Hide를 시도합니다.
 
 # CoroutineManager <a href="https://github.com/Oh123456/UnityFramework/tree/main/Assets/Framework/Coroutine"><img src="https://img.shields.io/badge/Git-F05032?style=flat-square&logo=GitURL&logoColor=white"/></a>
 유니티에 강력한 기능중하나인 `코루틴(Coroutine)`을 `잘 못 사용`하거나 각각의 객체마다 YieldInstruction을 생성하는것은 `메모리 낭비`와 `GC 부담`이 커질수있기에 `보안`하기위해서 만들었습니다. 
+
+${\textsf{\color{#1589F0}namespace}}$  `UnityFramework.CoroutineUtility`
 ```
 readonly WaitForEndOfFrame waitForEndOfFrame = new WaitForEndOfFrame();
 readonly WaitForFixedUpdate waitForFixedUpdate = new WaitForFixedUpdate();
@@ -292,8 +294,9 @@ Dictionary<float, WaitForSeconds> waitForSecondDictionary = new Dictionary<float
 
 해당 프레임워크에서는 `Class`, `Mono`, `ArrayPool(C# 기본 제공 기능)`이 제공 됩니다.
 
-각 풀은 Dictionary 기반으로 객체들을 관리합니다.
+각 풀은 Dictionary 기반으로 `풀(Pool)`들을 관리합니다.
 
+${\textsf{\color{#1589F0}namespace}}$  `UnityFramework.Pool`
 ### PoolKey
 
 ```
@@ -306,6 +309,38 @@ public struct PoolKey : System.IEquatable<PoolKey>
 ...
 ```
 구조체를 사용하기에 `GC부담없이` `키 검사`가 가능합니다. 기본적을 클래스 `타입(Type)`으로 `Key`를 관리합니다. MonoPool일경우 `프리팹(Prefab)`까지 같은지 검사합니다.
+
+### Pool
+```
+public abstract class Pool
+{
+protected Stack<IPoolObject> objects = new Stack<IPoolObject>(4);
+
+public IPoolObject GetObject()
+{
+    IPoolObject poolObject = null;
+    bool isValid = true;
+    while (isValid)
+    {
+        if (objects.Count == 0)
+            poolObject = CreateObject();
+        else
+            poolObject = objects.Pop();
+        // 혹시라도 생성되있는애가 풀에 들어와 있을경우
+        // 혹은 오브젝트가 널이라면
+        isValid = poolObject == null ? true : poolObject.IsValid();
+    }
+    return poolObject;
+}
+
+public void SetObject(IPoolObject classObject)
+{
+    objects.Push(classObject);
+}
+
+...
+```
+`GetObject` 와 `SetObject`를 통하여 오브젝트를 Pooling 할수 있습니다.
 
 
 ## ClassPool
