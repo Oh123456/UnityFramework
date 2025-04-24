@@ -342,12 +342,79 @@ public void SetObject(IPoolObject classObject)
 ```
 `GetObject` 와 `SetObject`를 통하여 오브젝트를 Pooling 할수 있습니다.
 
+### IPoolObject
+```
+public interface IPoolObject
+{
+    /// <summary>
+    /// 객체가 활성화 되있는지 혹은 존재하는지
+    /// </summary>
+    /// <returns></returns>
+    public bool IsValid();
+    /// <summary>
+    /// 객체 활성화
+    /// </summary>
+    public void Activate();
+    /// <summary>
+    /// 객체 비활성화
+    /// </summary>
+    public void Deactivate();
+}
+```
+오브젝트 풀링을 위한 인터페이스입니다.
 
+> 해당 프레임 워크의 Pooling은 `IPoolObject` 인터페이스 `기반`으로 `작동`하기에 Pooling할 Class에 상속이 없을시 해당 프레임 워크의 풀링 시스템을 사용할수 없습니다
+
+### IMonoPoolObject
+`GameObject`를 위한 인터페이스 입니다.
+```
+public interface IMonoPoolObject : IPoolObject
+{
+    public int KeyCode { get; set; }
+}
+```
+
+`KeyCode`는 `원본`의 프리팹과 타입의 정보를 `해싱`한 값이 있어 `복사본`으로 `반환`이 가능합니다.
+
+
+> [ClassPoolObject](https://github.com/Oh123456/UnityFramework/blob/main/Assets/Framework/Pooling/PoolObject.cs), [MonoPoolObject](https://github.com/Oh123456/UnityFramework/blob/main/Assets/Framework/Pooling/PoolObject.cs) 등 상위 클래스들이 준비가 되있습니다.
 ## ClassPool
 C# 에서는 `레퍼런스 타입`들은 모두 `힙`에 할당되고 `GC` 대상이기에 자주생성되는 `Class` 마저도 `Pooling`을 해주면 성능향상에 도움이 됩니다.
 
+## MonoPool
+유니티에서 사용되는 게임 오브젝트(GameObject)을 생성하고 재사용하는 풀입니다. 유니티에서 기초적으로 사용되는 풀입니다.
 
+## ArrayPool
+C# 에서 기본재공되는 ArrayPool기을을 사용하기 쉽게 가공한것입니다.
 
+```
+public struct ArrayPoolObject<T> : System.IDisposable
+{
+	T[] array;
+
+	
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+
+        public void Dispose(bool clearArray)
+        {
+            ArrayPool<T>.Shared.Return(array, clearArray: clearArray);
+            array = null;
+        }
+...
+```
+
+```
+ArrayPoolObject<int> array = PoolManager.GetArray<int>(20);
+for(int i = 0; i < 20; i++)
+	array[i] = i;
+//배열을 ArrayPool<T> 에 반환
+array.Dispose();
+```
+
+`구조체`와 `IDisposable` 사용하여 `GC` 부담 적고 쉽게 `Pool`에 배열을 `반환`할수있습니다.
 
 
 # Collections <a href="https://github.com/Oh123456/UnityFramework/tree/main/Assets/Framework/Collections"><img src="https://img.shields.io/badge/Git-F05032?style=flat-square&logo=GitURL&logoColor=white"/></a>
