@@ -585,7 +585,7 @@ public void SetTimer(float time, System.Action callback, bool ignoreTimeScale = 
 > 
 > 비동기는 중간에 캔슬할시 많은 비용이 발생합니다.
 > 
-> ${\textsf{\color{#FF9800}※ 종합적으로 `캔슬 가능한 SetTimer`는 사용을 지양합니다.}}$  
+> ${\textsf{\color{#FF9800}※ 종합적으로 캔슬 가능한 SetTimer는 사용을 지양합니다.}}$  
 
 ## TimerHandle
 캔슬 가능한 Timer에서 Timer `정보`를 가지고있는 `구조체` 입니다.
