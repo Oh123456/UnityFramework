@@ -511,7 +511,7 @@ public void Update()
 ## State
 각 상태의 행동을 정의하는 클래스입니다.
 
-![State drawio](https://github.com/user-attachments/assets/6e88b1f7-152a-40ee-8a09-d317dab3f790)
+![State drawio (1)](https://github.com/user-attachments/assets/358f1701-e128-4a70-93f5-ec1df26feb34)
 
 ```
 public virtual void Enter() { }
@@ -549,6 +549,71 @@ SetID `State`의 `ID`를 `부여`합니다. enum과 같이 사용하면 좋은 �
 
 SetChangeAble 에서 `해당 State`에서 `다른 State`로 변환이 가능한 ID를 설정 할수있습니다. 
 
+# Timer <a href="https://github.com/Oh123456/UnityFramework/tree/main/Assets/Framework/Time"><img src="https://img.shields.io/badge/GitHub_Pages-222222?style=flat-square&logo=GitHub&logoColor=white"/></a>
+## TimerManager
+유니티에서는 Timer 기능을 만들려면 `코루틴(Coroutine)`을 사용해야 하기에 `매번 새롭게 코드를 작성`해야하는 번거러움을 제거하기위해 제작했습니다.
+
+${\textsf{\color{#1589F0}namespace}}$  `UnityFramework.Timer`
+
+```
+// 캔슬 가능한 타이머
+public bool SetCoroutineTimer(MonoBehaviour monoBehaviour, float time, out TimerHandle timerHandle, System.Action callback, bool ignoreTimeScale = false, PlayerLoopTiming delayTiming = PlayerLoopTiming.Update)
+// 캔슬 불가능한 타이머
+public bool SetCoroutineTimer(MonoBehaviour monoBehaviour, float time, System.Action callback, bool ignoreTimeScale = false, PlayerLoopTiming delayTiming = PlayerLoopTiming.Update)
+```
+
+`코루틴(Coroutine)` 기반 Timer 입니다. Timer가 작동이되어야할 `monoBehaviour` 스크립트 기반으로 `코루틴(Coroutine)`을 `실행`합니다. 
+
+유니티 코루틴(Coroutine) WaitForSeconds 기준 시간을 사용합니다 `float 1.0f == 1초`
+
+> PlayerLoopTiming 중 Update, FixedUpdate, LastUpdate 만 지원합니다. 다른 값은 Update로 취급합니다.
+> 
+> 코루틴 기반이기에 monoBehaviour가 비활성화 상태면 작동을 안합니다.
+
+```
+// 캔슬 가능한 타이머
+public void SetTimer(float time, out TimerHandle timerHandle, System.Action callback, bool ignoreTimeScale = false, PlayerLoopTiming delayTiming = PlayerLoopTiming.Update, bool cancelImmediately = false)
+// 캔슬 불가능한 타이머
+public void SetTimer(float time, System.Action callback, bool ignoreTimeScale = false, PlayerLoopTiming delayTiming = PlayerLoopTiming.Update)
+```
+
+`UniTask` 기반 Timer 입니다. `코루틴(Coroutine)`이 `GC`를 `발생`하기에 GC 걱정 없는 UniTask를 사용했습니다. 
+
+유니티 코루틴(Coroutine) WaitForSeconds 기준 시간을 사용합니다 `float 1.0f == 1초`
+
+> CancellationTokenSource 이 클래스이기에 `캔슬 가능한 SetTimer`를 사용한다면 아이러니하게도 `GC가 발생`합니다. 내부적으로 풀링을 하기에 중간에 캔슬을 안 한다면 GC가 발생 안 합니다.
+> 
+> 비동기는 중간에 캔슬할시 많은 비용이 발생합니다.
+> 
+> ${\textsf{\color{#FF9800}※ 종합적으로 `캔슬 가능한 SetTimer`는 사용을 지양합니다.}}$  
+
+## TimerHandle
+캔슬 가능한 Timer에서 Timer `정보`를 가지고있는 `구조체` 입니다.
+```
+public struct TimerHandle
+{
+...
+public void Cancel()
+{
+    if (timerTaskHandle != null)
+    {
+        CancelTask();
+        return;
+    }
+
+    if (targetMono != null && timerCoroutine != null)
+    {
+        CancelCoroutineTimer();
+        return;
+    }
+
+}
+...
+```
+
+TimerHandle 에서 진행중인 `Timer`를 `취소` 할수있습니다.
+
+
 # Collections <a href="https://github.com/Oh123456/UnityFramework/tree/main/Assets/Framework/Collections"><img src="https://img.shields.io/badge/GitHub_Pages-222222?style=flat-square&logo=GitHub&logoColor=white"/></a>
 ## PriorityQueue 
 
@@ -572,7 +637,8 @@ IComparer<T> 기반으로 대소비교를합니다. 상황에따라 사용자 �
 
 `Enqueue`,`Dequeue` `O(log n)` 삽입 삭제시 힙 정렬을 하기에 `log n` 의 시간 복잡도가 발생 됩니다. 
 
-`순회 O(n)` 배열 기반이기에 순회는 n의 시간 복잡도가 발생합니다. 
+`순회 O(n)` 배열 기반이기에 순회는 `n`의 시간 복잡도가 발생합니다. 
 > IEnumerable<T>, IEnumerable 을 구현했기에 `Forech`, `Enumerator` 을 `지원`합니다.
+> 
 > Enumerator 기반 순회이기에 for문의 배열의 순회보다 시간이 더 소요 됩니다.
 
