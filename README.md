@@ -508,6 +508,71 @@ public void Update()
 ```
 기본적으로 일반 클래스이기에 Mono의 Update에서 호출이 되야합니다.
 
+## State
+각 상태의 행동을 정의하는 클래스입니다.
+
+![State drawio](https://github.com/user-attachments/assets/6e88b1f7-152a-40ee-8a09-d317dab3f790)
+
+```
+public virtual void Enter() { }
+public virtual void Update() { }
+public virtual void Exit() { }
+```
+
+Enter 상태가 변경시 `처음 진입`하는 함수 입니다. 
+
+Update 상태가 변경이 없다면 `매 프레임`마다 호출 되는 함수입니다. 주로 여기서 상태의 행동을 정의합니다. 
+
+Exit 상태가 `변경`이 된다면 `진입`하는 함수 입니다. Exit 이후 새로운 State의 Enter가 호출이 됩니다. 
+
+```
+protected HashSet<int> changeAble = new HashSet<int>();
+```
+
+`HashSet` 기반으로 변경 가능한 상태를 확인 합니다.
+> HashSet은 Hash 기반이기에 중복 검사에 O(1)의 시간복잡도가 소요되기에 선택했습니다. 단점으로는 HashSet은 사용되는 메모리양이 많습니다. 
+
+```
+public State()
+{
+    SetID(out id);
+    SetChangeAble(changeAble);
+}
+
+protected abstract void SetChangeAble(HashSet<int> changeAble);
+protected abstract void SetID(out int id);
+```
+
+초기화 부분입니다. `SetID` 과 `SetChangeAble`는 `순수 가상 함수`이기에 파생 State에서 무조건 재정의가 필수입니다.
+
+SetID `State`의 `ID`를 `부여`합니다. enum과 같이 사용하면 좋은 시너지가 발생합니다. 
+
+SetChangeAble 에서 `해당 State`에서 `다른 State`로 변환이 가능한 ID를 설정 할수있습니다. 
+
 # Collections <a href="https://github.com/Oh123456/UnityFramework/tree/main/Assets/Framework/Collections"><img src="https://img.shields.io/badge/GitHub_Pages-222222?style=flat-square&logo=GitHub&logoColor=white"/></a>
-## PriorityQueue
-유니티 C# 에서는 PriorityQueue가 지원을 하지 않기에 
+## PriorityQueue 
+
+유니티 C# 에서는 PriorityQueue가 지원을 하지 않기에 제작했습니다. 
+
+배열(array)기반 힙 정렬로 사용하여 구현했습니다. 
+
+${\textsf{\color{#1589F0}namespace}}$  `UnityFramework.Collections`
+
+```
+public class PriorityQueue<T> : IEnumerable<T>, IEnumerable, IReadOnlyCollection<T>, ICollection
+{
+
+	public PriorityQueue(IComparer<T> comparer = null, int capacity = 4)
+...
+
+```
+
+
+IComparer<T> 기반으로 대소비교를합니다. 상황에따라 사용자 지정의 대소비교를 사용할수있습니다.
+
+`Enqueue`,`Dequeue` `O(log n)` 삽입 삭제시 힙 정렬을 하기에 `log n` 의 시간 복잡도가 발생 됩니다. 
+
+`순회 O(n)` 배열 기반이기에 순회는 n의 시간 복잡도가 발생합니다. 
+> IEnumerable<T>, IEnumerable 을 구현했기에 `Forech`, `Enumerator` 을 `지원`합니다.
+> Enumerator 기반 순회이기에 for문의 배열의 순회보다 시간이 더 소요 됩니다.
+
