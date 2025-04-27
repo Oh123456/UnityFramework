@@ -7,12 +7,14 @@
 - [UI](#ui)
 - [AddressableSystem](#addressablesystem)
 - [CoroutineManager](#coroutinemanager)
-- [PoolManager](#poolmanager)
+- [Pooling](#pooling)
 - [FSM](#fsm)
 - [Timer](#timer)
 - [Collections](#collections)
 
-# UI <a href="https://github.com/Oh123456/UnityFramework/tree/main/Assets/Framework/UIManager"><img src="https://img.shields.io/badge/GitHub_Pages-222222?style=flat-square&logo=GitHub&logoColor=white"/></a>
+# UI 
+<a href="https://github.com/Oh123456/UnityFramework/tree/main/Assets/Framework/UIManager"><img src="https://img.shields.io/badge/GitHub_Pages-222222?style=flat-square&logo=GitHub&logoColor=white"/></a>
+
 유니티 모바일 환경에 알 맞는 UI를 관리 밎 최적화에 초점을 둔 프레임 워크입니다. 
 
 추후에 PC환경에도 대응할수있게 보완할 예정입니다.
@@ -285,7 +287,8 @@ public class BackgroundClickHandler : MonoBehaviour, IPointerClickHandler
 ```
 IPointerClickHandler를 통한 클릭 감지후 Hide를 시도합니다.
 
-# AddressableSystem <a href="https://github.com/Oh123456/UnityFramework/tree/main/Assets/Framework/AddressableSystem"><img src="https://img.shields.io/badge/GitHub_Pages-222222?style=flat-square&logo=GitHub&logoColor=white"/></a>
+# AddressableSystem 
+<a href="https://github.com/Oh123456/UnityFramework/tree/main/Assets/Framework/AddressableSystem"><img src="https://img.shields.io/badge/GitHub_Pages-222222?style=flat-square&logo=GitHub&logoColor=white"/></a>
 
 유니티의 Addressable을 조금더 효율적이게 사용하기 위해 제작했습니다. 
 
@@ -423,7 +426,9 @@ public sealed class AddressableResource<T> : IAddressableResource
 해당 프레임 워크에서 `관리 되는 어드레서블 리소스`입니다. 관리되는 객체이기에 외부에서 Release를 호출할수 없습니다. 그외 `AddressableResourceHandle이랑 기능은 동일`합니다.
 
 
-# CoroutineManager <a href="https://github.com/Oh123456/UnityFramework/tree/main/Assets/Framework/Coroutine"><img src="https://img.shields.io/badge/GitHub_Pages-222222?style=flat-square&logo=GitHub&logoColor=white"/></a>
+# CoroutineManager 
+<a href="https://github.com/Oh123456/UnityFramework/tree/main/Assets/Framework/Coroutine"><img src="https://img.shields.io/badge/GitHub_Pages-222222?style=flat-square&logo=GitHub&logoColor=white"/></a>
+
 유니티에 강력한 기능중하나인 `코루틴(Coroutine)`을 `잘 못 사용`하거나 각각의 객체마다 YieldInstruction을 생성하는것은 `메모리 낭비`와 `GC 부담`이 커질수있기에 `보안`하기위해서 만들었습니다. 
 
 ${\textsf{\color{#1589F0}namespace}}$  `UnityFramework.CoroutineUtility`
@@ -434,7 +439,9 @@ Dictionary<float, WaitForSeconds> waitForSecondDictionary = new Dictionary<float
 ```
 자주 사용되는것들은 `캐싱`하여 사용하여 GC부담과 메모리 낭비를 최소화합니다.
 
-# Pooling <a href="https://github.com/Oh123456/UnityFramework/tree/main/Assets/Framework/Pooling"><img src="https://img.shields.io/badge/GitHub_Pages-222222?style=flat-square&logo=GitHub&logoColor=white"/></a>
+# Pooling 
+<a href="https://github.com/Oh123456/UnityFramework/tree/main/Assets/Framework/Pooling"><img src="https://img.shields.io/badge/GitHub_Pages-222222?style=flat-square&logo=GitHub&logoColor=white"/></a>
+
 유니티에서는 게임진행중에 발생되는 `GC`가 `매우 치명적`이고 객체 `생성`과 `파괴`에 많은 `비용`이 들기에 Pooling 시스템은 필수입니다. 
 
 해당 프레임워크에서는 `Class`, `Mono`, `ArrayPool(C# 기본 제공 기능)`이 제공 됩니다.
@@ -579,7 +586,8 @@ array.Dispose();
 
 `구조체`와 `IDisposable` 사용하여 `GC` 부담 적고 쉽게 `Pool`에 배열을 `반환`할수있습니다.
 
-# FSM <a href="https://github.com/Oh123456/UnityFramework/tree/main/Assets/Framework/FSM"><img src="https://img.shields.io/badge/GitHub_Pages-222222?style=flat-square&logo=GitHub&logoColor=white"/></a>
+# FSM 
+<a href="https://github.com/Oh123456/UnityFramework/tree/main/Assets/Framework/FSM"><img src="https://img.shields.io/badge/GitHub_Pages-222222?style=flat-square&logo=GitHub&logoColor=white"/></a>
 
 AI, 혹은 캐릭터의 상태를 관리할수있는 상태 머신입니다.
 
@@ -692,12 +700,13 @@ SetID `State`의 `ID`를 `부여`합니다. enum과 같이 사용하면 좋은 �
 
 SetChangeAble 에서 `해당 State`에서 `다른 State`로 변환이 가능한 ID를 설정 할수있습니다. 
 
-# Timer <a href="https://github.com/Oh123456/UnityFramework/tree/main/Assets/Framework/Time"><img src="https://img.shields.io/badge/GitHub_Pages-222222?style=flat-square&logo=GitHub&logoColor=white"/></a>
-## TimerManager
+# Timer 
+<a href="https://github.com/Oh123456/UnityFramework/tree/main/Assets/Framework/Time"><img src="https://img.shields.io/badge/GitHub_Pages-222222?style=flat-square&logo=GitHub&logoColor=white"/></a>
+
 유니티에서는 Timer 기능을 만들려면 `코루틴(Coroutine)`을 사용해야 하기에 `매번 새롭게 코드를 작성`해야하는 번거러움을 제거하기위해 제작했습니다.
 
 ${\textsf{\color{#1589F0}namespace}}$  `UnityFramework.Timer`
-
+## TimerManager
 ```
 // 캔슬 가능한 타이머
 public bool SetCoroutineTimer(MonoBehaviour monoBehaviour, float time, out TimerHandle timerHandle, System.Action callback, bool ignoreTimeScale = false, PlayerLoopTiming delayTiming = PlayerLoopTiming.Update)
@@ -757,7 +766,11 @@ public void Cancel()
 TimerHandle 에서 진행중인 `Timer`를 `취소` 할수있습니다.
 
 
-# Collections <a href="https://github.com/Oh123456/UnityFramework/tree/main/Assets/Framework/Collections"><img src="https://img.shields.io/badge/GitHub_Pages-222222?style=flat-square&logo=GitHub&logoColor=white"/></a>
+# Collections 
+
+<a href="https://github.com/Oh123456/UnityFramework/tree/main/Assets/Framework/Collections"><img src="https://img.shields.io/badge/GitHub_Pages-222222?style=flat-square&logo=GitHub&logoColor=white"/></a>
+
+유니티에서 지원 하지 않은 Collection를 지원하기에 제작했습니다.
 ## PriorityQueue 
 
 유니티 C# 에서는 PriorityQueue가 지원을 하지 않기에 제작했습니다. 
