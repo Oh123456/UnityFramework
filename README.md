@@ -279,6 +279,143 @@ public class BackgroundClickHandler : MonoBehaviour, IPointerClickHandler
 ```
 IPointerClickHandler를 통한 클릭 감지후 Hide를 시도합니다.
 
+# AddressableSystem <a href="https://github.com/Oh123456/UnityFramework/tree/main/Assets/Framework/AddressableSystem"><img src="https://img.shields.io/badge/GitHub_Pages-222222?style=flat-square&logo=GitHub&logoColor=white"/></a>
+
+유니티의 Addressable을 조금더 효율적이게 사용하기 위해 제작했습니다. 
+
+Task와 UniTask 둘다 지원합니다. 
+> USE_ADDRESSABLE_TASK 심볼을 추가하면 Task로 작동합니다. 기본적으로 UniTask를 사용합니다.
+
+${\textsf{\color{#1589F0}namespace}}$  `UnityFramework.Addressable`
+
+## AddressableManager
+
+### DownLoadManager
+
+```
+using TaksLables = System.Threading.Tasks.Task<long>;
+using TaksLables = Cysharp.Threading.Tasks.UniTask<long>;
+public async TaksLables CheckDownLoadBundle(List<string> customLabels = null)
+```
+라벨 단위로 어드레서블을 다운로드를 체크하는 함수입니다. TaksLables 값이 1이상이면 다운로드할 에셋이 있는겁니다. 
+> downLoadLabels 값이 null 이면 사용중인 라벨 전체를 체크합니다.
+
+
+```
+public struct AddressableDownLoadData
+{
+    public AsyncOperationHandle handle;    
+}
+
+public event Action<AddressableDownLoadData> OnDownload;
+public event Action OnAllCompletedLoad;
+public async void DownLoadBundle(List<string> downLoadLabels = null)
+```
+
+실제로 다운로드가 되는 부분입니다. 다운로드가 시작되면 OnDownload 이벤트가 호출되어 진행도를 확인할수있습니다. 다운로드가 완료되면 OnAllCompletedLoad 이벤트가 호출이 됩니다.
+
+### LoadManager
+```
+public AddressableResource<T> LoadAsset<T>(object key)
+
+private Dictionary<object, IAddressableResource> loadedResource = new Dictionary<object, IAddressableResource>();
+
+```
+
+해당 프레임 워크에서 씬단위로 리소스를 관리합니다. 씬전환시 자동으로 어드레서블 메모리 해제합니다. 프레임 워크에서 관리하게 메모리 누수가 발생 안합니다. 
+
+>어드레서블 Key 단위로 로드한 리소스를 관리하기에 다른 Key로 같은 리소스를 로드하면 추가적인 메모리가 할당 될수있습니다. 
+>
+> 씬단위로 로드할것이 아닐경우 UnsafeLoadAsset를 사용해야합니다.
+
+```
+public static AddressableResourceHandle<T> UnsafeLoadAsset<T>(object key)
+public static void UnsafeLoadAsset<T>(object key, out AddressableResourceHandle<T> addressableResourceHandle)
+```
+기존 어드레서블로드와 같은 기능입니다. 수동으로 Release 해주지 않을경우 메모리 누수가 발생할수있습니다.
+
+
+
+## AddressableResourceHandle
+
+```
+public struct AddressableResourceHandle<T> : IDisposable, IAddressableResource, IAddressableReleaseAble
+{
+  private AsyncOperationHandle<T> asyncOperationHandle;
+...
+```
+구조체 기반 AsyncOperationHandle을 관리하는 Handle 입니다.
+
+```
+#if USE_ADDRESSABLE_TASK
+        public Task Task { get => this.asyncOperationHandle.Task;}
+#else
+        public UniTask Task { get => this.asyncOperationHandle.ToUniTask(); }
+#endif
+```
+
+비동이기를 위한 Task 지원입니다.
+
+```
+public T GetResource()
+{
+    if (!GetResource(out object resource))
+        return default(T);
+    return (T)resource;
+}
+
+public bool GetResource(out object resource)
+
+```
+
+어드레서블로 로드한 리소스를 가져옵니다. 리소스가 래퍼런스타입이기에 object 타입을 사용해도 박싱 언박싱이 발생 안합니다.
+
+```
+public T WaitForCompletion()
+{
+    if (!this.asyncOperationHandle.IsValid())
+    {
+        AddressableManager.AddressableLog("UnLoad Asset", Color.yellow);
+        return default(T);
+    }
+    return this.asyncOperationHandle.WaitForCompletion();
+}
+```
+
+어드레서블의 WaitForCompletion 입니다.
+> 리소소가 로드되기전까지 쓰레드를 막습니다.
+
+```
+public bool IsValid()
+{
+    return asyncOperationHandle.IsValid();
+}
+```
+
+해당 Handle이 유효한지 확인합니다. 
+
+```
+public bool Release()
+{
+    if (this.asyncOperationHandle.IsValid())
+    {
+        AddressableManager.AddressableLog($"{this.asyncOperationHandle.DebugName} Release!!", Color.blue);
+        Addressables.Release(this.asyncOperationHandle);
+        return !this.asyncOperationHandle.IsValid();
+    }
+
+    return true;
+}
+```
+어드레서블 Release 합니다. 어드레서블의 레퍼런스 카운트가 남아있다면 false가 반환이 됩니다. 
+
+## AddressableResource
+```
+public sealed class AddressableResource<T> : IAddressableResource
+```
+
+해당 프레임 워크에서 관리 되는 어드레서블 리소스입니다. 관리되는 객체이기에 외부에서 Release를 호출할수 없습니다. 그외 AddressableResourceHandle이랑 기능은 동일합니다.
+
 
 # CoroutineManager <a href="https://github.com/Oh123456/UnityFramework/tree/main/Assets/Framework/Coroutine"><img src="https://img.shields.io/badge/GitHub_Pages-222222?style=flat-square&logo=GitHub&logoColor=white"/></a>
 유니티에 강력한 기능중하나인 `코루틴(Coroutine)`을 `잘 못 사용`하거나 각각의 객체마다 YieldInstruction을 생성하는것은 `메모리 낭비`와 `GC 부담`이 커질수있기에 `보안`하기위해서 만들었습니다. 
