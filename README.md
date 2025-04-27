@@ -122,9 +122,9 @@ public class SubUI : UIBase , ISubUI
     }
 
     public new void Show()
-	{ 
-		base.Show();
-	}
+    { 
+        base.Show();
+    }
 
     public new void Hide()
     {
@@ -297,7 +297,7 @@ using TaksLables = System.Threading.Tasks.Task<long>;
 using TaksLables = Cysharp.Threading.Tasks.UniTask<long>;
 public async TaksLables CheckDownLoadBundle(List<string> customLabels = null)
 ```
-라벨 단위로 어드레서블을 다운로드를 체크하는 함수입니다. TaksLables 값이 1이상이면 다운로드할 에셋이 있는겁니다. 
+`라벨 단위`로 어드레서블을 `다운로드`를 `체크`하는 함수입니다. TaksLables 값이 `1이상`이면 `다운로드`할 에셋이 있는겁니다. 
 > downLoadLabels 값이 null 이면 사용중인 라벨 전체를 체크합니다.
 
 
@@ -312,7 +312,7 @@ public event Action OnAllCompletedLoad;
 public async void DownLoadBundle(List<string> downLoadLabels = null)
 ```
 
-실제로 다운로드가 되는 부분입니다. 다운로드가 시작되면 OnDownload 이벤트가 호출되어 진행도를 확인할수있습니다. 다운로드가 완료되면 OnAllCompletedLoad 이벤트가 호출이 됩니다.
+실제로 다운로드가 되는 부분입니다. `다운로드가 시작`되면 `OnDownload` 이벤트가 `호출`되어 진행도를 확인할수있습니다. `다운로드가 완료`되면 `OnAllCompletedLoad` 이벤트가 `호출`이 됩니다.
 
 ### LoadManager
 ```
@@ -322,9 +322,9 @@ private Dictionary<object, IAddressableResource> loadedResource = new Dictionary
 
 ```
 
-해당 프레임 워크에서 씬단위로 리소스를 관리합니다. 씬전환시 자동으로 어드레서블 메모리 해제합니다. 프레임 워크에서 관리하게 메모리 누수가 발생 안합니다. 
+해당 프레임 워크에서 `씬단위로 리소스를 관리`합니다. 씬 전환시 `자동`으로 어드레서블 `메모리 해제`합니다. 프레임 워크에서 관리하게 메모리 누수가 발생 안합니다. 
 
->어드레서블 Key 단위로 로드한 리소스를 관리하기에 다른 Key로 같은 리소스를 로드하면 추가적인 메모리가 할당 될수있습니다. 
+>${\textsf{\color{#FF9800}※ 어드레서블 Key 단위로 로드한 리소스를 관리하기에 다른 Key로 같은 리소스를 로드하면 추가적인 메모리가 할당 될수있습니다. }}$ 
 >
 > 씬단위로 로드할것이 아닐경우 UnsafeLoadAsset를 사용해야합니다.
 
@@ -332,7 +332,7 @@ private Dictionary<object, IAddressableResource> loadedResource = new Dictionary
 public static AddressableResourceHandle<T> UnsafeLoadAsset<T>(object key)
 public static void UnsafeLoadAsset<T>(object key, out AddressableResourceHandle<T> addressableResourceHandle)
 ```
-기존 어드레서블로드와 같은 기능입니다. 수동으로 Release 해주지 않을경우 메모리 누수가 발생할수있습니다.
+기존 어드레서블로드와 같은 기능입니다. 수동으로 `Release` 해주지 않을경우 `메모리 누수`가 발생할수있습니다.
 
 
 
@@ -354,7 +354,7 @@ public struct AddressableResourceHandle<T> : IDisposable, IAddressableResource, 
 #endif
 ```
 
-비동이기를 위한 Task 지원입니다.
+비동이기를 위한 `Task` 지원입니다.
 
 ```
 public T GetResource()
@@ -368,7 +368,7 @@ public bool GetResource(out object resource)
 
 ```
 
-어드레서블로 로드한 리소스를 가져옵니다. 리소스가 래퍼런스타입이기에 object 타입을 사용해도 박싱 언박싱이 발생 안합니다.
+어드레서블로 로드한 리소스를 가져옵니다. 리소스가 래퍼런스타입이기에 object 타입을 사용해도 `박싱 언박싱이 발생 안합니다.`
 
 ```
 public T WaitForCompletion()
@@ -382,7 +382,7 @@ public T WaitForCompletion()
 }
 ```
 
-어드레서블의 WaitForCompletion 입니다.
+어드레서블의 `WaitForCompletion` 입니다.
 > 리소소가 로드되기전까지 쓰레드를 막습니다.
 
 ```
@@ -392,7 +392,7 @@ public bool IsValid()
 }
 ```
 
-해당 Handle이 유효한지 확인합니다. 
+해당 Handle이 `유효`한지 확인합니다. 
 
 ```
 public bool Release()
@@ -407,14 +407,14 @@ public bool Release()
     return true;
 }
 ```
-어드레서블 Release 합니다. 어드레서블의 레퍼런스 카운트가 남아있다면 false가 반환이 됩니다. 
+어드레서블 Release 합니다. 어드레서블의 `레퍼런스 카운트가 남아있다면 false`가 반환 `Release 가 완료되면 True` 반환합니다.
 
 ## AddressableResource
 ```
 public sealed class AddressableResource<T> : IAddressableResource
 ```
 
-해당 프레임 워크에서 관리 되는 어드레서블 리소스입니다. 관리되는 객체이기에 외부에서 Release를 호출할수 없습니다. 그외 AddressableResourceHandle이랑 기능은 동일합니다.
+해당 프레임 워크에서 `관리 되는 어드레서블 리소스`입니다. 관리되는 객체이기에 외부에서 Release를 호출할수 없습니다. 그외 `AddressableResourceHandle이랑 기능은 동일`합니다.
 
 
 # CoroutineManager <a href="https://github.com/Oh123456/UnityFramework/tree/main/Assets/Framework/Coroutine"><img src="https://img.shields.io/badge/GitHub_Pages-222222?style=flat-square&logo=GitHub&logoColor=white"/></a>
