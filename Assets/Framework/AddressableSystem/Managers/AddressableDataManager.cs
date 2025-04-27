@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 
 using UnityEngine;
 using UnityEngine.AddressableAssets;
@@ -9,7 +9,7 @@ namespace UnityFramework.Addressable.Managing
 {
     public class AddressableDataManager
     {
-        Dictionary<object, IAddressableResource> loadedResource = new Dictionary<object, IAddressableResource>();
+        private Dictionary<object, IAddressableResource> loadedResource = new Dictionary<object, IAddressableResource>();
 
         public event System.Func<bool> OnRelease;
 
@@ -31,7 +31,6 @@ namespace UnityFramework.Addressable.Managing
 
             IAddressableResource addressableResource = null;
 
-            // ?놁쑝硫?異붽?
             if (!loadedResource.TryGetValue(assetKey, out addressableResource))
             {
                 AddressableManager.AddressableLog($"Loaded Addressable resource KeyCode : {assetKey}", Color.yellow);

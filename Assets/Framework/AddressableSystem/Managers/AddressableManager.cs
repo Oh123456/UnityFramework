@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 using UnityEngine;
@@ -94,7 +94,7 @@ namespace UnityFramework.Addressable
 
         public async TaksLables CheckDownLoadBundle(List<string> customLabels = null)
         {
-            AddressableLog("DouwnLoadCheck");
+            AddressableLog("DownLoadCheck");
             List<string> labels = CheckLabels(customLabels);
             if (labels == null)
                 return 0;
@@ -133,7 +133,7 @@ namespace UnityFramework.Addressable
             await handler.ToUniTask();
 #endif
 
-            DownladAddressable(handler);
+            DownloadAddressable(handler);
             Addressables.Release(handler);
             CompleteAll();
         }
@@ -260,13 +260,13 @@ namespace UnityFramework.Addressable
 #else
             await handler.ToUniTask();
 #endif
-            DownladAddressable(handler);
+            DownloadAddressable(handler);
             Addressables.Release(handler);
             return;
         }
 
 
-        void DownladAddressable(AsyncOperationHandle handle)
+        void DownloadAddressable(AsyncOperationHandle handle)
         {
             if (handle.Status == AsyncOperationStatus.Succeeded)
             {

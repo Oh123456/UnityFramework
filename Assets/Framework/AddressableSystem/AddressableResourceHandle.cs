@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
@@ -28,7 +28,7 @@ namespace UnityFramework.Addressable
         /// <summary>
         /// Addressable Release
         /// </summary>
-        /// <returns> ture is Complete Release</returns>
+        /// <returns> true is Complete Release</returns>
         bool Release();
     }
 

@@ -1,4 +1,4 @@
-﻿using UnityEngine.AddressableAssets;
+using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using UnityEngine.ResourceManagement.ResourceProviders;
 using UnityFramework.Addressable.Managing;
@@ -83,7 +83,7 @@ namespace UnityFramework.Addressable
         public static void UnsafeInstantiateAsset<T>(object key, out AddressableResourceHandle<T> addressableResourceHandle, System.Action<GameObject> OnCompleted) where T : Object
         {
             UnsafeLoadAsset(key, out addressableResourceHandle);
-            WiatInstantiateAsset(addressableResourceHandle,OnCompleted);
+            WaitInstantiateAsset(addressableResourceHandle,OnCompleted);
         }
 
 
@@ -97,19 +97,19 @@ namespace UnityFramework.Addressable
         public AddressableResource<T> InstantiateAsset<T>(object key, System.Action<GameObject> OnCompleted) where T : Object
         {
             AddressableResource<T> addressableResource = LoadAsset<T>(key);
-            WiatInstantiateAsset(addressableResource, OnCompleted);
+            WaitInstantiateAsset(addressableResource, OnCompleted);
             return addressableResource;
         }
 
 
-        private async void WiatInstantiateAsset<T>(AddressableResource<T> addressableResource, System.Action<GameObject> OnCompleted) where T : Object
+        private async void WaitInstantiateAsset<T>(AddressableResource<T> addressableResource, System.Action<GameObject> OnCompleted) where T : Object
         {
             await addressableResource.Task;
             GameObject gameObject = (GameObject.Instantiate(addressableResource.GetResource())) as GameObject;
             OnCompleted?.Invoke(gameObject);
         }
 
-        private static async void WiatInstantiateAsset<T>(AddressableResourceHandle<T> addressableResourceHandle, System.Action<GameObject> OnCompleted) where T : Object
+        private static async void WaitInstantiateAsset<T>(AddressableResourceHandle<T> addressableResourceHandle, System.Action<GameObject> OnCompleted) where T : Object
         {
             await addressableResourceHandle.Task;
             GameObject gameObject = (GameObject.Instantiate(addressableResourceHandle.GetResource())) as GameObject;
