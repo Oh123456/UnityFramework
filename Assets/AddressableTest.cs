@@ -35,7 +35,7 @@ public class AddressableTest : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.V))
         {
-            dkslaltlqkfdlrpdhodksejhkaghfsdjkghsdfjkghjfdakghadkfghadf();
+            LoadAsetReference();
         }
         if (Input.GetKeyDown(KeyCode.B))
         {
@@ -59,7 +59,7 @@ public class AddressableTest : MonoBehaviour
 
     }
 
-    private void dkslaltlqkfdlrpdhodksejhkaghfsdjkghsdfjkghjfdakghadkfghadf()
+    private void LoadAsetReference()
     {
         AddressableResource<Texture> addressableResource = AddressableManager.Instance.LoadAsset<Texture>(assetReference);
         image.texture = addressableResource.WaitForCompletion();
