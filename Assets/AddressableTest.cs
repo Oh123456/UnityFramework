@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 using UnityFramework.Addressable;
 
-public class Tlqkf : MonoBehaviour
+public class AddressableTest : MonoBehaviour
 {
     [SerializeField] RawImage image;
     [SerializeField] string imageKeys;
