@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 using UnityFramework.Addressable;
 
-public class Tlqkf : MonoBehaviour
+public class AddressableTest : MonoBehaviour
 {
     [SerializeField] RawImage image;
     [SerializeField] string imageKeys;
@@ -35,7 +35,7 @@ public class Tlqkf : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.V))
         {
-            dkslaltlqkfdlrpdhodksejhkaghfsdjkghsdfjkghjfdakghadkfghadf();
+            LoadAsetReference();
         }
         if (Input.GetKeyDown(KeyCode.B))
         {
@@ -59,7 +59,7 @@ public class Tlqkf : MonoBehaviour
 
     }
 
-    private void dkslaltlqkfdlrpdhodksejhkaghfsdjkghsdfjkghjfdakghadkfghadf()
+    private void LoadAsetReference()
     {
         AddressableResource<Texture> addressableResource = AddressableManager.Instance.LoadAsset<Texture>(assetReference);
         image.texture = addressableResource.WaitForCompletion();

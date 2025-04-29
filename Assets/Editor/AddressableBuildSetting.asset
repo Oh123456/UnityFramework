@@ -18,21 +18,13 @@ MonoBehaviour:
   backUpPath: 
   backUpFodierNameRule: '[productName]/[yyyy_MM_dd_HH_mm_ss]'
   isAlwaysBuildCilerWarningDisplay: 1
-  showAssetBundleBuildResults: 0
+  assetBundleBuildResults: 0
   addressablePatternRules:
-  - {fileID: 11500000, guid: da0c0fa2317d44547803e07b6edc021a, type: 3}
-  - {fileID: 11500000, guid: e9a537e017953e34c916192fdc94ea27, type: 3}
-  - {fileID: 11500000, guid: da0c0fa2317d44547803e07b6edc021a, type: 3}
-  - {fileID: 11500000, guid: e9a537e017953e34c916192fdc94ea27, type: 3}
-  - {fileID: 11500000, guid: da0c0fa2317d44547803e07b6edc021a, type: 3}
-  - {fileID: 11500000, guid: e9a537e017953e34c916192fdc94ea27, type: 3}
-  - {fileID: 11500000, guid: da0c0fa2317d44547803e07b6edc021a, type: 3}
-  - {fileID: 11500000, guid: e9a537e017953e34c916192fdc94ea27, type: 3}
   - {fileID: 11500000, guid: da0c0fa2317d44547803e07b6edc021a, type: 3}
   - {fileID: 11500000, guid: e9a537e017953e34c916192fdc94ea27, type: 3}
   backUpFoliderNameRulesTpye: 0
   ignoreChangeGroup:
   - {fileID: 11400000, guid: 6982894a4514142439c42a609a430e6f, type: 2}
-  - {fileID: 11400000, guid: 1c4f389ca2815e447b5853d45908a7d7, type: 2}
-  - {fileID: 11400000, guid: db5f935c2ad47054ebe6cde9d4d1ecec, type: 2}
   - {fileID: 11400000, guid: 27f3203523510d74fadb74a71d400a6b, type: 2}
+  - {fileID: 11400000, guid: db5f935c2ad47054ebe6cde9d4d1ecec, type: 2}
+  - {fileID: 11400000, guid: 1c4f389ca2815e447b5853d45908a7d7, type: 2}

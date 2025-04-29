@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 
@@ -126,7 +126,6 @@ namespace AddressableEditor
         private void InitializeScripts(string[] scriptNames)
         {
             string[] allScripts = AssetDatabase.FindAssets("t:MonoScript");
-
             foreach (var scripts in allScripts)
             {
                 string assetPath = AssetDatabase.GUIDToAssetPath(scripts);
@@ -140,7 +139,8 @@ namespace AddressableEditor
                     string name = $"{script.name}.cs";
                     if (name == scriptNames[j])
                     {
-                        addressablePatternRules.Add(script);
+                        if (!addressablePatternRules.Contains(script))
+                            addressablePatternRules.Add(script);
                     }
                 }
             }
@@ -149,7 +149,6 @@ namespace AddressableEditor
         public List<AddressablePatternRule> CheckIntegrityAddressablePatternRules()
         {
             patternRules.Clear();
-
 
             for (int i = addressablePatternRules.Count - 1; i >= 0; i--)
             {
