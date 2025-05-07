@@ -425,6 +425,48 @@ public sealed class AddressableResource<T> : IAddressableResource
 
 해당 프레임 워크에서 `관리 되는 어드레서블 리소스`입니다. 관리되는 객체이기에 외부에서 Release를 호출할수 없습니다. 그외 `AddressableResourceHandle이랑 기능은 동일`합니다.
 
+## UIManager(Addressable)
+UIManager를 어드레서블 과 같이 사용하는 기능입니다.
+
+```
+public async void ShowAddressableSceneUI<T>(object key, System.Action<T> showComplete = null, int sortOrder = 0) where T : MainUIBase
+{
+    T ui = await GetCachedAddressableUI<T>(key, LoadType.Safe);
+    ExecuteUIContoller(ui);
+    showComplete?.Invoke(ui);
+    return;
+}
+```
+씬 단위로 사용하는 UI는 어드레서블 로드하고 해당 씬에서 한번이라도 로드했다면 캐싱해둔데이터를 사용합니다.
+
+```
+private Dictionary<string, IUIAddressableHandle> unsafeLoads = new Dictionary<string, IUIAddressableHandle>();
+
+public async void ShowAddressableUI<T>(object key, System.Action<T> showComplete = null, int sortOrder = 0) where T : MainUIBase
+{
+    T ui = await GetCachedAddressableUI<T>(key, LoadType.UnSafe);
+    ExecuteUIContoller(ui);
+    showComplete?.Invoke(ui);
+}
+```
+UI Stack으로 관리 안하는 즉 항상 유지되야하는 UI를 Show 할때 사용하는 함수입니다. 
+
+기본적으로 게임이 종료될때까지 메모리가 유지되가 됩니다.
+
+```
+public void ReleaseUnsafeUI(object key)
+{
+    string stringKey = (string)(key is IKeyEvaluator keyEvaluator ? keyEvaluator.RuntimeKey : key);
+    if (unsafeLoads.TryGetValue(stringKey, out IUIAddressableHandle uIAddressableHandle))
+    {
+        uIAddressableHandle.Release();
+        unsafeLoads.Remove(stringKey);
+    }
+}
+```
+물론 사용빈도가 낮을경우 메모리를 해제도 가능합니다.
+
+그외 기능은 UIManager랑 동일합니다.
 
 # CoroutineManager 
 <a href="https://github.com/Oh123456/UnityFramework/tree/main/Assets/Framework/Coroutine"><img src="https://img.shields.io/badge/GitHub_Pages-222222?style=flat-square&logo=GitHub&logoColor=white"/></a>
