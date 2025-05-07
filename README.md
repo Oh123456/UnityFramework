@@ -425,6 +425,146 @@ public sealed class AddressableResource<T> : IAddressableResource
 
 해당 프레임 워크에서 `관리 되는 어드레서블 리소스`입니다. 관리되는 객체이기에 외부에서 Release를 호출할수 없습니다. 그외 `AddressableResourceHandle이랑 기능은 동일`합니다.
 
+## UIManager(Addressable)
+UIManager를 어드레서블 과 같이 사용하는 기능입니다.
+
+```
+public async void ShowAddressableSceneUI<T>(object key, System.Action<T> showComplete = null, int sortOrder = 0) where T : MainUIBase
+{
+    T ui = await GetCachedAddressableUI<T>(key, LoadType.Safe);
+    ExecuteUIContoller(ui);
+    showComplete?.Invoke(ui);
+    return;
+}
+```
+`씬 단위`로 사용하는 UI는 어드레서블 로드하고 해당 씬에서 한번이라도 로드했다면 캐싱해둔데이터를 사용합니다.
+
+```
+private Dictionary<string, IUIAddressableHandle> unsafeLoads = new Dictionary<string, IUIAddressableHandle>();
+
+public async void ShowAddressableUI<T>(object key, System.Action<T> showComplete = null, int sortOrder = 0) where T : MainUIBase
+{
+    T ui = await GetCachedAddressableUI<T>(key, LoadType.UnSafe);
+    ExecuteUIContoller(ui);
+    showComplete?.Invoke(ui);
+}
+```
+`UI Stack으로 관리 안하는` 즉 항상 유지되야하는 UI를 Show 할때 사용하는 함수입니다. 
+
+기본적으로 게임이 `종료`될때까지 `메모리`가 유지되가 됩니다.
+
+```
+public void ReleaseUnsafeUI(object key)
+{
+    string stringKey = (string)(key is IKeyEvaluator keyEvaluator ? keyEvaluator.RuntimeKey : key);
+    if (unsafeLoads.TryGetValue(stringKey, out IUIAddressableHandle uIAddressableHandle))
+    {
+        uIAddressableHandle.Release();
+        unsafeLoads.Remove(stringKey);
+    }
+}
+```
+물론 사용빈도가 낮을경우 `메모리를 해제`도 가능합니다.
+
+그외 기능은 UIManager랑 동일합니다.
+
+## Editor
+어드레서블의 에디터 기능입니다.
+
+![바로가기](https://github.com/user-attachments/assets/f2488574-de6b-4cf0-af2d-adc9f78e6148)
+![바로가기2](https://github.com/user-attachments/assets/bcf44b95-92d5-4ccc-8c7f-4f832a6fe616)
+![바로가기3](https://github.com/user-attachments/assets/3d9478e5-0d99-4161-a507-9ed487675870)
+
+자주 사용되는 어드레서블을 툴팁바에 바로갈수있게 커스텀 했습니다.
+
+![어드레서블 빌드 세팅](https://github.com/user-attachments/assets/0f787476-24b0-48d3-ac94-d333c02c0230)
+![어드레서블 빌드 세팅 2](https://github.com/user-attachments/assets/f3f448a0-3702-4ff1-beb8-6561ff330c70)
+
+어드레서블 빌드를 편하게 하기위해 스크립터블 오브젝트로 만들었습니다.
+
+![image](https://github.com/user-attachments/assets/8c9df10e-080c-4eb9-baa9-f282f0fd770a)
+
+빠르게 빌드 프로필을 발꿀수 있으며 빌드 경로를 확인할수 있습니다.
+
+![image](https://github.com/user-attachments/assets/b4efc6a8-1dc8-4d9b-a462-25f40b612f2d)
+
+>${\textsf{\color{#FF9800}※ 오탈자 BuildCilerFolder -> BuildClearFolder }}$
+
+BuildCompleteOpenFolder 옵션은 빌드가 완료되면 빌드 폴더를 열어줍니다. 
+BuildClearFolder 
+```
+public enum BuildClearOption
+{
+    None = BuildClearOptionFlags.None,
+    FileClear = BuildClearOptionFlags.FileClear,
+    FileClearAndWarning = BuildClearOptionFlags.FileClear | BuildClearOptionFlags.ShowWarning,
+    BackUp = BuildClearOptionFlags.BackUp,
+    BackUpAndClear = BuildClearOptionFlags.BackUp | BuildClearOptionFlags.FileClear,
+}
+```
+>FileClear 빌드 폴더 내부를 삭제후 빌드합니다.
+>
+>ShowWarning 빌드전 경고 문구를 표시합니다.
+>
+>BackUp 다른 폴더에 백업을 합니다. ((0.3) 버전에서 버그가있습니다.)
+
+![image](https://github.com/user-attachments/assets/9ee98cbc-5398-44e6-a6d2-702d74fb2ce0)
+
+플레이모드를 바꿀수있습니다.
+
+![image](https://github.com/user-attachments/assets/ddbc3617-0082-4864-bc77-5cac55e047d6)
+
+빌드 버튼입니다.
+> ![image](https://github.com/user-attachments/assets/5aac6642-cddb-438c-903a-7ac22873112b)
+>
+> Build 일반 빌드
+>
+> Build (Clear Build Cache) 빌드 캐시 삭제후 빌드
+>
+> Build (Clear ALL) 어드레서블 모든 캐시 삭제후 빌드
+
+![image](https://github.com/user-attachments/assets/265557b3-3973-433f-8b57-8a1ee34f2b59)
+
+어드레서블 자동도르 라벨을 갱신 하는 기능입니다.
+
+
+![라벨세팅](https://github.com/user-attachments/assets/352304f3-0bb1-4a4e-b316-624e3c9213df)
+
+라벨 세팅입니다. 자동 로드 라벨을 세팅합니다. Ignore Lable을 세팅할시 자동로드 에서 제외됩니다.
+
+![image](https://github.com/user-attachments/assets/ec883fd8-0bb1-49f3-aa2f-27a7f31e303b)
+
+현재 어드레서블 그룹입니다. 한눈에 해당 그룹이 리모트인지 로컬인지 확인이 가능합니다.
+
+![image](https://github.com/user-attachments/assets/fd524970-b3ac-4632-aa0f-00ff79679830)
+
+모든 그룹을 리모트로 변경하는 버튼입니다. Ignore 세팅을하면 해당그룹은 변경이 무시됩니다.
+
+![image](https://github.com/user-attachments/assets/b3147724-8d91-489a-92a9-c3d89d17167e)
+
+관리가 안되는 어드레서블 로드입니다. 어느 키로 접근했는지 몇번 로드했는지 어느 스크립트에서 호출했는지 표시해줍니다. 추후에 메모리 누수가 발생하는지 확인할수 있습니다.
+
+![image](https://github.com/user-attachments/assets/44d20a83-8ca3-4901-99fd-83d1f33bda94)
+
+관리가 되는 어드레서블 로드입니다. 씬단위로 어느 리소스가 로드가됬는지 추적합니다.
+
+![image](https://github.com/user-attachments/assets/daf4ca37-a13f-4224-8f6e-589daa362e1d)
+
+다른 키로 같은 리소스를 접근했을 경우 노란색으로 경고가 나옵니다. 기능상 문제는 없지만 내부적으로 두개의 키임으로 중복으로 캐싱됩니다.
+
+![image](https://github.com/user-attachments/assets/26e21fb2-e6d2-4e51-96ff-233a20e1b53f)
+![image](https://github.com/user-attachments/assets/f21e62f5-51fa-49ea-afda-76c3e9cd4009)
+
+어드레서블 에러 관리가되는 어드레서블 로드와 안되는 로드가 동시에 발생했을경우 빨간색 점으로 표시가 됩니다. 이 경우 의도치 않은 메모리 해제가 발생할수있습니다.
+
+
+>빨간점 : 잘 못 된 로드
+>
+>노란색점 : 잘 못 된 키접근
+>
+> 초록점 : 정상
+>
+>회색점 : 메모리 해제
 
 # CoroutineManager 
 <a href="https://github.com/Oh123456/UnityFramework/tree/main/Assets/Framework/Coroutine"><img src="https://img.shields.io/badge/GitHub_Pages-222222?style=flat-square&logo=GitHub&logoColor=white"/></a>
