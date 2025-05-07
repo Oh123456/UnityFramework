@@ -9,7 +9,7 @@ namespace UnityFramework.Addressable.Managing
 {
     public class AddressableDataManager
     {
-        private Dictionary<object, IAddressableResource> loadedResource = new Dictionary<object, IAddressableResource>();
+        private  Dictionary<object, IAddressableResource> loadedResource = new Dictionary<object, IAddressableResource>();
 
         public event System.Func<bool> OnRelease;
 
