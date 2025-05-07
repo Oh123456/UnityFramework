@@ -16,7 +16,13 @@ MonoBehaviour:
   m_Data:
     m_SerializedData: []
   m_GUID: 6dfa5f22cf8f1a046b814f95c8eb3401
-  m_SerializeEntries: []
+  m_SerializeEntries:
+  - m_GUID: f8aca899175a6b4459ea913784a11682
+    m_Address: Assets/Scenes/Addressables/LoadTest.unity
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Scenes
+    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 3a88b6728ff4e534f84e308d2655ebfa, type: 2}
   m_SchemaSet:

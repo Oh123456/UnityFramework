@@ -16,7 +16,25 @@ MonoBehaviour:
   m_Data:
     m_SerializedData: []
   m_GUID: a1cd296025359c54b9ec875e6f476998
-  m_SerializeEntries: []
+  m_SerializeEntries:
+  - m_GUID: 8963e1817f672ca42abac88f477a4c23
+    m_Address: Assets/Cube.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Scenes
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 911ec8fe89654e34e84c78437eed0942
+    m_Address: Assets/Shader Graphs_AlphaShader.mat
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Scenes
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ce0fa5042be55fd4ba0724c81580842a
+    m_Address: Assets/GIF/1/360render_0.jpeg
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Image
+    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 3a88b6728ff4e534f84e308d2655ebfa, type: 2}
   m_SchemaSet:

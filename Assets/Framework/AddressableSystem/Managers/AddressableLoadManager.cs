@@ -120,9 +120,9 @@ namespace UnityFramework.Addressable
         /// <summary>
         /// As confirmed so far, scene loading using Addressables does not function properly on mobile devices.
         /// </summary>
-        public async void LoadScene(string sceneName, UnityEngine.SceneManagement.LoadSceneMode loadSceneMode)
+        public async void LoadScene(object sceneKey, UnityEngine.SceneManagement.LoadSceneMode loadSceneMode)
         {
-            AsyncOperationHandle<SceneInstance> asyncOperationHandle = Addressables.LoadSceneAsync(sceneName, loadSceneMode);
+            AsyncOperationHandle<SceneInstance> asyncOperationHandle = Addressables.LoadSceneAsync(sceneKey, loadSceneMode);
 
             while (!asyncOperationHandle.IsDone)
             {
@@ -135,11 +135,15 @@ namespace UnityFramework.Addressable
 #endif
             }
 
+#if USE_ADDRESSABLE_TASK
+            await Addressables.UnloadSceneAsync(asyncOperationHandle).Task;
+#else
+            await Addressables.UnloadSceneAsync(asyncOperationHandle).ToUniTask();
+#endif
+
             this.OnSceneLoadCompleted?.Invoke(asyncOperationHandle.Result);
             this.OnSceneLoadCompleted = null;
             this.OnLoadScenePercent = null;
-
-            Addressables.Release(asyncOperationHandle);
         }
 
 

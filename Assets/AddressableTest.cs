@@ -1,5 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+
+using Cysharp.Threading.Tasks;
+
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.SceneManagement;
@@ -13,16 +16,26 @@ public class AddressableTest : MonoBehaviour
     [SerializeField] string imageKeys;
     [SerializeField] AssetReference assetReference;
     [SerializeField] AssetReference assetReferenceGO;
-
+    [SerializeField] AssetReference assetScene;
+    [SerializeField] Button button;
 
     AddressableResourceHandle<Texture> addressableResource;
     void Start()
     {
-        AddressableManager.Instance.DownLoad();
+        button.onClick.AddListener(ButtonClick);
+        button.interactable =false;
+        Load();
+    }
+
+    async void Load()
+    {
+        long size = await AddressableManager.Instance.CheckDownLoadBundle();
         AddressableManager.Instance.OnAllCompletedLoad += () =>
         {
+            button.interactable = true;
             Debug.Log("다운로드 완료 ");
         };
+        AddressableManager.Instance.DownLoadBundle();   
     }
 
 
@@ -57,10 +70,30 @@ public class AddressableTest : MonoBehaviour
             Instantiate(go);
         }
 
+        if (Input.GetKeyDown(KeyCode.I))
+        {
+            LoadScene();
+        }
+
     }
+
+    void ButtonClick()
+    {
+        button.interactable = false;
+        _ = LoadScene();
+    }
+
+    async UniTask LoadScene()
+    {
+        AddressableManager.Instance.LoadScene(assetScene, LoadSceneMode.Single);
+        Debug.Log("TT");
+    }
+
 
     private void LoadAsetReference()
     {
+        
+
         AddressableResource<Texture> addressableResource = AddressableManager.Instance.LoadAsset<Texture>(assetReference);
         image.texture = addressableResource.WaitForCompletion();
     }
