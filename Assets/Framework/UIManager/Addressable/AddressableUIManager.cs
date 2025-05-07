@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 
 using UnityEngine;
@@ -19,17 +19,17 @@ namespace UnityFramework.UI
 {
     public partial class UIManager
     {
-        private interface IUIAddressalbeHandle
+        private interface IUIAddressableHandle
         {
             T GetResource<T>() where T : MainUIBase;
             void Release();
         }
-        private class UIAddressalbeHandle<T> : IUIAddressalbeHandle where T : MainUIBase
+        private class UIAddressableHandle<T> : IUIAddressableHandle where T : MainUIBase
         {
             readonly AddressableResourceHandle<GameObject> addressableResourceHandle;
             T uiBase;
 
-            public UIAddressalbeHandle(in AddressableResourceHandle<GameObject> addressableResourceHandle)
+            public UIAddressableHandle(in AddressableResourceHandle<GameObject> addressableResourceHandle)
             {
                 this.addressableResourceHandle = addressableResourceHandle;
                 uiBase = addressableResourceHandle.GetResource().GetComponent<T>();
@@ -47,7 +47,7 @@ namespace UnityFramework.UI
             }
         }
 
-        private Dictionary<string, IUIAddressalbeHandle> unsafeLoads = new Dictionary<string, IUIAddressalbeHandle>();
+        private Dictionary<string, IUIAddressableHandle> unsafeLoads = new Dictionary<string, IUIAddressableHandle>();
 
         enum LoadType
         {
@@ -58,7 +58,7 @@ namespace UnityFramework.UI
         public async void ShowAddressableSceneUI<T>(object key, System.Action<T> showComplete = null, int sortOrder = 0) where T : MainUIBase
         {
             T ui = await GetCachedAddressableUI<T>(key, LoadType.Safe);
-            ExecuteUIContoller(ui);
+            ExecuteUIController(ui);
             showComplete?.Invoke(ui);
             return;
         }
@@ -71,7 +71,7 @@ namespace UnityFramework.UI
         ShowAddressableSceneUI<T>(object key, int sortOrder = 0) where T : MainUIBase
         {
             T ui = await GetCachedAddressableUI<T>(key, LoadType.Safe);
-            ExecuteUIContoller(ui);
+            ExecuteUIController(ui);
             return ui;
         }
 
@@ -79,7 +79,7 @@ namespace UnityFramework.UI
         public async void ShowAddressableUI<T>(object key, System.Action<T> showComplete = null, int sortOrder = 0) where T : MainUIBase
         {
             T ui = await GetCachedAddressableUI<T>(key, LoadType.UnSafe);
-            ExecuteUIContoller(ui);
+            ExecuteUIController(ui);
             showComplete?.Invoke(ui);
         }
 
@@ -91,7 +91,7 @@ namespace UnityFramework.UI
         ShowAddressableUI<T>(object key, int sortOrder = 0) where T : MainUIBase
         {
             T ui = await GetCachedAddressableUI<T>(key, LoadType.UnSafe);
-            var uIController = ExecuteUIContoller(ui);
+            var uIController = ExecuteUIController(ui);
             return ui;
         }
 
@@ -123,7 +123,7 @@ namespace UnityFramework.UI
             return ui;
         }
 
-        private UIController ExecuteUIContoller<T>(T ui) where T : MainUIBase
+        private UIController ExecuteUIController<T>(T ui) where T : MainUIBase
         {
 
             UIController uIController = GetUIController();
@@ -151,11 +151,11 @@ namespace UnityFramework.UI
             else
             {
                 string loadKey = (key is IKeyEvaluator evaluator ? evaluator.RuntimeKey : key) as string;
-                if (!unsafeLoads.TryGetValue(loadKey, out IUIAddressalbeHandle uiAddressalbeHandle))
+                if (!unsafeLoads.TryGetValue(loadKey, out IUIAddressableHandle uiAddressalbeHandle))
                 {
                     AddressableResourceHandle<GameObject> addressableResourceHandle = AddressableManager.UnsafeLoadAsset<GameObject>(key);
                     await addressableResourceHandle.Task;
-                    uiAddressalbeHandle = new UIAddressalbeHandle<T>(in addressableResourceHandle);
+                    uiAddressalbeHandle = new UIAddressableHandle<T>(in addressableResourceHandle);
                     if (loadKey != null)
                         unsafeLoads.Add(loadKey, uiAddressalbeHandle);
                 }
@@ -167,11 +167,11 @@ namespace UnityFramework.UI
 
         public void ReleaseUnsafeUI(object key)
         {
-            string stringkey = (string)(key is IKeyEvaluator keyEvaluator ? keyEvaluator.RuntimeKey : key);
-            if (unsafeLoads.TryGetValue(stringkey, out IUIAddressalbeHandle uIAddressalbeHandle))
+            string stringKey = (string)(key is IKeyEvaluator keyEvaluator ? keyEvaluator.RuntimeKey : key);
+            if (unsafeLoads.TryGetValue(stringKey, out IUIAddressableHandle uIAddressableHandle))
             {
-                uIAddressalbeHandle.Release();
-                unsafeLoads.Remove(stringkey);
+                uIAddressableHandle.Release();
+                unsafeLoads.Remove(stringKey);
             }
         }
     }

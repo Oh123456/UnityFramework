@@ -51,9 +51,9 @@ namespace AddressableEditor
 
         [SerializeField][Tooltip("")] Color settingTitleColor = Color.black;
         [SerializeField][Tooltip("")] bool buildCompleteOpenFolder = true;
-        [SerializeField][Tooltip("")] BuildClearOption buildCilerFolder = BuildClearOption.FileClearAndWarning;
+        [SerializeField][Tooltip("")] BuildClearOption buildClearFolder = BuildClearOption.FileClearAndWarning;
         [SerializeField][Tooltip("")] string backUpPath = "";
-        [SerializeField][Tooltip("")] string backUpFodierNameRule = "[productName]/[yyyy_MM_dd_HH_mm_ss]";
+        [SerializeField][Tooltip("")] string backUpFolderNameRule = "[productName]/[yyyy_MM_dd_HH_mm_ss]";
         [SerializeField][Tooltip("")] bool isAlwaysBuildCilerWarningDisplay = true;
         [SerializeField][Tooltip("")] bool assetBundleBuildResults = false;
         [SerializeField][Tooltip("")] List<MonoScript> addressablePatternRules;
@@ -69,7 +69,7 @@ namespace AddressableEditor
 
         public bool AssetBundleBuildResults => this.assetBundleBuildResults;
         public bool BuildCompleteOpenFolder => this.buildCompleteOpenFolder;
-        public BuildClearOption BuildCilerFolder => this.buildCilerFolder;
+        public BuildClearOption BuildCilerFolder => this.buildClearFolder;
         public bool IsAlwaysBuildCilerWarningDisplay => this.isAlwaysBuildCilerWarningDisplay;
 
         public string BackUpPath => this.backUpPath;
@@ -79,7 +79,7 @@ namespace AddressableEditor
             {
                 if (backUpFoliderNameRulesTpye == BackUpFoliderNameRulesTpye.Default)
                     return DEFAULT_BACKUP_FODIER_NAMERULE;
-                return this.backUpFodierNameRule;
+                return this.backUpFolderNameRule;
             }
         }
 
@@ -116,8 +116,8 @@ namespace AddressableEditor
             if (this.backUpFoliderNameRulesTpye == BackUpFoliderNameRulesTpye.Default &&
                 this.previousbackUpFoliderNameRulesTpye != this.backUpFoliderNameRulesTpye)
             {
-                Debug.Log("Rest BackUpFoliderNameBules");
-                this.backUpFodierNameRule = DEFAULT_BACKUP_FODIER_NAMERULE;
+                Debug.Log("Rest BackUpFolderNameRules");
+                this.backUpFolderNameRule = DEFAULT_BACKUP_FODIER_NAMERULE;
                 InitializeScripts(new string[] { "AddressablePatternDayRule.cs", "AddressablePatternProductNameRule.cs" });
             }
             this.previousbackUpFoliderNameRulesTpye = this.backUpFoliderNameRulesTpye;
