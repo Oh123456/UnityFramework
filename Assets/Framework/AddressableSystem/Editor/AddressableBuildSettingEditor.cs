@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Buffers;
 using System.Collections;
 using System.Collections.Generic;
@@ -54,7 +54,7 @@ namespace AddressableEditor
         }
 
         EditorSerializedProperty buildCompleteOpenFolder = new EditorSerializedProperty("buildCompleteOpenFolder");
-        EditorSerializedProperty buildCilerFolder = new EditorSerializedProperty("buildCilerFolder");
+        EditorSerializedProperty buildClearFolder = new EditorSerializedProperty("buildClearFolder");
         EditorSerializedProperty assetBundleBuildResults = new EditorSerializedProperty("assetBundleBuildResults");
         EditorSerializedProperty isAlwaysBuildCilerWarningDisplay = new EditorSerializedProperty("isAlwaysBuildCilerWarningDisplay");
         EditorSerializedProperty settingTitleColor = new EditorSerializedProperty("settingTitleColor");
@@ -92,7 +92,7 @@ namespace AddressableEditor
         private void OnEnable()
         {
             buildCompleteOpenFolder.Initialization(serializedObject);
-            buildCilerFolder.Initialization(serializedObject);
+            buildClearFolder.Initialization(serializedObject);
             assetBundleBuildResults.Initialization(serializedObject);
             isAlwaysBuildCilerWarningDisplay.Initialization(serializedObject);
             settingTitleColor.Initialization(serializedObject);
@@ -261,9 +261,9 @@ namespace AddressableEditor
             EditorGUILayout.Space(7.0f + popupHeight);
 
             PropertyField(buildCompleteOpenFolder, "빌드 완료후 빌드 폴더 열기");
-            PropertyField(buildCilerFolder, "빌드시 빌드 폴더 삭제");
+            PropertyField(buildClearFolder, "빌드시 빌드 폴더 삭제");
 
-            var option = (AddressableBuildSetting.BuildClearOptionFlags)(buildCilerFolder.Property.intValue);
+            var option = (AddressableBuildSetting.BuildClearOptionFlags)(buildClearFolder.Property.intValue);
             if (option.HasFlag(AddressableBuildSetting.BuildClearOptionFlags.BackUp))
             {
                 EditorGUI.indentLevel++;
