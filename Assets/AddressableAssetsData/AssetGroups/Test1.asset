@@ -35,6 +35,12 @@ MonoBehaviour:
     m_SerializedLabels:
     - Image
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5b77a737fe03ece41a29941e7911e273
+    m_Address: Assets/GIF/1/360render_2.jpeg
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Image
+    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 3a88b6728ff4e534f84e308d2655ebfa, type: 2}
   m_SchemaSet:

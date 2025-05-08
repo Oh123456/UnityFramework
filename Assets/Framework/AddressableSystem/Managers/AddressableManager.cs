@@ -126,17 +126,13 @@ namespace UnityFramework.Addressable
                 Debug.Log($"PlayModeStateChange : {playModeStateChange}");
             };
 #endif
-            Addressables.InitializeAsync(true).Completed += (a) =>
-            {
-                Debug.Log("asdf");
-            };
 
         }
 
         public async TaksDownLoadData CheckDownLoadBundle(List<string> customLabels = null)
         {
             AddressableLog("DownLoadCheck");
-
+            await Addressables.InitializeAsync();
             List<string> catalog = await CheckForCatalogUpdates();
             List<string> labels = null;
 
