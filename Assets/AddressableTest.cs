@@ -18,24 +18,40 @@ public class AddressableTest : MonoBehaviour
     [SerializeField] AssetReference assetReferenceGO;
     [SerializeField] AssetReference assetScene;
     [SerializeField] Button button;
+    [SerializeField] Button InitButton;
 
     AddressableResourceHandle<Texture> addressableResource;
     void Start()
     {
+        var a = AddressableManager.Instance;
+        InitButton.onClick.AddListener(Load);    
         button.onClick.AddListener(ButtonClick);
-        button.interactable =false;
-        Load();
+        button.interactable = false;
+
     }
 
     async void Load()
     {
-        long size = await AddressableManager.Instance.CheckDownLoadBundle();
+        var data = await AddressableManager.Instance.CheckDownLoadBundle();
         AddressableManager.Instance.OnAllCompletedLoad += () =>
         {
             button.interactable = true;
             Debug.Log("다운로드 완료 ");
         };
-        AddressableManager.Instance.DownLoadBundle();   
+
+        if (data.size <= 0)
+        {
+            Debug.Log("다운로드 불필요!");
+            return;
+        }
+
+        if (data.labels == null)
+        {
+            Debug.Log("다운로드가능한 라벨 없음");
+            return;
+        }
+
+        AddressableManager.Instance.DownLoadBundle(data.labels);
     }
 
 
@@ -53,11 +69,11 @@ public class AddressableTest : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.B))
         {
             AddressableResource<Texture> addressableResource = AddressableManager.Instance.LoadAsset<Texture>(imageKeys);
-            image.texture = addressableResource.WaitForCompletion();            
+            image.texture = addressableResource.WaitForCompletion();
         }
         if (Input.GetKeyDown(KeyCode.C))
         {
-            AddressableManager.Instance.GetAddressableDataManager().Release();  
+            AddressableManager.Instance.GetAddressableDataManager().Release();
         }
         if (Input.GetKeyDown(KeyCode.P))
         {
@@ -92,7 +108,7 @@ public class AddressableTest : MonoBehaviour
 
     private void LoadAsetReference()
     {
-        
+
 
         AddressableResource<Texture> addressableResource = AddressableManager.Instance.LoadAsset<Texture>(assetReference);
         image.texture = addressableResource.WaitForCompletion();
