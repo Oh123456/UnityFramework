@@ -23,6 +23,18 @@ MonoBehaviour:
     m_SerializedLabels:
     - Scenes
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c0f7789f7439db842b197dd8b089885b
+    m_Address: Assets/GIF/9/360render_0.jpeg
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Image
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: fe1f4a1d63327f540a599f112f0f0eac
+    m_Address: Assets/GIF/9/360render_8.jpeg
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Image
+    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 3a88b6728ff4e534f84e308d2655ebfa, type: 2}
   m_SchemaSet:

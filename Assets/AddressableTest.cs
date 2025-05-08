@@ -30,6 +30,7 @@ public class AddressableTest : MonoBehaviour
     async void Load()
     {
         long size = await AddressableManager.Instance.CheckDownLoadBundle();
+        Debug.Log($"다운로드 사이즈 : {size}");
         AddressableManager.Instance.OnAllCompletedLoad += () =>
         {
             button.interactable = true;

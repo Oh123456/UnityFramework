@@ -72,6 +72,7 @@ namespace UnityFramework.Addressable.Managing
         private void UnloadScene(UnityEngine.SceneManagement.Scene scene)
         {
             Release();
+            Resources.UnloadUnusedAssets();
         }
     }
 }
