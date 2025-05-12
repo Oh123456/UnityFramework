@@ -3,9 +3,6 @@ using System.Threading;
 using Cysharp.Threading.Tasks;
 
 using UnityFramework.Singleton;
-using UnityFramework.CoroutineUtility;
-
-using System.Collections;
 
 using UnityEngine;
 
@@ -17,7 +14,7 @@ namespace UnityFramework.Timer
 
 
 
-    public class TimerManager : LazySingleton<TimerManager>
+    public partial class TimerManager : LazySingleton<TimerManager>
     {
         /// <summary>
         /// 취소 가능한 Task 기반 타이머 콜백을 위한 데이터
@@ -38,109 +35,10 @@ namespace UnityFramework.Timer
             public System.Action cancelFunction;
         }
 
-        private class CoroutineTimer
-        {
-            /// <summary>
-            /// 코루틴 딜레이
-            /// </summary>
-            /// <param name="time">1.0f = 1초 </param>
-            /// <param name="callback"> 콜백 </param>
-            /// <param name="playerLoopTiming">Update, FixedUpdate, LastUpdate 만 지원 나머지 값은 Update </param>
-            /// <returns></returns>
-            public IEnumerator Delay(float time, System.Action callback, bool ignoreTimeScale = false, PlayerLoopTiming playerLoopTiming = PlayerLoopTiming.Update)
-            {
-
-                // 대기 방식 결정
-                YieldInstruction yieldInstruction = playerLoopTiming switch
-                {
-                    PlayerLoopTiming.FixedUpdate => CoroutineManager.Instance.WaitForFixedUpdate,
-                    PlayerLoopTiming.Update => null,
-                    PlayerLoopTiming.LastUpdate => CoroutineManager.Instance.WaitForEndOfFrame,
-                    _ => null
-                };
-
-                //타임 스케일 무시여부에따라 값 변경
-                System.Func<float> getTime = ignoreTimeScale? GetUnscaledTime : GetTime;
-
-                float currentTimeDeltaTime = 0.0f;
-                while (time > currentTimeDeltaTime)
-                {
-                    float start = getTime();
-                    yield return yieldInstruction;
-                    // 코루틴간의 시간 측정
-                    currentTimeDeltaTime += getTime() - start;
-                }
-
-                callback();
-            }
-
-            /// <summary>
-            /// 타임 스케일 영향 받는 시간
-            /// </summary>
-            /// <returns>누적 시간 값</returns>
-            private float GetTime()
-            {
-                return Time.time;
-            }
-
-            /// <summary>
-            /// 타임 스케일 영향 안받는 시간
-            /// </summary>
-            /// <returns>누적 시간 값</returns>
-            private float GetUnscaledTime()
-            {
-                return Time.unscaledTime;
-            }
-
-        }
+        
 
         private SimpleClassPool<TimerTaskHandle> simpleClassPool = new SimpleClassPool<TimerTaskHandle>();
-        private CoroutineTimer coroutineTimer = new CoroutineTimer();
 
-        /// <summary>
-        /// 코루틴 기반 Timer 취소가 가능하다 
-        /// </summary>
-        /// <param name="monoBehaviour">코루틴 돌릴 Mono </param>
-        /// <param name="timerHandle"> 핸들 </param>
-        /// <param name="time">시간</param>
-        /// <param name="callback">콜백</param>
-        /// <param name="ignoreTimeScale">타임스케일 무시</param>
-        /// <param name="delayTiming">타이밍</param>
-        /// <returns>성공 여부</returns>
-        public bool SetCoroutineTimer(MonoBehaviour monoBehaviour,float time, out TimerHandle timerHandle, System.Action callback, bool ignoreTimeScale = false, PlayerLoopTiming delayTiming = PlayerLoopTiming.Update)
-        {
-
-            // 게임 오브젝트가 비활성화 상태면 코루틴이 작동안하기에 체크
-            if (!monoBehaviour.gameObject.activeInHierarchy)
-            {
-                timerHandle = new TimerHandle();
-                return false;
-            }
-
-
-            timerHandle = new TimerHandle(monoBehaviour, monoBehaviour.StartCoroutine(coroutineTimer.Delay(time, callback, ignoreTimeScale, delayTiming)));
-
-            return true;
-        }
-
-        /// <summary>
-        /// 코루틴 기반 Timer
-        /// </summary>
-        /// <param name="monoBehaviour">코루틴 돌릴 Mono</param>
-        /// <param name="time">타임</param>
-        /// <param name="callback">콜백</param>
-        /// <param name="ignoreTimeScale"> 타임스케일 무시</param>
-        /// <param name="delayTiming">딜레이 타임</param>
-        /// <returns>성공 여부</returns>
-        public bool SetCoroutineTimer(MonoBehaviour monoBehaviour, float time, System.Action callback, bool ignoreTimeScale = false, PlayerLoopTiming delayTiming = PlayerLoopTiming.Update)
-        {
-            // 게임 오브젝트가 비활성화 상태면 코루틴이 작동안하기에 체크
-            if (!monoBehaviour.gameObject.activeInHierarchy)
-                return false;
-
-            monoBehaviour.StartCoroutine(coroutineTimer.Delay(time, callback, ignoreTimeScale, delayTiming));
-            return true;
-        }
 
         /// <summary>
         /// UniTask 기반 Timer 취소가 가능하다 비동기는 캔슬시 비용이 큼으로 최대한 캔슬 안하는 방향으로 가거나 빈조가 적을경우 사용
@@ -204,7 +102,7 @@ namespace UnityFramework.Timer
         public static class TimerUniTaskExtensions
         {
             /// <summary>
-            /// try-Catach 구조이기에 취소를 하지 않기를 권장 , 중간에 취소가 일어날경우 코루틴 사용할것..
+            /// try-Catch 구조이기에 취소를 하지 않기를 권장 , 중간에 취소가 일어날경우 코루틴 사용할것..
             /// </summary>
             /// <returns></returns>
             public static async UniTask ContinueWith(this UniTask uniTask, TimerManager.TimerData timerData)
