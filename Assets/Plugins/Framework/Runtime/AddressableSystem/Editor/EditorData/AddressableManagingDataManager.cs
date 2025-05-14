@@ -25,7 +25,7 @@ using Cysharp.Threading.Tasks;
 namespace UnityFramework.Addressable.Editor
 {
     using static UnityFramework.Addressable.Editor.AddressableManagingDataManager;
-    public static class AddressableManagingDataManager
+    public static partial class AddressableManagingDataManager
     {
         public enum LoadType
         {

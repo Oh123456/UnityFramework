@@ -1,5 +1,4 @@
-﻿using System.Buffers;
-using System.Collections;
+#if UNITY_EDITOR
 using System.Collections.Generic;
 
 using UnityEditor;
@@ -292,3 +291,5 @@ public class Vector2CurveDrawer : PropertyDrawer
         return EditorGUI.GetPropertyHeight(pointsProp, true);
     }
 }
+
+#endif

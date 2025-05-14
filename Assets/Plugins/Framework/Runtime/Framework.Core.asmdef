@@ -9,11 +9,11 @@
         "Unity.Addressables",
         "UniTask.Addressables",
         "Unity.ResourceManager",
-        "Unity.Addressables.Editor"
+        "Unity.Addressables.Editor",
+        "UnityEditor.UI",
+        "UnityEditor"
     ],
-    "includePlatforms": [
-        "Editor"
-    ],
+    "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,
