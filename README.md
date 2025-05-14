@@ -10,6 +10,7 @@
 - [Pooling](#pooling)
 - [FSM](#fsm)
 - [Timer](#timer)
+- [WeightedRandom](#WeightedRandom)
 - [Collections](#collections)
 
 # UI 
@@ -904,6 +905,31 @@ public void Cancel()
 ```
 
 TimerHandle 에서 진행중인 `Timer`를 `취소` 할수있습니다.
+
+# WeightedRandom
+<a href="https://github.com/Oh123456/UnityFramework/tree/main/Assets/Plugins/Framework/Runtime/Radom"><img src="https://img.shields.io/badge/GitHub_Pages-222222?style=flat-square&logo=GitHub&logoColor=white"/></a>
+가중치 기반 랜덤 기능입니다.
+${\textsf{\color{#1589F0}namespace}}$  `UnityFramework.Random`
+
+각각의 가중치 10 40 60 80 100 
+
+알고리즘에 사용되는 누적 가중치 10 50 110 190 290
+
+Unity.Mathematics.Random 과 사용자 지정 Seed를 사용하여 0 ~ 290 사이의 숫자를 랜던하게 뽑습니다. 
+> 만약 70 이라는 숫자가 나왔다면 50~110 사임으로  Index 2 가 반환이됩니다.
+> 5 가 나왔다면 index 0 입니다. 289가 나왔다면 index 4 입니다.
+
+이진 탐색(UpperBound)을 사용하여  log(N) 의 시간봅작도로 랜던한 값을 가져옵니다. 
+![image](https://github.com/user-attachments/assets/f81441f2-0570-4020-b1f4-f86dc6e3d65e)
+> 정확도 테스트
+```
+public static int Random(List<int> weightList)
+public static int Random(List<int> weightList, int totalWeight)
+```
+
+기본적으로 가중치가 담겨있는 List를 매개변수로 넣으면 나머지 계산을 하여 랜덤값을 가져옵니다. 
+
+> 추후에 미리 준비된 누적 가중치도 사용할수있게 작업할 예정입니다.
 
 
 # Collections 
