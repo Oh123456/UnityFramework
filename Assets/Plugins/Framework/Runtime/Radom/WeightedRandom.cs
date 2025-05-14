@@ -61,25 +61,6 @@ namespace UnityFramework.Random
             return index;
         }
 
-        //public static int UpperBound(int[] array ,int count, int target)
-        //{
-        //    int low = 0;
-        //    int high = count;
-        //    int mid = 0;
-
-        //    while (low < high)
-        //    {
-        //        mid = (low + high) / 2;
-
-        //        if (array[mid] <= target)
-        //            low = mid + 1;
-        //        else
-        //            high = mid;
-        //    }
-
-        //    return low;
-        //}
-
         public static int RandomJobSystem(NativeArray<int> weightList, NativeArray<int> sumArray, int totalWeight, uint seed)
         {
             int count = weightList.Length;
