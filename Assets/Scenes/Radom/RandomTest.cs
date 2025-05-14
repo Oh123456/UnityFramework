@@ -8,6 +8,7 @@ using Unity.Jobs;
 
 using UnityEngine;
 
+using UnityFramework.Algorithm;
 using UnityFramework.Random;
 
 public class RandomTest : MonoBehaviour
@@ -19,7 +20,7 @@ public class RandomTest : MonoBehaviour
         [ReadOnly] public NativeArray<int> sumWeights;
         public NativeArray<int> indexs;
         public int totalWeight;
-        public int seed;
+        public uint seed;
 
         public void Dispose()
         {
@@ -31,7 +32,7 @@ public class RandomTest : MonoBehaviour
         public void Execute(int index)
         {
             uint uSeed = (uint)(seed * (17 + index));
-            indexs[index] = (WeightedRandom.Random(weights, sumWeights, totalWeight, uSeed));
+            indexs[index] = (WeightedRandom.RandomJobSystem(weights, sumWeights, totalWeight, uSeed));
         }
     }
 
@@ -77,12 +78,15 @@ public class RandomTest : MonoBehaviour
         weights = new List<int>(weightCount);
         datas = new List<Data>(weightCount);
 
+        int[] testarray = new int[weightCount];
+
         int total = 0;
         for (int i = 0; i < weightCount; i++)
         {
             int current = Random.Range(1, 200);
             total += current;
             weights.Add(current);
+            testarray[i] = total;
         }
 
         for (int i = 0; i < weightCount; i++)
@@ -96,7 +100,31 @@ public class RandomTest : MonoBehaviour
         }
         isInit = true;
 
+
+
+        //StartCoroutine(ZZZZ(() =>
+        //{
+        //    int count =  Random.Range(0, total);
+        //
+        //    if (testarray.UpperBound(weightCount, count) != WeightedRandom.UpperBound(testarray, weightCount, count))
+        //        Debug.Log("문제발생");
+        //    else
+        //        Debug.Log("같음");
+        //
+        //}));
+
         TestF();
+    }
+
+
+    IEnumerator ZZZZ(System.Action zzzz)
+    {
+        while (true)
+        {
+            zzzz();
+
+            yield return null;  
+        }
     }
 
     void TestF()
@@ -123,11 +151,11 @@ public class RandomTest : MonoBehaviour
             weights = weights,
             sumWeights = array,
             totalWeight = totalWeight,
-            seed = System.Environment.TickCount * 31,
+            seed = (uint)(System.Diagnostics.Stopwatch.GetTimestamp() * 31),
             indexs = new NativeArray<int>(sampleCount, Allocator.TempJob)
         };
 
-        text.text = "Start Job";
+        Debug.Log("Start Job");
 
         var handle = job.Schedule(sampleCount, 64);
         handle.Complete();
@@ -178,10 +206,6 @@ public class RandomTest : MonoBehaviour
             return;
 
         int index = WeightedRandom.Random(weights);
-        totalTracking += WeightedRandom.tracking;
-
-        minTracking = Mathf.Min(minTracking, WeightedRandom.tracking);
-        maxTracking = Mathf.Max(maxTracking, WeightedRandom.tracking);
 
         try
         {
@@ -190,7 +214,7 @@ public class RandomTest : MonoBehaviour
             data.count++;
 
 
-            text.text = $"Total Count {totalCount} log({weightCount}) = {Mathf.Log(weightCount,2):F2}  \n Min {minTracking}  Max {maxTracking} Avg {(float)totalTracking / (float)totalCount :F2}";
+            text.text = $"Total Count {totalCount} log({weightCount}) = {Mathf.Log(weightCount,2):F2}";
 
 
             for (int i = 0; i < weightCount; i++)
