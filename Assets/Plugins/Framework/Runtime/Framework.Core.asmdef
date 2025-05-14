@@ -8,10 +8,7 @@
         "UnityEditor.TestRunner",
         "Unity.Addressables",
         "UniTask.Addressables",
-        "Unity.ResourceManager",
-        "Unity.Addressables.Editor",
-        "UnityEditor.UI",
-        "UnityEditor"
+        "Unity.ResourceManager"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
