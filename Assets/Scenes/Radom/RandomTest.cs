@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 
 using Unity.Burst;
 using Unity.Collections;
@@ -11,24 +12,59 @@ using UnityFramework.Random;
 
 public class RandomTest : MonoBehaviour
 {
+    [BurstCompile]
+    public struct WeightedRandomJob : IJobParallelFor , System.IDisposable
+    {
+        [ReadOnly] public NativeArray<int> weights;
+        [ReadOnly] public NativeArray<int> sumWeights;
+        public NativeArray<int> indexs;
+        public int totalWeight;
+        public int seed;
+
+        public void Dispose()
+        {
+            weights.Dispose(); 
+            sumWeights.Dispose();
+            indexs.Dispose();
+        }
+
+        public void Execute(int index)
+        {
+            uint uSeed = (uint)(seed * (17 + index));
+            indexs[index] = (WeightedRandom.Random(weights, sumWeights, totalWeight, uSeed));
+        }
+    }
 
 
+    int totalTracking = 0;
+    int minTracking = int.MaxValue;
+    int maxTracking = 0;
+
+
+    const int MAX_VALUE = int.MaxValue / 2;
     class Data
     {
         public int currentWeight;
-        public float percent;
-        public float currentPercent;
+        public double percent;
+        public double currentPercent;
         public int count;
 
         public void Update(long total)
         {
             if (count == 0)
                 return;
-            currentPercent = (float)((float)count/ (double)total);
+            currentPercent = (double)((double)count / (double)total);
         }
 
     }
 
+    [SerializeField]
+    int[] rarityWeight = new int[]
+        {
+            3,12,85
+        };
+
+    [SerializeField] int sampleCount = 1000000;
     [SerializeField] int weightCount = 100000;
     [SerializeField] List<int> weights;
     [SerializeField] long totalCount = 0;
@@ -49,7 +85,6 @@ public class RandomTest : MonoBehaviour
             weights.Add(current);
         }
 
-
         for (int i = 0; i < weightCount; i++)
         {
             datas.Add(new Data()
@@ -61,26 +96,117 @@ public class RandomTest : MonoBehaviour
         }
         isInit = true;
 
+        TestF();
     }
-    private void Update()
+
+    void TestF()
     {
-        if (!isInit) return;
 
+        NativeArray<int> weights = new NativeArray<int>(weightCount,Allocator.TempJob);
+        int totalWeight = 0;
 
-        int index = WeightedRandom.Random(weights);
+        for(int i = 0; i < weightCount; i++)
+        {
+            weights[i] = this.weights[i];
+            totalWeight += this.weights[i];
+        }
 
-        totalCount++;
-        var data = datas[index];
-        data.count++;
+        NativeArray<int> array = new NativeArray<int>(weightCount, Allocator.TempJob);
+        array[0] = weights[0];
+        for (int i = 1; i < weightCount; i++)
+        {
+            array[i] = array[i - 1] + weights[i];
+        }
 
-        text.text = $"Total Count {totalCount}";
+        WeightedRandomJob job = new WeightedRandomJob()
+        {
+            weights = weights,
+            sumWeights = array,
+            totalWeight = totalWeight,
+            seed = System.Environment.TickCount * 31,
+            indexs = new NativeArray<int>(sampleCount, Allocator.TempJob)
+        };
 
+        text.text = "Start Job";
+
+        var handle = job.Schedule(sampleCount, 64);
+        handle.Complete();
+        Debug.Log("End Job");
+        totalCount = sampleCount;
+
+        for (int i = 0; i < sampleCount; i++)
+        {
+            var data = datas[job.indexs[i]];
+            data.count++;
+        }
+        text.text = "";
+        string Title = $"Total Count {totalCount} log({weightCount}) = {Mathf.Log(weightCount, 2):F2}";
+        double minAccuracy = 100.0;
+        int minIndex = 0;
         for (int i = 0; i < weightCount; i++)
         {
-            data = datas[i];
+            var data = datas[i];
             data.Update(totalCount);
 
-            text.text = $"{text.text} \n index : {i} :  {data.currentPercent} / {data.percent}";
+
+            double relativeError = System.Math.Abs(data.currentPercent - data.percent) / data.percent * 100.0;
+            double accuracy = (1.0 - System.Math.Min(1f, relativeError / 100.0)) * 100.0;
+
+            if (minAccuracy > accuracy)
+            {
+                minAccuracy = accuracy;
+                minIndex = i;
+            }
+
+            text.text = $"{text.text} \n index : {i} (Weight {data.currentWeight}) :  {data.currentPercent:F7} / {data.percent:F7} (Accuracy {accuracy:F1} %)";
+        }
+
+        text.text = $"{Title} MinAccuracy {minAccuracy} Index {minIndex} {text.text}";
+
+
+        job.Dispose();
+    }
+
+
+
+    private void Update()
+    {
+        return;
+        if (!isInit) return;
+
+        if (totalCount >= MAX_VALUE)
+            return;
+
+        int index = WeightedRandom.Random(weights);
+        totalTracking += WeightedRandom.tracking;
+
+        minTracking = Mathf.Min(minTracking, WeightedRandom.tracking);
+        maxTracking = Mathf.Max(maxTracking, WeightedRandom.tracking);
+
+        try
+        {
+            totalCount++;
+            var data = datas[index];
+            data.count++;
+
+
+            text.text = $"Total Count {totalCount} log({weightCount}) = {Mathf.Log(weightCount,2):F2}  \n Min {minTracking}  Max {maxTracking} Avg {(float)totalTracking / (float)totalCount :F2}";
+
+
+            for (int i = 0; i < weightCount; i++)
+            {
+                data = datas[i];
+                data.Update(totalCount);
+
+                double relativeError = System.Math.Abs(data.currentPercent - data.percent) / data.percent * 100;
+                double accuracy = (1f - System.Math.Min(1.0, relativeError / 100)) * 100;
+
+                text.text = $"{text.text} \n index : {i} (Weight {data.currentWeight}) :  {data.currentPercent:F7} / {data.percent:F7} (Accuracy {accuracy:F1} %)";
+            }
+        }
+        catch (System.Exception ex)
+        {
+            Debug.LogError($"index :{index}");
         }
     }
 
