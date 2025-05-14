@@ -313,6 +313,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ae8ca16c46b4bd4f835c47a411cb525, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rarityWeight: 030000000c00000055000000
   sampleCount: 100000000
   weightCount: 300
   weights: 
