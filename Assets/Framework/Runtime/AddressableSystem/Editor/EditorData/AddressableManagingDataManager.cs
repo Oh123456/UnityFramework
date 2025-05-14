@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 
 
@@ -10,7 +10,6 @@ using UnityEngine.ResourceManagement.AsyncOperations;
 using UnityEngine.SceneManagement;
 using System.Buffers;
 using System.Text.RegularExpressions;
-using UnityEngine.Timeline;
 
 
 

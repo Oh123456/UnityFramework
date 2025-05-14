@@ -36,7 +36,7 @@ namespace UnityFramework.Addressable
             var handle = Addressables.LoadAssetAsync<T>(key);
             AddressableResourceHandle<T> addressableResourceHandle = new AddressableResourceHandle<T>(handle);
 #if UNITY_EDITOR
-            Editor.AddressableManagingDataManager.TrackEditorLoad(handle, Editor.AddressableManagingDataManager.LoadType.UnsafeLoad, key, (assetKey) =>
+            UnityFramework.Addressable.Editor.AddressableManagingDataManager.TrackEditorLoad(handle, Editor.AddressableManagingDataManager.LoadType.UnsafeLoad, key, (assetKey) =>
             {
                 addressableResourceHandle.editor_AssetKey = assetKey;
             });

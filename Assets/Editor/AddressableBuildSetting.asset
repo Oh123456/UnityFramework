@@ -14,11 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   settingTitleColor: {r: 0, g: 0, b: 0, a: 1}
   buildCompleteOpenFolder: 1
-  buildCilerFolder: 3
+  buildClearFolder: 3
   backUpPath: 
-  backUpFodierNameRule: '[productName]/[yyyy_MM_dd_HH_mm_ss]'
+  backUpFolderNameRule: '[productName]/[yyyy_MM_dd_HH_mm_ss]'
   isAlwaysBuildCilerWarningDisplay: 1
   assetBundleBuildResults: 0
-  addressablePatternRules: []
+  addressablePatternRules:
+  - {fileID: 11500000, guid: 0bcbddc2f48dcda468dcd06a1244ebc2, type: 3}
+  - {fileID: 11500000, guid: 7b55dde7eefa3fd419ff3981349f22ff, type: 3}
   backUpFoliderNameRulesTpye: 0
   ignoreChangeGroup: []

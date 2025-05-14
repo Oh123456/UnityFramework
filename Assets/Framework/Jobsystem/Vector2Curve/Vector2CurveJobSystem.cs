@@ -1,11 +1,15 @@
-﻿using Unity.Burst;
-using Unity.Collections;
-using Unity.Mathematics;
 
-using UnityEngine;
 
+#if USE_UNITYFRAMEWORK_JOBSYSTEM
 namespace UnityFramework.JobSystem
 {
+    using Unity.Burst;
+    using Unity.Collections;
+    using Unity.Mathematics;
+
+    using UnityEngine;
+
+    using UnityFramework;
 
     public static class Vector2CurveJob
     {
@@ -63,3 +67,4 @@ namespace UnityFramework.JobSystem
         }
     }
 }
+#endif
