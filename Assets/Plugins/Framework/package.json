@@ -7,5 +7,6 @@
     "author": {
       "name": "OJK",
       "email": "dhwnsrud98@gmail.com"
-    }
+    },
+    "com.ojk.framework": "https://github.com/Oh123456/UnityFramework.git"
 }
